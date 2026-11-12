@@ -23,14 +23,20 @@ import {
 	unlinkEmployeeAccountFn,
 	updateEmployeeFn,
 } from "./employees.functions";
+import type { EmployeeStatus } from "./types";
 
 export const EMPLOYEES_PAGE_SIZE = 20;
 export const READ_AUDIT_PAGE_SIZE = 20;
 
-export type EmployeesSearch = { companyId?: string; search?: string; page?: number };
+export type EmployeesSearch = {
+	companyId?: string;
+	search?: string;
+	status?: EmployeeStatus;
+	page?: number;
+};
 
-export function employeesQuery({ companyId, search, page }: EmployeesSearch) {
-	const params = { companyId, search, page: page ?? 1, pageSize: EMPLOYEES_PAGE_SIZE };
+export function employeesQuery({ companyId, search, status, page }: EmployeesSearch) {
+	const params = { companyId, search, status, page: page ?? 1, pageSize: EMPLOYEES_PAGE_SIZE };
 	return queryOptions({
 		queryKey: employeesKeys.list(params),
 		queryFn: () => listEmployeesFn({ data: params }),

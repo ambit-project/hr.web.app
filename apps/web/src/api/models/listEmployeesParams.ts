@@ -8,6 +8,7 @@
 export type ListEmployeesParams = {
 	companyId?: string;
 	search?: string;
+	status?: string;
 	page?: number;
 	pageSize?: number;
 };

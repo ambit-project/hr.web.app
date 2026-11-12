@@ -19,4 +19,5 @@ export interface ListEmployeesItem {
 	city: string | null;
 	/** @nullable */
 	accountLogin: string | null;
+	status: string;
 }

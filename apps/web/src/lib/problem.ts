@@ -1,10 +1,14 @@
 import { isAxiosError } from "axios";
 
-/** ProblemDetails from the API: `code` is the database error code (U0001…), `errors` maps fields to codes. */
+/**
+ * ProblemDetails from the API: `code` is the database error code (U0001…), `errors` maps fields to codes and `reason`
+ * names the cause of a conflict (e.g. `retention`), translated under `reasons.<reason>`.
+ */
 export type Problem = {
 	status: number;
 	code?: string;
 	errors?: Record<string, string[]>;
+	reason?: string;
 };
 
 /** Server function result: problems travel as data, because thrown errors lose their shape on the way to the browser. */
@@ -20,7 +24,12 @@ export async function toResult<T>(call: () => Promise<T>): Promise<Result<T>> {
 			const data = (response.data ?? {}) as Partial<Problem>;
 			return {
 				ok: false,
-				problem: { status: response.status, code: data.code, errors: data.errors },
+				problem: {
+					status: response.status,
+					code: data.code,
+					errors: data.errors,
+					reason: data.reason,
+				},
 			};
 		}
 		throw error;

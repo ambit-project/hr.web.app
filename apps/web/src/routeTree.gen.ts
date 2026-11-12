@@ -16,6 +16,7 @@ import { Route as AuditIndexRouteImport } from './routes/audit/index'
 import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as EmployeesIndexRouteImport } from './routes/employees/index'
 import { Route as EmployeesIdRouteImport } from './routes/employees/$id'
+import { Route as EmploymentsIdRouteImport } from './routes/employments/$id'
 import { Route as LegalParametersIndexRouteImport } from './routes/legal-parameters/index'
 import { Route as MyIndexRouteImport } from './routes/my/index'
 import { Route as PositionsIndexRouteImport } from './routes/positions/index'
@@ -58,6 +59,11 @@ const EmployeesIdRoute = EmployeesIdRouteImport.update({
   path: '/employees/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmploymentsIdRoute = EmploymentsIdRouteImport.update({
+  id: '/employments/$id',
+  path: '/employments/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalParametersIndexRoute = LegalParametersIndexRouteImport.update({
   id: '/legal-parameters/',
   path: '/legal-parameters/',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/health': typeof HealthRoute
   '/login': typeof LoginRoute
   '/employees/$id': typeof EmployeesIdRoute
+  '/employments/$id': typeof EmploymentsIdRoute
   '/audit/': typeof AuditIndexRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employees/': typeof EmployeesIndexRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/health': typeof HealthRoute
   '/login': typeof LoginRoute
   '/employees/$id': typeof EmployeesIdRoute
+  '/employments/$id': typeof EmploymentsIdRoute
   '/audit': typeof AuditIndexRoute
   '/companies': typeof CompaniesIndexRoute
   '/employees': typeof EmployeesIndexRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/health': typeof HealthRoute
   '/login': typeof LoginRoute
   '/employees/$id': typeof EmployeesIdRoute
+  '/employments/$id': typeof EmploymentsIdRoute
   '/audit/': typeof AuditIndexRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employees/': typeof EmployeesIndexRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/health'
     | '/login'
     | '/employees/$id'
+    | '/employments/$id'
     | '/audit/'
     | '/companies/'
     | '/employees/'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/health'
     | '/login'
     | '/employees/$id'
+    | '/employments/$id'
     | '/audit'
     | '/companies'
     | '/employees'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/health'
     | '/login'
     | '/employees/$id'
+    | '/employments/$id'
     | '/audit/'
     | '/companies/'
     | '/employees/'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   HealthRoute: typeof HealthRoute
   LoginRoute: typeof LoginRoute
   EmployeesIdRoute: typeof EmployeesIdRoute
+  EmploymentsIdRoute: typeof EmploymentsIdRoute
   AuditIndexRoute: typeof AuditIndexRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   EmployeesIndexRoute: typeof EmployeesIndexRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmployeesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employments/$id': {
+      id: '/employments/$id'
+      path: '/employments/$id'
+      fullPath: '/employments/$id'
+      preLoaderRoute: typeof EmploymentsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal-parameters/': {
       id: '/legal-parameters/'
       path: '/legal-parameters'
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   HealthRoute: HealthRoute,
   LoginRoute: LoginRoute,
   EmployeesIdRoute: EmployeesIdRoute,
+  EmploymentsIdRoute: EmploymentsIdRoute,
   AuditIndexRoute: AuditIndexRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   EmployeesIndexRoute: EmployeesIndexRoute,

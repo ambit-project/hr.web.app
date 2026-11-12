@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmployeeResponse } from "#/api/models";
 import { hasRole } from "#/features/auth/session";
+import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { ProblemError } from "#/lib/problem";
 import { EmployeeDrawer, type EmployeeDrawerHandle } from "./EmployeeDrawer";
 import { employeeQuery, useDeleteEmployee } from "./employeesQueries";
@@ -12,7 +13,7 @@ import { AccountSection } from "./sections/AccountSection";
 import { AddressesSection } from "./sections/AddressesSection";
 import { BankSection } from "./sections/BankSection";
 import { ReadsSection } from "./sections/ReadsSection";
-import { EMPLOYEE_TABS, type EmployeeTab } from "./types";
+import { EMPLOYEE_TABS, type EmployeeStatus, type EmployeeTab } from "./types";
 
 const route = getRouteApi("/employees/$id");
 
@@ -72,6 +73,9 @@ export function EmployeeDetailsPage() {
 				<Tabs.Panel id="data" className="pt-4">
 					<DataSection employee={employee} />
 				</Tabs.Panel>
+				<Tabs.Panel id="employments" className="pt-4">
+					<EmploymentsSection employeeId={employee.id} />
+				</Tabs.Panel>
 				<Tabs.Panel id="addresses" className="pt-4">
 					<AddressesSection employeeId={employee.id} />
 				</Tabs.Panel>
@@ -109,6 +113,13 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 			employee.taxOfficeCode ? `${employee.taxOfficeCode} ${employee.taxOfficeName ?? ""}` : null,
 		],
 		[t("employees.fields.email"), employee.email],
+		[t("employees.status.label"), t(`employees.status.${employee.status as EmployeeStatus}`)],
+		[
+			t("employees.retention.label"),
+			employee.retentionOpen
+				? t("employees.retention.open")
+				: (employee.retentionUntil ?? t("employees.retention.none")),
+		],
 	];
 
 	const onDelete = async () => {
@@ -119,7 +130,9 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 		} catch (error) {
 			toast.danger(
 				error instanceof ProblemError && error.problem.status === 409
-					? t("employees.delete.blocked")
+					? error.problem.reason === "retention"
+						? t("reasons.retention")
+						: t("employees.delete.blocked")
 					: t("common.serverError"),
 			);
 		}

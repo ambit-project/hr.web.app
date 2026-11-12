@@ -31,5 +31,9 @@ export interface GetEmployeeResponse {
 	iban: string | null;
 	/** @nullable */
 	accountLogin: string | null;
+	status: string;
+	/** @nullable */
+	retentionUntil: string | null;
+	retentionOpen: boolean;
 	rowVersion: number;
 }

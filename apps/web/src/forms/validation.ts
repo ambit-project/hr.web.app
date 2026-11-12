@@ -10,7 +10,16 @@ export type ValidationCode =
 	| "beforeFrom"
 	| "notFound"
 	| "inactive"
-	| "mismatch";
+	| "mismatch"
+	| "afterStart"
+	| "overlap"
+	| "beforeTermination"
+	| "termsOutsidePeriod"
+	| "outsidePeriod"
+	| "missingMandatory"
+	| "belowMinimum"
+	| "beforeStart"
+	| "afterEnd";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {

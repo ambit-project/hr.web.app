@@ -6,6 +6,16 @@ import { createPositionFn, listPositionsFn, updatePositionFn } from "./positions
 
 export const POSITIONS_PAGE_SIZE = 20;
 
+/** All positions (also inactive, so a contract keeps showing its old one) for pickers; at most one page of 100. */
+export function positionOptionsQuery() {
+	const params = { includeInactive: true, page: 1, pageSize: 100 };
+	return queryOptions({
+		queryKey: positionsKeys.list(params),
+		queryFn: () => listPositionsFn({ data: params }),
+		staleTime: 60_000,
+	});
+}
+
 export type PositionsSearch = { search?: string; inactive?: boolean; page?: number };
 
 export function positionsQuery({ search, inactive, page }: PositionsSearch) {

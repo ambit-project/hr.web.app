@@ -11,6 +11,15 @@ const KNOWN: readonly ValidationCode[] = [
 	"notFound",
 	"inactive",
 	"mismatch",
+	"afterStart",
+	"overlap",
+	"beforeTermination",
+	"termsOutsidePeriod",
+	"outsidePeriod",
+	"missingMandatory",
+	"belowMinimum",
+	"beforeStart",
+	"afterEnd",
 ];
 
 /**

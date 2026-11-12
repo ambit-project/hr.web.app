@@ -1,13 +1,22 @@
-import { Button, EmptyState, Spinner, Table } from "@heroui/react";
+import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi, Link as RouterLink } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
+import { OptionSelect } from "#/components/ui/OptionSelect";
 import { CompanySelect } from "#/features/companies/CompanySelect";
 import { EmployeeDrawer, type EmployeeDrawerHandle } from "./EmployeeDrawer";
 import { EMPLOYEES_PAGE_SIZE, employeesQuery } from "./employeesQueries";
+import { EMPLOYEE_STATUSES, type EmployeeStatus } from "./types";
+
+const STATUS_COLORS: Record<EmployeeStatus, "success" | "warning" | "default"> = {
+	active: "success",
+	future: "warning",
+	former: "default",
+	none: "default",
+};
 
 const route = getRouteApi("/employees/");
 
@@ -52,6 +61,26 @@ export function EmployeesPage() {
 						})
 					}
 				/>
+				<OptionSelect
+					className="w-48"
+					label={t("employees.status.label")}
+					allLabel={t("employees.status.all")}
+					value={search.status ?? ""}
+					options={EMPLOYEE_STATUSES.map((status) => ({
+						id: status,
+						label: t(`employees.status.${status}`),
+					}))}
+					onChange={(status) =>
+						void navigate({
+							search: (prev) => ({
+								...prev,
+								status: (status || undefined) as EmployeeStatus | undefined,
+								page: undefined,
+							}),
+							replace: true,
+						})
+					}
+				/>
 				<ListSearch
 					value={search.search}
 					placeholder={t("employees.searchPlaceholder")}
@@ -72,6 +101,7 @@ export function EmployeesPage() {
 								<Table.Column>{t("employees.fields.birthDate")}</Table.Column>
 								<Table.Column>{t("employees.fields.city")}</Table.Column>
 								<Table.Column>{t("employees.fields.account")}</Table.Column>
+								<Table.Column>{t("employees.status.label")}</Table.Column>
 							</Table.Header>
 							<Table.Body
 								renderEmptyState={() => (
@@ -99,6 +129,11 @@ export function EmployeesPage() {
 										<Table.Cell>{employee.birthDate}</Table.Cell>
 										<Table.Cell>{employee.city ?? "—"}</Table.Cell>
 										<Table.Cell>{employee.accountLogin ?? "—"}</Table.Cell>
+										<Table.Cell>
+											<Chip size="sm" color={STATUS_COLORS[employee.status as EmployeeStatus]}>
+												{t(`employees.status.${employee.status as EmployeeStatus}`)}
+											</Chip>
+										</Table.Cell>
 									</Table.Row>
 								))}
 							</Table.Body>
