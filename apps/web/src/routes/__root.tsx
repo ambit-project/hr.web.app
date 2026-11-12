@@ -5,13 +5,17 @@ import {
 	HeadContent,
 	type NavigateOptions,
 	Outlet,
+	redirect,
 	Scripts,
 	type ToOptions,
 	useRouter,
+	useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { RouterProvider } from "react-aria-components";
 import { AppLayout } from "#/components/layout/AppLayout";
+import { getMeFn } from "#/features/auth/auth.functions";
+import type { Me } from "#/features/auth/session";
 import { DEFAULT_LANGUAGE, i18next } from "#/i18n";
 import appCss from "#/styles/app.css?url";
 
@@ -23,7 +27,15 @@ declare module "react-aria-components" {
 	}
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient; me?: Me | null }>()({
+	// Every page needs the account: without a session everything except the login page leads to it.
+	beforeLoad: async ({ location }) => {
+		const me = await getMeFn();
+		if (!me && location.pathname !== "/login") {
+			throw redirect({ to: "/login", search: { redirect: location.href } });
+		}
+		return { me };
+	},
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },
@@ -53,14 +65,20 @@ function RootDocument({ children }: { children: ReactNode }) {
 
 function RootComponent() {
 	const router = useRouter();
+	const { me } = Route.useRouteContext();
+	const isLogin = useRouterState({ select: (state) => state.location.pathname === "/login" });
 	return (
 		<RouterProvider
 			navigate={(to, options) => router.navigate({ ...options, to })}
 			useHref={(to) => router.buildLocation({ to }).href}
 		>
-			<AppLayout>
+			{me && !isLogin ? (
+				<AppLayout me={me}>
+					<Outlet />
+				</AppLayout>
+			) : (
 				<Outlet />
-			</AppLayout>
+			)}
 		</RouterProvider>
 	);
 }

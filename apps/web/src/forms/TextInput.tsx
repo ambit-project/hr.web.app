@@ -8,9 +8,18 @@ type TextInputProps = {
 	description?: string;
 	isRequired?: boolean;
 	multiline?: boolean;
+	type?: "text" | "password" | "email";
+	autoComplete?: string;
 };
 
-export function TextInput({ label, description, isRequired, multiline }: TextInputProps) {
+export function TextInput({
+	label,
+	description,
+	isRequired,
+	multiline,
+	type,
+	autoComplete,
+}: TextInputProps) {
 	const field = useFieldContext<string>();
 	const { t } = useTranslation();
 	const code = errorCode(field.state.meta.errors);
@@ -27,7 +36,7 @@ export function TextInput({ label, description, isRequired, multiline }: TextInp
 			validationBehavior="aria"
 		>
 			<Label>{label}</Label>
-			{multiline ? <TextArea rows={3} /> : <Input />}
+			{multiline ? <TextArea rows={3} /> : <Input type={type} autoComplete={autoComplete} />}
 			{description ? <Description>{description}</Description> : null}
 			<FieldError>{showError && code ? t(`validation.${code}`) : null}</FieldError>
 		</TextField>

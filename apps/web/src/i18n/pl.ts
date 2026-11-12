@@ -2,7 +2,7 @@
 export const pl = {
 	app: {
 		name: "Kadry i Płace",
-		nav: { positions: "Stanowiska" },
+		nav: { positions: "Stanowiska", my: "Moje dokumenty" },
 	},
 	common: {
 		add: "Dodaj",
@@ -13,6 +13,24 @@ export const pl = {
 		next: "Następna",
 		loading: "Wczytywanie…",
 		serverError: "Serwer nie odpowiedział poprawnie. Spróbuj ponownie.",
+	},
+	auth: {
+		title: "Zaloguj się, aby kontynuować.",
+		login: "Login lub e-mail",
+		password: "Hasło",
+		submit: "Zaloguj",
+		failed: "Nieprawidłowy login lub hasło albo konto jest zablokowane.",
+		logout: "Wyloguj",
+		noAccess: "Twoje konto nie ma jeszcze żadnej roli. Poproś administratora o nadanie uprawnień.",
+		dev: {
+			hint: "Środowisko deweloperskie — logowanie bez hasła:",
+			as: "Zaloguj jako {{role}}",
+		},
+	},
+	roles: { kadry: "Kadry", administrator: "Administrator", pracownik: "Pracownik" },
+	my: {
+		title: "Moje dokumenty",
+		empty: "Paski wypłat, PIT-y i zgody pojawią się tutaj, gdy kadry powiążą konto z kartoteką.",
 	},
 	validation: {
 		required: "Pole jest wymagane.",
