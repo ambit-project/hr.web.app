@@ -80,7 +80,9 @@ Stanowisko pracy. Słownik jest wspólny dla grupy i działa już w kodzie (`dic
 
 Kod ze słowników ZUS używany przy naliczeniu: kod tytułu ubezpieczenia (4 znaki), prawo do emerytury lub renty
 (1 znak), stopień niepełnosprawności (1 znak). Prowadzi go Administrator na podstawie aktualnych wykazów ZUS.
-*Wersjonowana* (kod może zostać wycofany).
+*Wersjonowana* (kod może zostać wycofany). Kody w bazie pochodzą z załącznika nr 24 do rozporządzenia
+z 9 kwietnia 2026 r. (Dz.U. 2026 poz. 518). Wykaz nie przypisuje tytułom poszczególnych ubezpieczeń, więc obowiązkowe
+ubezpieczenia ustala reguła zbiegu tytułów w zatrudnieniu (04), nie słownik (specyfikacja 002).
 
 | Atrybut | Typ | Wym. | Opis |
 |---|---|---|---|
@@ -88,7 +90,6 @@ Kod ze słowników ZUS używany przy naliczeniu: kod tytułu ubezpieczenia (4 zn
 | `kind` | Wyliczenie | tak | `tytuł ubezpieczenia`, `prawo do emerytury/renty`, `niepełnosprawność`. |
 | `code` | Kod | tak | **UK** w obrębie `kind`. |
 | `name` | Tekst | tak | Opis z wykazu ZUS. |
-| `insurances` | Wyliczenie (wiele) | warunkowo | Dla tytułu: obowiązkowe ubezpieczenia (`emerytalne`, `rentowe`, `chorobowe`, `wypadkowe`, `zdrowotne`). Podpowiedź przy umowie; ostatecznie rozstrzyga reguła zbiegu tytułów. |
 | `validFrom` | Data | tak | |
 | `validTo` | Data | nie | |
 
@@ -122,4 +123,6 @@ Urząd skarbowy z kodem urzędu z e-Deklaracji.
 | `US-0001` | `0001` | Urząd Skarbowy Przykładowo-Śródmieście |
 | `US-0002` | `0002` | Urząd Skarbowy Przykładowo-Północ |
 
-- W scenariuszu kody są fikcyjne. Prawdziwy wykaz kodów urzędów wczyta Administrator.
+- W scenariuszu kody są fikcyjne. Baza ma pełny wykaz 400 urzędów ze schematu e-Deklaracji
+  `KodyUrzedowSkarbowych_v8-0E`. PIT-11 używa węższego wykazu `KodyUrzedowSkarbowychExWUS_v8-0E` (379 urzędów,
+  bez wyspecjalizowanych); sprawdzenie urzędu pracownika pod PIT-11 należy do modułu 010.
