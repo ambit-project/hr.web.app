@@ -1,0 +1,31 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+	"vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**/src/**/*",
+			"**/vite.config.ts",
+			"**/vitest.config.ts",
+			"**/orval.config.ts",
+			"!**/src/routeTree.gen.ts"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 100
+	},
+	"assist": { "enabled": true, "actions": { "source": { "organizeImports": "on" } } },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"style": { "noDescendingSpecificity": "warn" }
+		}
+	},
+	"css": { "parser": { "tailwindDirectives": true } },
+	"javascript": { "formatter": { "quoteStyle": "double" } },
+	"plugins": ["./biome/deprecated-query-client.grit"]
+}

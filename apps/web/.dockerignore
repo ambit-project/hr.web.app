@@ -1,0 +1,7 @@
+node_modules/
+.output/
+.nitro/
+.tanstack/
+.yarn/install-state.gz
+Dockerfile
+.dockerignore

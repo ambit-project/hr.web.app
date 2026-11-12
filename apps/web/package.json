@@ -1,0 +1,58 @@
+{
+	"name": "hr-web",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"packageManager": "yarn@4.18.1",
+	"engines": {
+		"node": ">=22.12"
+	},
+	"imports": {
+		"#/*": "./src/*"
+	},
+	"scripts": {
+		"dev": "vite dev --port 6301 --strictPort",
+		"build": "tsc --noEmit && vite build",
+		"start": "node .output/server/index.mjs",
+		"typecheck": "tsc --noEmit",
+		"check": "biome check .",
+		"format": "biome check --write .",
+		"test": "vitest run",
+		"api:gen": "orval && biome check --write src/api"
+	},
+	"dependencies": {
+		"@heroui/react": "^3.2.6",
+		"@heroui/styles": "^3.2.6",
+		"@internationalized/date": "^3.12.4",
+		"@react-aria/ssr": "^3.9.0",
+		"@react-aria/utils": "^3.34.1",
+		"@tanstack/query-core": "^5.103.2",
+		"@tanstack/react-form": "^1.33.0",
+		"@tanstack/react-query": "^5.103.2",
+		"@tanstack/react-router": "^1.170.39",
+		"@tanstack/react-router-ssr-query": "^1.167.3",
+		"@tanstack/react-start": "^1.168.58",
+		"axios": "^1.20.0",
+		"i18next": "^26.0.0",
+		"react": "^19.3.0",
+		"react-aria": "^3.53.1",
+		"react-aria-components": "^1.21.1",
+		"react-dom": "^19.3.0",
+		"react-i18next": "^17.0.0",
+		"zod": "^4.6.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.14",
+		"@tailwindcss/vite": "^4.3.3",
+		"@types/node": "^26.6.2",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
+		"@vitejs/plugin-react": "^6.1.1",
+		"nitro": "^3.0.260903-beta",
+		"orval": "^8.37.0",
+		"tailwindcss": "^4.3.3",
+		"typescript": "^7.0.2",
+		"vite": "^8.3.1",
+		"vitest": "^5.0.2"
+	}
+}

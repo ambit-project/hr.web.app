@@ -1,0 +1,15 @@
+language js
+
+// TanStack Query 5.10x deprecates these QueryClient methods. Biome has no type-aware @deprecated rule, so the names
+// are listed here with the replacement in the message.
+`$client.$method($args)` where {
+	$method <: or {
+		`fetchQuery`,
+		`prefetchQuery`,
+		`ensureQueryData`,
+		`fetchInfiniteQuery`,
+		`prefetchInfiniteQuery`,
+		`ensureInfiniteQueryData`
+	},
+	register_diagnostic(span=$method, message="Deprecated in TanStack Query: use queryClient.query(options) or infiniteQuery(options) - with staleTime static in place of ensure...Data, with a catch in place of prefetch...", severity="error")
+}
