@@ -16,6 +16,7 @@ public static class UpdateCompany
         string Street,
         string PostalCode,
         string City,
+        Guid? TaxOfficeId,
         bool IsActive
     );
 
@@ -39,7 +40,7 @@ public sealed class UpdateCompanyHandler(DbSession db)
         CancellationToken cancellationToken
     ) =>
         await db.ScalarAsync<object>(
-            "CALL platform_app.company_update($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+            "CALL platform_app.company_update($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
             [
                 Db.Param(id),
                 Db.Param(request.RowVersion),
@@ -50,6 +51,7 @@ public sealed class UpdateCompanyHandler(DbSession db)
                 Db.Param(request.Street),
                 Db.Param(request.PostalCode),
                 Db.Param(request.City),
+                Db.Param(request.TaxOfficeId),
                 Db.Param(request.IsActive),
             ],
             cancellationToken

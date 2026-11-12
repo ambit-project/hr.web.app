@@ -76,6 +76,23 @@ public static class TestDb
         return id;
     }
 
+    /// <summary>Zakłada urząd skarbowy z wolnym kodem z zakresu 9000–9999 (poza wykazem urzędów).</summary>
+    public static async Task<Guid> TaxOfficeAsync(DatabaseFixture database, bool isActive = true) =>
+        await AdminScalarAsync<Guid>(
+            database,
+            """
+            INSERT INTO dictionaries.tax_offices (code, name, is_active)
+            SELECT c.code, 'Urząd Testowy ' || c.code, $1
+            FROM (
+                SELECT lpad(n::text, 4, '0') AS code FROM generate_series(9000, 9999) n
+                EXCEPT SELECT code FROM dictionaries.tax_offices
+                ORDER BY 1 LIMIT 1
+            ) c
+            RETURNING id
+            """,
+            new NpgsqlParameter<bool> { TypedValue = isActive }
+        );
+
     public static NpgsqlCommand Command(
         NpgsqlConnection connection,
         string sql,

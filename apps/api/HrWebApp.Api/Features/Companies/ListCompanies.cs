@@ -24,6 +24,9 @@ public static class ListCompanies
         string PostalCode,
         string City,
         bool IsActive,
+        Guid? TaxOfficeId,
+        string? TaxOfficeCode,
+        string? TaxOfficeName,
         long RowVersion
     );
 
@@ -46,7 +49,8 @@ public sealed class ListCompaniesHandler(DbSession db)
         long total = 0;
         var items = await db.QueryAsync(
             """
-            SELECT id, short_name, name, nip, regon, street, postal_code, city, is_active, row_version, total_count
+            SELECT id, short_name, name, nip, regon, street, postal_code, city, is_active,
+                   tax_office_id, tax_office_code, tax_office_name, row_version, total_count
             FROM platform_app.company_list($1, $2, $3, $4)
             """,
             [
@@ -57,7 +61,7 @@ public sealed class ListCompaniesHandler(DbSession db)
             ],
             reader =>
             {
-                total = reader.GetInt64(10);
+                total = reader.GetInt64(13);
                 return new ListCompanies.Item(
                     reader.GetGuid(0),
                     reader.GetString(1),
@@ -68,7 +72,10 @@ public sealed class ListCompaniesHandler(DbSession db)
                     reader.GetString(6),
                     reader.GetString(7),
                     reader.GetBoolean(8),
-                    reader.GetInt64(9)
+                    reader.IsDBNull(9) ? null : reader.GetGuid(9),
+                    reader.IsDBNull(10) ? null : reader.GetString(10),
+                    reader.IsDBNull(11) ? null : reader.GetString(11),
+                    reader.GetInt64(12)
                 );
             },
             cancellationToken

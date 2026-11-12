@@ -10,7 +10,7 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 | `bootstrap/roles.sql` | baza i role `<prefix>_owner`, `_migrator`, `_api` | uruchamia superużytkownik, idempotentne |
 | `changelog.yaml` | korzeń changelogu | kolejność: `1-ddl` → `modules` → `9-grants` |
 | `changelog/1-ddl/yyyymmdd-nn-<opis>.sql` | tabele, indeksy, schematy | changeset niezmienny, nowa zmiana = nowy plik |
-| `changelog/2-data/yyyymmdd-nn-<opis>.sql` | dane (parametry prawne; konta deweloperskie z `context:dev`) | changeset niezmienny |
+| `changelog/2-data/yyyymmdd-nn-<opis>.sql` | dane (parametry prawne, kody ZUS, urzędy skarbowe; konta deweloperskie z `context:dev`) | changeset niezmienny, źródło w komentarzu |
 | `changelog/modules/<nn>-<moduł>/<schemat>.<nazwa>.sql` | procedury i funkcje | `runOnChange:true`, jeden obiekt na plik, `CREATE OR REPLACE` |
 | `changelog/9-grants/grants.sql` | prawa roli API | `runAlways:true` |
 
@@ -37,7 +37,8 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 | `U0005` | logowanie nieudane (zły login lub hasło, blokada, konto wyłączone) | 401 | zwraca API, nie baza; zawsze ten sam |
 | `U0006` | brak parametru prawnego w dniu | 409 | `HINT` = `{"code": …, "on": …}` |
 
-Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`.
+Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`, `beforeFrom`
+(data „do” przed „od”), `notFound` (wskazana pozycja słownika nie istnieje), `inactive` (pozycja nieaktywna).
 
 Tłumaczenie na HTTP: `apps/api/HrWebApp.Api/Database/DbErrors.cs`. Front tłumaczy kody pól na teksty
 (`apps/web/src/i18n/pl.ts`, sekcja `validation`).

@@ -2,7 +2,9 @@
 
 --changeset hr:dictionaries_app.position_list runOnChange:true splitStatements:false
 --comment: Lista stanowisk (Kadry, Administrator): wyszukiwanie po nazwie, stronicowanie, total_count w każdym wierszu.
-CREATE OR REPLACE FUNCTION dictionaries_app.position_list(
+-- Zmiana kolumn wyniku wymaga DROP (CREATE OR REPLACE nie zmienia typu zwracanego).
+DROP FUNCTION IF EXISTS dictionaries_app.position_list(text, boolean, integer, integer);
+CREATE FUNCTION dictionaries_app.position_list(
     p_search text DEFAULT NULL,
     p_include_inactive boolean DEFAULT false,
     p_limit integer DEFAULT 50,
@@ -14,6 +16,7 @@ CREATE OR REPLACE FUNCTION dictionaries_app.position_list(
         description text,
         is_active boolean,
         created_at timestamptz,
+        row_version bigint,
         total_count bigint
     )
     LANGUAGE plpgsql
@@ -24,7 +27,7 @@ AS $$
 BEGIN
     PERFORM platform.require_role('kadry', 'administrator');
     RETURN QUERY
-    SELECT p.id, p.name, p.description, p.is_active, p.created_at, count(*) OVER ()
+    SELECT p.id, p.name, p.description, p.is_active, p.created_at, p.xmin::text::bigint, count(*) OVER ()
     FROM dictionaries.positions p
     WHERE (p_include_inactive OR p.is_active)
       AND (

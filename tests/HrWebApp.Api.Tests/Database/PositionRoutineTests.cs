@@ -108,6 +108,51 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, error.SqlState);
     }
 
+    [Fact]
+    public async Task Update_deactivates_checks_duplicates_and_row_version()
+    {
+        var marker = Guid.NewGuid().ToString("N")[..8];
+        await CreateAsync($"Inne {marker}");
+        var id = await CreateAsync($"Stanowisko {marker}");
+        var version = await RowVersionAsync(id);
+
+        var duplicate = await Assert.ThrowsAsync<PostgresException>(() =>
+            UpdateAsync(id, version, $"INNE {marker}", false)
+        );
+        await UpdateAsync(id, version, $"Stanowisko {marker} wyłączone", false);
+        var stale = await Assert.ThrowsAsync<PostgresException>(() =>
+            UpdateAsync(id, version, $"Stanowisko {marker}", true)
+        );
+
+        Assert.Equal("""{"name": ["duplicate"]}""", duplicate.Hint);
+        Assert.Equal("U0003", stale.SqlState);
+        Assert.Equal([$"Inne {marker}"], await ListNamesAsync(marker, includeInactive: false));
+    }
+
+    private async Task<long> RowVersionAsync(Guid id) =>
+        await TestDb.AdminScalarAsync<long>(
+            database,
+            "SELECT xmin::text::bigint FROM dictionaries.positions WHERE id = $1",
+            new NpgsqlParameter<Guid> { TypedValue = id }
+        );
+
+    private async Task UpdateAsync(Guid id, long version, string name, bool isActive)
+    {
+        await using var connection = await TestDb.ApiAsync(
+            database,
+            await TestDb.DevUserAsync(database, "kadry")
+        );
+        await using var command = TestDb.Command(
+            connection,
+            "CALL dictionaries_app.position_update($1, $2, $3, NULL, $4)",
+            new NpgsqlParameter<Guid> { TypedValue = id },
+            new NpgsqlParameter<long> { TypedValue = version },
+            new NpgsqlParameter<string> { TypedValue = name },
+            new NpgsqlParameter<bool> { TypedValue = isActive }
+        );
+        await command.ExecuteNonQueryAsync();
+    }
+
     private async Task<Guid> CreateAsync(string name, Guid? actor = null)
     {
         await using var connection = await TestDb.ApiAsync(
@@ -122,7 +167,11 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         return (Guid)(await command.ExecuteScalarAsync())!;
     }
 
-    private async Task<List<string>> ListNamesAsync(string search, Guid? actor = null)
+    private async Task<List<string>> ListNamesAsync(
+        string search,
+        Guid? actor = null,
+        bool includeInactive = true
+    )
     {
         await using var connection = await TestDb.ApiAsync(
             database,
@@ -130,8 +179,9 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         );
         await using var command = TestDb.Command(
             connection,
-            "SELECT name FROM dictionaries_app.position_list($1, true, 100, 0)",
-            new NpgsqlParameter<string> { TypedValue = search }
+            "SELECT name FROM dictionaries_app.position_list($1, $2, 100, 0)",
+            new NpgsqlParameter<string> { TypedValue = search },
+            new NpgsqlParameter<bool> { TypedValue = includeInactive }
         );
         await using var reader = await command.ExecuteReaderAsync();
         var names = new List<string>();

@@ -13,13 +13,19 @@ public sealed class CompanyHttpTests(DatabaseFixture database)
         using var admin = await database.Api.ClientAsAsync("administrator");
         using var kadry = await database.Api.ClientAsAsync("kadry");
         var shortName = Unique.Login();
-        var company = NewCompany(shortName);
+        var taxOfficeId = await TestDb.TaxOfficeAsync(database);
+        var company = NewCompany(shortName, taxOfficeId);
 
         var created = await admin.PostAsJsonAsync("/api/companies", company);
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         Assert.Equal(
             HttpStatusCode.Forbidden,
-            (await kadry.PostAsJsonAsync("/api/companies", NewCompany(Unique.Login()))).StatusCode
+            (
+                await kadry.PostAsJsonAsync(
+                    "/api/companies",
+                    NewCompany(Unique.Login(), taxOfficeId)
+                )
+            ).StatusCode
         );
 
         var item = await FindAsync(kadry, shortName);
@@ -33,6 +39,7 @@ public sealed class CompanyHttpTests(DatabaseFixture database)
             street = "ul. Nowa 2",
             postalCode = "00-002",
             city = "Przykładowo",
+            taxOfficeId,
             isActive = true,
         };
         var id = item.GetProperty("id").GetGuid();
@@ -45,13 +52,13 @@ public sealed class CompanyHttpTests(DatabaseFixture database)
             HttpStatusCode.Conflict,
             (await admin.PutAsJsonAsync($"/api/companies/{id}", update)).StatusCode
         );
-        Assert.Equal(
-            "Spółka po zmianie sp. z o.o.",
-            (await FindAsync(kadry, shortName)).GetProperty("name").GetString()
-        );
+        var updated = await FindAsync(kadry, shortName);
+        Assert.Equal("Spółka po zmianie sp. z o.o.", updated.GetProperty("name").GetString());
+        Assert.Equal(taxOfficeId, updated.GetProperty("taxOfficeId").GetGuid());
+        Assert.Matches("^9\\d{3}$", updated.GetProperty("taxOfficeCode").GetString());
     }
 
-    private static object NewCompany(string shortName) =>
+    private static object NewCompany(string shortName, Guid taxOfficeId) =>
         new
         {
             shortName,
@@ -61,6 +68,7 @@ public sealed class CompanyHttpTests(DatabaseFixture database)
             street = "ul. Testowa 1",
             postalCode = "00-001",
             city = "Przykładowo",
+            taxOfficeId,
         };
 
     private static async Task<JsonElement> FindAsync(HttpClient client, string shortName)

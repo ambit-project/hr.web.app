@@ -211,6 +211,386 @@
         }
       }
     },
+    "/api/positions/{id}": {
+      "put": {
+        "tags": [
+          "Positions"
+        ],
+        "operationId": "UpdatePosition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePositionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/zus-codes": {
+      "get": {
+        "tags": [
+          "ZusCodes"
+        ],
+        "operationId": "ListZusCodes",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "onDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedListOfListZusCodesItem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ZusCodes"
+        ],
+        "operationId": "CreateZusCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZusCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateZusCodeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/zus-codes/{id}": {
+      "put": {
+        "tags": [
+          "ZusCodes"
+        ],
+        "operationId": "UpdateZusCode",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateZusCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tax-offices": {
+      "get": {
+        "tags": [
+          "TaxOffices"
+        ],
+        "operationId": "ListTaxOffices",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedListOfListTaxOfficesItem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TaxOffices"
+        ],
+        "operationId": "CreateTaxOffice",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaxOfficeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateTaxOfficeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tax-offices/{id}": {
+      "put": {
+        "tags": [
+          "TaxOffices"
+        ],
+        "operationId": "UpdateTaxOffice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTaxOfficeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/companies": {
       "get": {
         "tags": [
@@ -901,7 +1281,8 @@
           "regon",
           "street",
           "postalCode",
-          "city"
+          "city",
+          "taxOfficeId"
         ],
         "type": "object",
         "properties": {
@@ -927,6 +1308,13 @@
           },
           "city": {
             "type": "string"
+          },
+          "taxOfficeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -974,6 +1362,35 @@
           }
         }
       },
+      "CreateTaxOfficeRequest": {
+        "required": [
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "maxLength": 4,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 300,
+            "type": "string"
+          }
+        }
+      },
+      "CreateTaxOfficeResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "CreateUserRequest": {
         "required": [
           "login",
@@ -1008,6 +1425,55 @@
         }
       },
       "CreateUserResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateZusCodeRequest": {
+        "required": [
+          "kind",
+          "code",
+          "name",
+          "validFrom",
+          "validTo"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "code": {
+            "maxLength": 4,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "validFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "CreateZusCodeResponse": {
         "required": [
           "id"
         ],
@@ -1133,6 +1599,9 @@
           "postalCode",
           "city",
           "isActive",
+          "taxOfficeId",
+          "taxOfficeCode",
+          "taxOfficeName",
           "rowVersion"
         ],
         "type": "object",
@@ -1164,6 +1633,25 @@
           },
           "isActive": {
             "type": "boolean"
+          },
+          "taxOfficeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "taxOfficeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "taxOfficeName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "rowVersion": {
             "type": "integer",
@@ -1215,7 +1703,8 @@
           "name",
           "description",
           "isActive",
-          "createdAt"
+          "createdAt",
+          "rowVersion"
         ],
         "type": "object",
         "properties": {
@@ -1238,6 +1727,39 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ListTaxOfficesItem": {
+        "required": [
+          "id",
+          "code",
+          "name",
+          "isActive",
+          "rowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -1282,6 +1804,48 @@
           },
           "isLocked": {
             "type": "boolean"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ListZusCodesItem": {
+        "required": [
+          "id",
+          "kind",
+          "code",
+          "name",
+          "validFrom",
+          "validTo",
+          "rowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           },
           "rowVersion": {
             "type": "integer",
@@ -1405,6 +1969,35 @@
           }
         }
       },
+      "PagedListOfListTaxOfficesItem": {
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListTaxOfficesItem"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "PagedListOfListUsersItem": {
         "required": [
           "items",
@@ -1418,6 +2011,35 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ListUsersItem"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PagedListOfListZusCodesItem": {
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListZusCodesItem"
             }
           },
           "total": {
@@ -1491,6 +2113,7 @@
           "street",
           "postalCode",
           "city",
+          "taxOfficeId",
           "isActive"
         ],
         "type": "object",
@@ -1520,6 +2143,63 @@
             "type": "string"
           },
           "city": {
+            "type": "string"
+          },
+          "taxOfficeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdatePositionRequest": {
+        "required": [
+          "rowVersion",
+          "name",
+          "description",
+          "isActive"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateTaxOfficeRequest": {
+        "required": [
+          "rowVersion",
+          "name",
+          "isActive"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "maxLength": 300,
             "type": "string"
           },
           "isActive": {
@@ -1559,6 +2239,39 @@
             "type": "boolean"
           }
         }
+      },
+      "UpdateZusCodeRequest": {
+        "required": [
+          "rowVersion",
+          "name",
+          "validFrom",
+          "validTo"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "validFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
       }
     }
   },
@@ -1579,7 +2292,13 @@
       "name": "Positions"
     },
     {
+      "name": "TaxOffices"
+    },
+    {
       "name": "Users"
+    },
+    {
+      "name": "ZusCodes"
     }
   ]
 }

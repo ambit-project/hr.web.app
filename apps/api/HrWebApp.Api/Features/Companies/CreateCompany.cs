@@ -14,7 +14,8 @@ public static class CreateCompany
         string Regon,
         string Street,
         string PostalCode,
-        string City
+        string City,
+        Guid? TaxOfficeId
     );
 
     public sealed record Response(Guid Id);
@@ -37,7 +38,7 @@ public sealed class CreateCompanyHandler(DbSession db)
         CancellationToken cancellationToken
     ) =>
         await db.ScalarAsync<Guid>(
-            "CALL platform_app.company_create($1, $2, $3, $4, $5, $6, $7, NULL)",
+            "CALL platform_app.company_create($1, $2, $3, $4, $5, $6, $7, $8, NULL)",
             [
                 Db.Param(request.ShortName),
                 Db.Param(request.Name),
@@ -46,6 +47,7 @@ public sealed class CreateCompanyHandler(DbSession db)
                 Db.Param(request.Street),
                 Db.Param(request.PostalCode),
                 Db.Param(request.City),
+                Db.Param(request.TaxOfficeId),
             ],
             cancellationToken
         );

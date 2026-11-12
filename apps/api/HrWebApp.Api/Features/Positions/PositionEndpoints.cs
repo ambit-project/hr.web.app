@@ -6,6 +6,7 @@ public static class PositionEndpoints
     {
         services.AddScoped<ListPositionsHandler>();
         services.AddScoped<CreatePositionHandler>();
+        services.AddScoped<UpdatePositionHandler>();
         return services;
     }
 
@@ -17,6 +18,12 @@ public static class PositionEndpoints
             .MapPost("/", CreatePosition.Handle)
             .WithName("CreatePosition")
             .ProducesValidationProblem();
+        group
+            .MapPut("/{id:guid}", UpdatePosition.Handle)
+            .WithName("UpdatePosition")
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict);
         return app;
     }
 }

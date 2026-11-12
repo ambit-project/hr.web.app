@@ -95,25 +95,78 @@ public sealed class CompanyRoutineTests(DatabaseFixture database)
         Assert.Equal("U0002", error.SqlState);
     }
 
+    [Fact]
+    public async Task Tax_office_is_required_and_must_be_active()
+    {
+        var missing = await Assert.ThrowsAsync<PostgresException>(() =>
+            CreateAsync(Unique.Login(), FakeIds.Nip(), FakeIds.Regon(), taxOfficeId: Guid.Empty)
+        );
+        var inactive = await Assert.ThrowsAsync<PostgresException>(async () =>
+            await CreateAsync(
+                Unique.Login(),
+                FakeIds.Nip(),
+                FakeIds.Regon(),
+                taxOfficeId: await TestDb.TaxOfficeAsync(database, isActive: false)
+            )
+        );
+
+        Assert.Equal("""{"taxOfficeId": ["required"]}""", missing.Hint);
+        Assert.Equal("""{"taxOfficeId": ["inactive"]}""", inactive.Hint);
+    }
+
+    [Fact]
+    public async Task Company_keeps_its_tax_office_after_it_becomes_inactive()
+    {
+        var office = await TestDb.TaxOfficeAsync(database);
+        var id = await CreateAsync(
+            Unique.Login(),
+            FakeIds.Nip(),
+            FakeIds.Regon(),
+            taxOfficeId: office
+        );
+        await TestDb.AdminScalarAsync<object>(
+            database,
+            "UPDATE dictionaries.tax_offices SET is_active = false WHERE id = $1",
+            new NpgsqlParameter<Guid> { TypedValue = office }
+        );
+
+        await UpdateAsync(id, await RowVersionAsync(id), "Nazwa po wyłączeniu urzędu");
+
+        Assert.Equal(
+            office,
+            await TestDb.AdminScalarAsync<Guid>(
+                database,
+                "SELECT tax_office_id FROM platform.companies WHERE id = $1",
+                new NpgsqlParameter<Guid> { TypedValue = id }
+            )
+        );
+    }
+
     private async Task<Guid> CreateAsync(
         string shortName,
         string nip,
         string regon,
         string postalCode = "00-001",
-        string actor = "admin"
+        string actor = "admin",
+        Guid? taxOfficeId = null
     )
     {
+        taxOfficeId ??= await TestDb.TaxOfficeAsync(database);
         await using var connection = await TestDb.ApiAsync(
             database,
             await TestDb.DevUserAsync(database, actor)
         );
         await using var command = TestDb.Command(
             connection,
-            "CALL platform_app.company_create($1, 'Spółka Testowa sp. z o.o.', $2, $3, 'ul. Testowa 1', $4, 'Przykładowo', NULL)",
+            "CALL platform_app.company_create($1, 'Spółka Testowa sp. z o.o.', $2, $3, 'ul. Testowa 1', $4, 'Przykładowo', $5, NULL)",
             new NpgsqlParameter<string> { TypedValue = shortName },
             new NpgsqlParameter<string> { TypedValue = nip },
             new NpgsqlParameter<string> { TypedValue = regon },
-            new NpgsqlParameter<string> { TypedValue = postalCode }
+            new NpgsqlParameter<string> { TypedValue = postalCode },
+            new NpgsqlParameter<Guid?>
+            {
+                TypedValue = taxOfficeId == Guid.Empty ? null : taxOfficeId,
+            }
         );
         return (Guid)(await command.ExecuteScalarAsync())!;
     }
@@ -125,8 +178,13 @@ public sealed class CompanyRoutineTests(DatabaseFixture database)
             new NpgsqlParameter<Guid> { TypedValue = id }
         );
 
-    private async Task UpdateAsync(Guid id, long version, string name)
+    private async Task UpdateAsync(Guid id, long version, string name, Guid? taxOfficeId = null)
     {
+        taxOfficeId ??= await TestDb.AdminScalarAsync<Guid?>(
+            database,
+            "SELECT tax_office_id FROM platform.companies WHERE id = $1",
+            new NpgsqlParameter<Guid> { TypedValue = id }
+        );
         var current = await TestDb.AdminScalarAsync<string>(
             database,
             "SELECT short_name || '|' || nip || '|' || regon FROM platform.companies WHERE id = $1",
@@ -139,13 +197,14 @@ public sealed class CompanyRoutineTests(DatabaseFixture database)
         );
         await using var command = TestDb.Command(
             connection,
-            "CALL platform_app.company_update($1, $2, $3, $4, $5, $6, 'ul. Nowa 2', '00-002', 'Przykładowo', true)",
+            "CALL platform_app.company_update($1, $2, $3, $4, $5, $6, 'ul. Nowa 2', '00-002', 'Przykładowo', $7, true)",
             new NpgsqlParameter<Guid> { TypedValue = id },
             new NpgsqlParameter<long> { TypedValue = version },
             new NpgsqlParameter<string> { TypedValue = parts[0] },
             new NpgsqlParameter<string> { TypedValue = name },
             new NpgsqlParameter<string> { TypedValue = parts[1] },
-            new NpgsqlParameter<string> { TypedValue = parts[2] }
+            new NpgsqlParameter<string> { TypedValue = parts[2] },
+            new NpgsqlParameter<Guid?> { TypedValue = taxOfficeId }
         );
         await command.ExecuteNonQueryAsync();
     }

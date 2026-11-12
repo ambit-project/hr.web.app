@@ -2,7 +2,8 @@
 
 --changeset hr:platform_app.company_list runOnChange:true splitStatements:false
 --comment: Lista spółek (Kadry, Administrator), wyszukiwanie po nazwie, nazwie krótkiej i NIP.
-CREATE OR REPLACE FUNCTION platform_app.company_list(
+DROP FUNCTION IF EXISTS platform_app.company_list(text, boolean, integer, integer);
+CREATE FUNCTION platform_app.company_list(
     p_search text DEFAULT NULL,
     p_include_inactive boolean DEFAULT false,
     p_limit integer DEFAULT 50,
@@ -18,6 +19,9 @@ CREATE OR REPLACE FUNCTION platform_app.company_list(
         postal_code text,
         city text,
         is_active boolean,
+        tax_office_id uuid,
+        tax_office_code text,
+        tax_office_name text,
         row_version bigint,
         total_count bigint
     )
@@ -33,8 +37,9 @@ BEGIN
     PERFORM platform.require_role('kadry', 'administrator');
     RETURN QUERY
     SELECT c.id, c.short_name, c.name, c.nip, c.regon, c.street, c.postal_code, c.city, c.is_active,
-           c.xmin::text::bigint, count(*) OVER ()
+           c.tax_office_id, t.code, t.name, c.xmin::text::bigint, count(*) OVER ()
     FROM platform.companies c
+    LEFT JOIN dictionaries.tax_offices t ON t.id = c.tax_office_id
     WHERE (p_include_inactive OR c.is_active)
       AND (
           v_search IS NULL
@@ -50,6 +55,7 @@ $$;
 
 --changeset hr:platform_app.company_create runOnChange:true splitStatements:false
 --comment: Nowa spółka (Administrator), z audytem.
+DROP PROCEDURE IF EXISTS platform_app.company_create(text, text, text, text, text, text, text, uuid);
 CREATE OR REPLACE PROCEDURE platform_app.company_create(
     IN p_short_name text,
     IN p_name text,
@@ -58,6 +64,7 @@ CREATE OR REPLACE PROCEDURE platform_app.company_create(
     IN p_street text,
     IN p_postal_code text,
     IN p_city text,
+    IN p_tax_office_id uuid,
     INOUT p_id uuid DEFAULT NULL
 )
     LANGUAGE plpgsql
@@ -77,16 +84,18 @@ BEGIN
     v_row.street := nullif(btrim(p_street), '');
     v_row.postal_code := nullif(btrim(p_postal_code), '');
     v_row.city := nullif(btrim(p_city), '');
+    v_row.tax_office_id := p_tax_office_id;
 
     v_errors := platform.company_validate(NULL, v_row.short_name, v_row.name, v_row.nip, v_row.regon,
-        v_row.street, v_row.postal_code, v_row.city);
+        v_row.street, v_row.postal_code, v_row.city, v_row.tax_office_id);
     IF v_errors <> '{}' THEN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
-    INSERT INTO platform.companies (short_name, name, nip, regon, street, postal_code, city, created_by)
+    INSERT INTO platform.companies (short_name, name, nip, regon, street, postal_code, city, tax_office_id,
+                                    created_by)
     VALUES (v_row.short_name, v_row.name, v_row.nip, v_row.regon, v_row.street, v_row.postal_code, v_row.city,
-            platform.actor_id())
+            v_row.tax_office_id, platform.actor_id())
     RETURNING * INTO v_row;
     p_id := v_row.id;
 
@@ -96,6 +105,7 @@ $$;
 
 --changeset hr:platform_app.company_update runOnChange:true splitStatements:false
 --comment: Edycja spółki (Administrator) z kontrolą wersji wiersza (U0003 przy nieaktualnej wersji).
+DROP PROCEDURE IF EXISTS platform_app.company_update(uuid, bigint, text, text, text, text, text, text, text, boolean);
 CREATE OR REPLACE PROCEDURE platform_app.company_update(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -106,6 +116,7 @@ CREATE OR REPLACE PROCEDURE platform_app.company_update(
     IN p_street text,
     IN p_postal_code text,
     IN p_city text,
+    IN p_tax_office_id uuid,
     IN p_is_active boolean
 )
     LANGUAGE plpgsql
@@ -135,10 +146,11 @@ BEGIN
     v_after.street := nullif(btrim(p_street), '');
     v_after.postal_code := nullif(btrim(p_postal_code), '');
     v_after.city := nullif(btrim(p_city), '');
+    v_after.tax_office_id := p_tax_office_id;
     v_after.is_active := coalesce(p_is_active, v_before.is_active);
 
     v_errors := platform.company_validate(p_id, v_after.short_name, v_after.name, v_after.nip, v_after.regon,
-        v_after.street, v_after.postal_code, v_after.city);
+        v_after.street, v_after.postal_code, v_after.city, v_after.tax_office_id);
     IF v_errors <> '{}' THEN
         PERFORM platform.fail_validation(v_errors);
     END IF;
@@ -146,7 +158,7 @@ BEGIN
     UPDATE platform.companies c
     SET short_name = v_after.short_name, name = v_after.name, nip = v_after.nip, regon = v_after.regon,
         street = v_after.street, postal_code = v_after.postal_code, city = v_after.city,
-        is_active = v_after.is_active
+        tax_office_id = v_after.tax_office_id, is_active = v_after.is_active
     WHERE c.id = p_id;
 
     PERFORM platform.audit('company', p_id::text, 'update', to_jsonb(v_before), to_jsonb(v_after));

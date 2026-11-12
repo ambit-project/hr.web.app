@@ -19,7 +19,8 @@ public static class ListPositions
         string Name,
         string? Description,
         bool IsActive,
-        DateTimeOffset CreatedAt
+        DateTimeOffset CreatedAt,
+        long RowVersion
     );
 
     public static async Task<Ok<PagedList<Item>>> Handle(
@@ -42,7 +43,7 @@ public sealed class ListPositionsHandler(DbSession db)
 
         var items = await db.QueryAsync(
             """
-            SELECT id, name, description, is_active, created_at, total_count
+            SELECT id, name, description, is_active, created_at, row_version, total_count
             FROM dictionaries_app.position_list($1, $2, $3, $4)
             """,
             [
@@ -53,13 +54,14 @@ public sealed class ListPositionsHandler(DbSession db)
             ],
             reader =>
             {
-                total = reader.GetInt64(5);
+                total = reader.GetInt64(6);
                 return new ListPositions.Item(
                     reader.GetGuid(0),
                     reader.GetString(1),
                     reader.IsDBNull(2) ? null : reader.GetString(2),
                     reader.GetBoolean(3),
-                    reader.GetFieldValue<DateTimeOffset>(4)
+                    reader.GetFieldValue<DateTimeOffset>(4),
+                    reader.GetInt64(5)
                 );
             },
             cancellationToken
