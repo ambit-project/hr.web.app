@@ -1,6 +1,7 @@
 using HrWebApp.Api.Auth;
 using HrWebApp.Api.Common;
 using HrWebApp.Api.Database;
+using HrWebApp.Api.Features.Companies;
 using HrWebApp.Api.Features.Positions;
 using Scalar.AspNetCore;
 
@@ -13,6 +14,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddSessionAuth(builder.Configuration);
 builder.Services.AddPositions();
+builder.Services.AddCompanies();
 
 var app = builder.Build();
 
@@ -31,5 +33,6 @@ app.MapHealthChecks("/health");
 var api = app.MapGroup("/api").RequireAuthorization();
 api.MapAuth();
 api.MapPositions();
+api.MapCompanies();
 
 app.Run();

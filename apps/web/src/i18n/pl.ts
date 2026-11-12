@@ -2,7 +2,7 @@
 export const pl = {
 	app: {
 		name: "Kadry i Płace",
-		nav: { positions: "Stanowiska", my: "Moje dokumenty" },
+		nav: { positions: "Stanowiska", companies: "Spółki", my: "Moje dokumenty" },
 	},
 	common: {
 		add: "Dodaj",
@@ -13,6 +13,11 @@ export const pl = {
 		next: "Następna",
 		loading: "Wczytywanie…",
 		serverError: "Serwer nie odpowiedział poprawnie. Spróbuj ponownie.",
+		conflict:
+			"Ktoś zmienił te dane w międzyczasie. Lista została odświeżona — wprowadź zmianę jeszcze raz.",
+		edit: "Edytuj",
+		yes: "tak",
+		no: "nie",
 	},
 	auth: {
 		title: "Zaloguj się, aby kontynuować.",
@@ -36,7 +41,29 @@ export const pl = {
 		required: "Pole jest wymagane.",
 		maxLength: "Wartość jest za długa.",
 		duplicate: "Taka wartość już istnieje.",
+		invalid: "Nieprawidłowa wartość.",
 		unknown: "Nieprawidłowa wartość.",
+	},
+	companies: {
+		title: "Spółki",
+		searchPlaceholder: "Szukaj po nazwie lub NIP",
+		empty: "Brak spółek.",
+		total_one: "{{count}} spółka",
+		total_few: "{{count}} spółki",
+		total_many: "{{count}} spółek",
+		total_other: "{{count}} spółki",
+		fields: {
+			shortName: "Nazwa krótka",
+			name: "Pełna nazwa",
+			nip: "NIP",
+			regon: "REGON",
+			street: "Ulica i numer",
+			postalCode: "Kod pocztowy",
+			city: "Miejscowość",
+			isActive: "Aktywna",
+		},
+		create: { title: "Nowa spółka", created: "Dodano spółkę „{{name}}”." },
+		edit: { title: "Edycja spółki", saved: "Zapisano spółkę „{{name}}”." },
 	},
 	positions: {
 		title: "Stanowiska",

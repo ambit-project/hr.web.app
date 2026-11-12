@@ -1,6 +1,6 @@
 import type { ValidationCode } from "./validation";
 
-const KNOWN: readonly ValidationCode[] = ["required", "maxLength", "duplicate"];
+const KNOWN: readonly ValidationCode[] = ["required", "maxLength", "duplicate", "invalid"];
 
 /**
  * Form errors are codes, never sentences: zod messages and API field errors (U0001) use the same codes, and

@@ -7,14 +7,15 @@ import { logoutFn, type Role } from "#/features/auth/auth.functions";
 import { hasRole, type Me } from "#/features/auth/session";
 
 type NavItem = {
-	to: "/positions" | "/my";
-	label: "app.nav.positions" | "app.nav.my";
+	to: "/positions" | "/companies" | "/my";
+	label: "app.nav.positions" | "app.nav.companies" | "app.nav.my";
 	roles: Role[];
 };
 
 // Menu mirrors the database rules only to hide what would end in 403; the database stays the authority.
 const NAV: NavItem[] = [
 	{ to: "/positions", label: "app.nav.positions", roles: ["kadry", "administrator"] },
+	{ to: "/companies", label: "app.nav.companies", roles: ["kadry", "administrator"] },
 	{ to: "/my", label: "app.nav.my", roles: ["pracownik"] },
 ];
 

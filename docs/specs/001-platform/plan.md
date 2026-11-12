@@ -28,7 +28,7 @@ Rutyny `platform_app` (rola API: `EXECUTE`), wszystkie `SECURITY DEFINER`:
 | `me()` → konto i role | zalogowany | R7 |
 | `bootstrap_admin(login, email, display_name, password)` → bool | start API | R10 |
 | `user_list`, `user_create`, `user_update` | Administrator | R14–R15 |
-| `company_list`, `company_get`, `company_create`, `company_update` | lista/get: Kadry, Administrator; zapis: Administrator | R16–R17 |
+| `company_list` (z `row_version`), `company_create`, `company_update` | lista/get: Kadry, Administrator; zapis: Administrator | R16–R17 |
 | `legal_parameter_list(code, on_date)`, `legal_parameter_add` | Administrator | R18–R19 |
 | `audit_list(entity, entity_id, actor_id, from, to, limit, offset)` | Administrator | R24 |
 

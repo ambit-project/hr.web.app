@@ -10,7 +10,7 @@
 - [x] T3. Stanowiska wymagają ról (R13) — rutyny `require_role` + audyt (R22); testy zaktualizowane o sesję.
 - [x] T4. Front: sesja w ciasteczku, server functions z `Authorization`, `/login` z przyciskami deweloperskimi,
       guard w root, menu według ról, wylogowanie.
-- [ ] T5. Spółki: tabela, `nip_valid`, `regon_valid`, rutyny, endpointy, ekran (R16–R17). Testy.
+- [x] T5. Spółki: tabela, `nip_valid`, `regon_valid`, rutyny, endpointy, ekran (R16–R17). Testy.
 - [ ] T6. Parametry prawne: tabela z `EXCLUDE`, dane 2026, `legal_parameter`, rutyny, endpointy, ekran (R18–R21). Testy.
 - [ ] T7. Użytkownicy: rutyny, endpointy, ekran (R14–R15). Testy.
 - [ ] T8. Audyt: `audit_list`, endpoint, ekran (R24).

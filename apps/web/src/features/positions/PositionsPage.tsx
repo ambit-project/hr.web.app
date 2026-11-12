@@ -1,8 +1,10 @@
-import { Button, Chip, EmptyState, Pagination, SearchField, Spinner, Table } from "@heroui/react";
+import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { ListSearch } from "#/components/table/ListSearch";
+import { Pager } from "#/components/table/Pager";
 import { CreatePositionDrawer, type CreatePositionDrawerHandle } from "./CreatePositionDrawer";
 import { POSITIONS_PAGE_SIZE, positionsQuery } from "./positionsQueries";
 
@@ -14,23 +16,13 @@ export function PositionsPage() {
 	const navigate = route.useNavigate();
 	const drawer = useRef<CreatePositionDrawerHandle>(null);
 	const { data, isPending } = useQuery(positionsQuery(search));
-	const [term, setTerm] = useState(search.search ?? "");
-
-	// Typing updates the URL after a pause; a new search always starts from the first page.
-	useEffect(() => {
-		const handle = setTimeout(() => {
-			const next = term.trim() === "" ? undefined : term.trim();
-			if (next !== search.search) {
-				void navigate({ search: { search: next, page: undefined }, replace: true });
-			}
-		}, 300);
-		return () => clearTimeout(handle);
-	}, [term, search.search, navigate]);
 
 	const page = search.page ?? 1;
-	const pages = data ? Math.max(1, Math.ceil(data.total / POSITIONS_PAGE_SIZE)) : 1;
-	const goTo = (target: number) =>
-		navigate({ search: (prev) => ({ ...prev, page: target === 1 ? undefined : target }) });
+	const onSearch = useCallback(
+		(term: string | undefined) =>
+			void navigate({ search: { search: term, page: undefined }, replace: true }),
+		[navigate],
+	);
 
 	return (
 		<section className="flex flex-col gap-4">
@@ -44,16 +36,11 @@ export function PositionsPage() {
 				<Button onPress={() => drawer.current?.open()}>{t("common.add")}</Button>
 			</header>
 
-			<SearchField value={term} onChange={setTerm} aria-label={t("common.search")}>
-				<SearchField.Group>
-					<SearchField.SearchIcon />
-					<SearchField.Input
-						className="w-full sm:w-80"
-						placeholder={t("positions.searchPlaceholder")}
-					/>
-					<SearchField.ClearButton />
-				</SearchField.Group>
-			</SearchField>
+			<ListSearch
+				value={search.search}
+				placeholder={t("positions.searchPlaceholder")}
+				onSearch={onSearch}
+			/>
 
 			{isPending ? (
 				<Spinner aria-label={t("common.loading")} />
@@ -90,30 +77,17 @@ export function PositionsPage() {
 				</Table>
 			)}
 
-			{pages > 1 ? (
-				<Pagination className="justify-center">
-					<Pagination.Content>
-						<Pagination.Item>
-							<Pagination.Previous isDisabled={page <= 1} onPress={() => goTo(page - 1)}>
-								<Pagination.PreviousIcon />
-								<span>{t("common.previous")}</span>
-							</Pagination.Previous>
-						</Pagination.Item>
-						{Array.from({ length: pages }, (_, index) => index + 1).map((number) => (
-							<Pagination.Item key={number}>
-								<Pagination.Link isActive={number === page} onPress={() => goTo(number)}>
-									{number}
-								</Pagination.Link>
-							</Pagination.Item>
-						))}
-						<Pagination.Item>
-							<Pagination.Next isDisabled={page >= pages} onPress={() => goTo(page + 1)}>
-								<span>{t("common.next")}</span>
-								<Pagination.NextIcon />
-							</Pagination.Next>
-						</Pagination.Item>
-					</Pagination.Content>
-				</Pagination>
+			{data ? (
+				<Pager
+					page={page}
+					total={data.total}
+					pageSize={POSITIONS_PAGE_SIZE}
+					onPage={(target) =>
+						void navigate({
+							search: (prev) => ({ ...prev, page: target === 1 ? undefined : target }),
+						})
+					}
+				/>
 			) : null}
 
 			<CreatePositionDrawer ref={drawer} />

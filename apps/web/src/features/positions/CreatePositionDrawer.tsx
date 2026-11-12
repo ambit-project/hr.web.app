@@ -3,6 +3,7 @@ import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { text, useAppForm } from "#/forms";
+import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useCreatePosition } from "./positionsQueries";
 
@@ -47,20 +48,12 @@ function CreatePositionForm({ onDone }: { onDone: () => void }) {
 				toast.success(t("positions.create.created", { name: value.name.trim() }));
 				onDone();
 			} catch (error) {
-				if (error instanceof ProblemError && error.problem.errors) {
-					// Field codes from the database land on the fields, like client-side errors.
-					for (const [field, codes] of Object.entries(error.problem.errors)) {
-						if (field === "name" || field === "description") {
-							formApi.setFieldMeta(field, (meta) => ({
-								...meta,
-								isTouched: true,
-								errorMap: { ...meta.errorMap, onSubmit: codes[0] },
-							}));
-						}
-					}
-					return;
+				if (
+					!(error instanceof ProblemError) ||
+					!applyFieldErrors(formApi, error.problem.errors, ["name", "description"] as const)
+				) {
+					toast.danger(t("common.serverError"));
 				}
-				toast.danger(t("common.serverError"));
 			}
 		},
 	});
