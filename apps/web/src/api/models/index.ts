@@ -5,6 +5,8 @@
  * OpenAPI spec version: v1
  */
 
+export * from "./addLegalParameterRequest.ts";
+export * from "./addLegalParameterResponse.ts";
 export * from "./authEndpointsDevLoginRequest.ts";
 export * from "./authEndpointsLoginRequest.ts";
 export * from "./authEndpointsLoginResponse.ts";
@@ -19,9 +21,12 @@ export * from "./httpValidationProblemDetails.ts";
 export * from "./httpValidationProblemDetailsErrors.ts";
 export * from "./listCompaniesItem.ts";
 export * from "./listCompaniesParams.ts";
+export * from "./listLegalParametersItem.ts";
+export * from "./listLegalParametersParams.ts";
 export * from "./listPositionsItem.ts";
 export * from "./listPositionsParams.ts";
 export * from "./pagedListOfListCompaniesItem.ts";
+export * from "./pagedListOfListLegalParametersItem.ts";
 export * from "./pagedListOfListPositionsItem.ts";
 export * from "./problemDetails.ts";
 export * from "./updateCompanyRequest.ts";

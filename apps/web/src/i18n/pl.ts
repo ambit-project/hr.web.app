@@ -2,7 +2,12 @@
 export const pl = {
 	app: {
 		name: "Kadry i Płace",
-		nav: { positions: "Stanowiska", companies: "Spółki", my: "Moje dokumenty" },
+		nav: {
+			positions: "Stanowiska",
+			companies: "Spółki",
+			legalParameters: "Parametry prawne",
+			my: "Moje dokumenty",
+		},
 	},
 	common: {
 		add: "Dodaj",
@@ -42,6 +47,7 @@ export const pl = {
 		maxLength: "Wartość jest za długa.",
 		duplicate: "Taka wartość już istnieje.",
 		invalid: "Nieprawidłowa wartość.",
+		beforeCurrent: "Data jest wcześniejsza niż początek obowiązującej wartości.",
 		unknown: "Nieprawidłowa wartość.",
 	},
 	companies: {
@@ -64,6 +70,25 @@ export const pl = {
 		},
 		create: { title: "Nowa spółka", created: "Dodano spółkę „{{name}}”." },
 		edit: { title: "Edycja spółki", saved: "Zapisano spółkę „{{name}}”." },
+	},
+	legalParameters: {
+		title: "Parametry prawne",
+		hint: "Stawki, progi i kwoty z okresem obowiązywania. Lista płac bierze wartość obowiązującą w dniu z przepisu.",
+		searchPlaceholder: "Kod, np. zus. albo pit.skala",
+		onDate: "Obowiązujące w dniu",
+		empty: "Brak parametrów.",
+		fields: {
+			code: "Kod",
+			value: "Wartość",
+			validFrom: "Od",
+			validTo: "Do",
+			source: "Źródło (akt prawny)",
+		},
+		add: {
+			title: "Nowa wartość parametru",
+			hint: "Poprzedni okres tego kodu skończy się dzień przed datą „Od”. Ta sama data „Od” poprawia wartość.",
+			saved: "Zapisano parametr {{code}}.",
+		},
 	},
 	positions: {
 		title: "Stanowiska",

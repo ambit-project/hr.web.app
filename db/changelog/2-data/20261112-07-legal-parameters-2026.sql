@@ -1,0 +1,35 @@
+--liquibase formatted sql
+
+--changeset hr:20261112-07
+--comment: Parametry 2026 ze źródłami (docs/domain/09-payroll.md, stan na 2026-11-12). Dane produkcyjne, nie deweloperskie.
+INSERT INTO platform.legal_parameters (code, value, valid_from, source) VALUES
+('placa.minimalna', 4806.00, '2026-01-01', 'Rozp. RM z 11.09.2025, Dz.U. 2025 poz. 1242'),
+('placa.minimalna.godzinowa', 31.40, '2026-01-01', 'Rozp. RM z 11.09.2025, Dz.U. 2025 poz. 1242'),
+('zus.emerytalna.pracownik', 0.0976, '2026-01-01', 'Ustawa o systemie ubezpieczeń społecznych, art. 22'),
+('zus.emerytalna.pracodawca', 0.0976, '2026-01-01', 'Ustawa o systemie ubezpieczeń społecznych, art. 22'),
+('zus.rentowa.pracownik', 0.015, '2026-01-01', 'Ustawa o systemie ubezpieczeń społecznych, art. 22'),
+('zus.rentowa.pracodawca', 0.065, '2026-01-01', 'Ustawa o systemie ubezpieczeń społecznych, art. 22'),
+('zus.chorobowa.pracownik', 0.0245, '2026-01-01', 'Ustawa o systemie ubezpieczeń społecznych, art. 22'),
+('zus.wypadkowa.domyslna', 0.0167, '2026-01-01', 'Ustawa o ubezpieczeniu społecznym z tytułu wypadków przy pracy; płatnik do 9 ubezpieczonych'),
+('zus.limit.roczny', 282600.00, '2026-01-01', 'Obwieszczenie MRPiPS z 19.11.2025, M.P. 2025 poz. 1206'),
+('fp.pracodawca', 0.0245, '2026-01-01', 'Ustawa o rynku pracy i służbach zatrudnienia'),
+('fgsp.pracodawca', 0.001, '2026-01-01', 'Ustawa o ochronie roszczeń pracowniczych'),
+('zdrowotna.stawka', 0.09, '2026-01-01', 'Ustawa o świadczeniach opieki zdrowotnej, art. 79'),
+('pit.skala.stawka1', 0.12, '2026-01-01', 'Ustawa o PIT, art. 27 ust. 1, t.j. Dz.U. 2026 poz. 592'),
+('pit.skala.stawka2', 0.32, '2026-01-01', 'Ustawa o PIT, art. 27 ust. 1, t.j. Dz.U. 2026 poz. 592'),
+('pit.skala.prog', 120000.00, '2026-01-01', 'Ustawa o PIT, art. 27 ust. 1, t.j. Dz.U. 2026 poz. 592'),
+('pit.kwota.zmniejszajaca.miesiac', 300.00, '2026-01-01', 'Ustawa o PIT, art. 32 ust. 3'),
+('kup.pracownik.miesiac', 250.00, '2026-01-01', 'Ustawa o PIT, art. 22 ust. 2 pkt 1'),
+('kup.pracownik.podwyzszone.miesiac', 300.00, '2026-01-01', 'Ustawa o PIT, art. 22 ust. 2 pkt 2'),
+('kup.zlecenie', 0.20, '2026-01-01', 'Ustawa o PIT, art. 22 ust. 9 pkt 4'),
+('kup.autorskie', 0.50, '2026-01-01', 'Ustawa o PIT, art. 22 ust. 9 pkt 1-3'),
+('kup.autorskie.limit', 120000.00, '2026-01-01', 'Ustawa o PIT, art. 22 ust. 9a'),
+('pit.ulga.mlodzi.limit', 85528.00, '2026-01-01', 'Ustawa o PIT, art. 21 ust. 1 pkt 148'),
+('pit.ryczalt.male.umowy.limit', 200.00, '2026-01-01', 'Ustawa o PIT, art. 30 ust. 1 pkt 5a'),
+('potracenia.kwota.wolna.100', 3605.85, '2026-01-01', 'Kodeks pracy, art. 87^1 i 91; płaca minimalna netto bez PPK'),
+('potracenia.kwota.wolna.100.ppk', 3501.73, '2026-01-01', 'Kodeks pracy, art. 87^1 i 91; płaca minimalna netto z PPK 2%'),
+('ppk.pracownik.podstawowa', 0.02, '2019-07-01', 'Ustawa o PPK, art. 26'),
+('ppk.pracodawca.podstawowa', 0.015, '2019-07-01', 'Ustawa o PPK, art. 26'),
+('ppk.prog.obnizenia', 5767.20, '2026-01-01', 'Ustawa o PPK, art. 27 ust. 2; 1,2 × płaca minimalna'),
+('chorobowe.stawka', 0.80, '2026-01-01', 'Kodeks pracy, art. 92'),
+('chorobowe.odliczenie.skladek', 0.1371, '2026-01-01', 'Ustawa zasiłkowa, art. 3 pkt 4 i art. 36');

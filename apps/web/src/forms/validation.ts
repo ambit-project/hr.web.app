@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type ValidationCode = "required" | "maxLength" | "duplicate" | "invalid";
+export type ValidationCode = "required" | "maxLength" | "duplicate" | "invalid" | "beforeCurrent";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {
