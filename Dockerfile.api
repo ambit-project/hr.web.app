@@ -1,0 +1,39 @@
+# syntax=docker/dockerfile:1
+
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
+ARG CONFIGURATION=Release
+# Husky w .csproj nie może działać w obrazie (brak .git i narzędzi).
+ENV HUSKY=0
+WORKDIR /src
+
+# 1) Tylko pliki do restore — warstwa cache'owana, dopóki nie zmienią się zależności.
+COPY global.json nuget.config Directory.Build.props Directory.Packages.props ./
+COPY apps/api/HrWebApp.Api/HrWebApp.Api.csproj apps/api/HrWebApp.Api/
+RUN dotnet restore apps/api/HrWebApp.Api/HrWebApp.Api.csproj
+
+# 2) Źródła i publish.
+COPY apps/api/ apps/api/
+RUN dotnet publish apps/api/HrWebApp.Api/HrWebApp.Api.csproj \
+    --configuration $CONFIGURATION \
+    --no-restore \
+    --output /app/publish \
+    /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS runtime
+
+# curl tylko dla HEALTHCHECK.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY --from=build --chown=$APP_UID /app/publish .
+
+ENV ASPNETCORE_HTTP_PORTS=8080
+EXPOSE 8080
+USER $APP_UID
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD curl --fail --silent http://localhost:8080/health || exit 1
+
+ENTRYPOINT ["dotnet", "HrWebApp.Api.dll"]

@@ -1,0 +1,82 @@
+name: hr-web-app
+
+services:
+  postgres:
+    image: postgres:18.6
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?ustaw w infrastructure/.env}
+    ports:
+      - "127.0.0.1:${HR_DB_PORT:-6332}:5432"
+    volumes:
+      # PostgreSQL 18+: wolumen na katalogu nadrzędnym (dane w /var/lib/postgresql/18/docker).
+      - pgdata:/var/lib/postgresql
+    shm_size: 256mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -q"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Jednorazowo: baza hr i role hr_owner / hr_migrator / hr_api (idempotentne).
+  db-init:
+    image: postgres:18.6
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGUSER: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ../db/bootstrap:/bootstrap:ro
+    command: >
+      psql -v db=hr -v prefix=hr
+      -v migrator_password=${HR_MIGRATOR_PASSWORD:?ustaw w infrastructure/.env}
+      -v api_password=${HR_API_PASSWORD:?ustaw w infrastructure/.env}
+      -f /bootstrap/roles.sql
+    restart: "no"
+
+  # Jednorazowo: migracje Liquibase jako hr_migrator (obiekty należą do hr_owner).
+  migrate:
+    image: liquibase/liquibase:4.33.0
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    volumes:
+      - ../db:/liquibase/changelog:ro
+    command:
+      - --url=jdbc:postgresql://postgres:5432/hr
+      - --username=hr_migrator
+      - --password=${HR_MIGRATOR_PASSWORD}
+      - --search-path=/liquibase/changelog
+      - --changelog-file=changelog.yaml
+      - update
+      - -Dapi_role=hr_api
+    restart: "no"
+
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile.api
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Hr: Host=postgres;Database=hr;Username=hr_api;Password=${HR_API_PASSWORD}
+    ports:
+      - "127.0.0.1:${HR_API_PORT:-6300}:8080"
+
+  web:
+    build:
+      context: ../apps/web
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      HR_API_URL: http://api:8080
+    ports:
+      - "127.0.0.1:${HR_WEB_PORT:-6301}:3000"
+
+volumes:
+  pgdata:
