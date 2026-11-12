@@ -45,7 +45,7 @@ uprawnienia. Administrator prowadzi spółki grupy i parametry prawne z okresem 
 
 ### Użytkownicy
 - **R14.** Administrator widzi listę kont, zakłada konto (login, e-mail, nazwa, role, hasło początkowe), zmienia role
-  i aktywność. Hasło: co najmniej `Auth__MinPasswordLength` znaków (domyślnie 12).
+  i aktywność. Hasło: co najmniej `Auth__MinPasswordLength` znaków (domyślnie 12; ustawienie dojdzie z T7).
 - **R15.** Administrator nie może odebrać sobie roli Administratora ani wyłączyć własnego konta (`U0003`), żeby nie
   zostać bez administratora.
 

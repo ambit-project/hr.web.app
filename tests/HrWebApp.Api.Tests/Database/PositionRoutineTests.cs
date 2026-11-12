@@ -7,21 +7,28 @@ namespace HrWebApp.Api.Tests.Database;
 public sealed class PositionRoutineTests(DatabaseFixture database)
 {
     [Fact]
-    public async Task Create_returns_id_and_trims_name()
+    public async Task Create_returns_id_trims_name_and_writes_audit()
     {
         var name = Unique.Name("Księgowa");
 
         var id = await CreateAsync($"  {name}  ");
 
-        Assert.NotEqual(Guid.Empty, id);
-        await using var connection = new NpgsqlConnection(database.AdminConnectionString);
-        await connection.OpenAsync();
-        await using var command = Command(
-            connection,
-            "SELECT name FROM dictionaries.positions WHERE id = $1",
-            new NpgsqlParameter<Guid> { TypedValue = id }
+        Assert.Equal(
+            name,
+            await TestDb.AdminScalarAsync<string>(
+                database,
+                "SELECT name FROM dictionaries.positions WHERE id = $1",
+                new NpgsqlParameter<Guid> { TypedValue = id }
+            )
         );
-        Assert.Equal(name, await command.ExecuteScalarAsync());
+        Assert.Equal(
+            await TestDb.DevUserAsync(database, "kadry"),
+            await TestDb.AdminScalarAsync<Guid>(
+                database,
+                "SELECT actor_id FROM platform.audit_entries WHERE entity = 'position' AND entity_id = $1 AND action = 'create'",
+                new NpgsqlParameter<string> { TypedValue = id.ToString() }
+            )
+        );
     }
 
     [Theory]
@@ -59,6 +66,22 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         Assert.Equal("""{"name": ["duplicate"]}""", error.Hint);
     }
 
+    [Theory]
+    [InlineData("pracownik")]
+    [InlineData(null)]
+    public async Task Create_and_list_require_kadry_or_administrator(string? login)
+    {
+        Guid? actor = login is null ? Guid.Empty : await TestDb.DevUserAsync(database, login);
+
+        var create = await Assert.ThrowsAsync<PostgresException>(() =>
+            CreateAsync(Unique.Name("Stanowisko"), actor)
+        );
+        var list = await Assert.ThrowsAsync<PostgresException>(() => ListNamesAsync("x", actor));
+
+        Assert.Equal("U0004", create.SqlState);
+        Assert.Equal("U0004", list.SqlState);
+    }
+
     [Fact]
     public async Task List_treats_like_wildcards_literally()
     {
@@ -74,11 +97,10 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
     [Fact]
     public async Task Api_role_has_no_rights_to_tables()
     {
-        await using var connection = new NpgsqlConnection(database.ApiConnectionString);
-        await connection.OpenAsync();
-        await using var command = new NpgsqlCommand(
-            "SELECT count(*) FROM dictionaries.positions",
-            connection
+        await using var connection = await TestDb.ApiAsync(database);
+        await using var command = TestDb.Command(
+            connection,
+            "SELECT count(*) FROM dictionaries.positions"
         );
 
         var error = await Assert.ThrowsAsync<PostgresException>(command.ExecuteScalarAsync);
@@ -86,11 +108,13 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, error.SqlState);
     }
 
-    private async Task<Guid> CreateAsync(string name)
+    private async Task<Guid> CreateAsync(string name, Guid? actor = null)
     {
-        await using var connection = new NpgsqlConnection(database.ApiConnectionString);
-        await connection.OpenAsync();
-        await using var command = Command(
+        await using var connection = await TestDb.ApiAsync(
+            database,
+            actor ?? await TestDb.DevUserAsync(database, "kadry")
+        );
+        await using var command = TestDb.Command(
             connection,
             "CALL dictionaries_app.position_create($1, NULL, NULL)",
             new NpgsqlParameter<string> { TypedValue = name }
@@ -98,11 +122,13 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         return (Guid)(await command.ExecuteScalarAsync())!;
     }
 
-    private async Task<List<string>> ListNamesAsync(string search)
+    private async Task<List<string>> ListNamesAsync(string search, Guid? actor = null)
     {
-        await using var connection = new NpgsqlConnection(database.ApiConnectionString);
-        await connection.OpenAsync();
-        await using var command = Command(
+        await using var connection = await TestDb.ApiAsync(
+            database,
+            actor ?? await TestDb.DevUserAsync(database, "kadry")
+        );
+        await using var command = TestDb.Command(
             connection,
             "SELECT name FROM dictionaries_app.position_list($1, true, 100, 0)",
             new NpgsqlParameter<string> { TypedValue = search }
@@ -115,16 +141,5 @@ public sealed class PositionRoutineTests(DatabaseFixture database)
         }
 
         return names;
-    }
-
-    private static NpgsqlCommand Command(
-        NpgsqlConnection connection,
-        string sql,
-        params NpgsqlParameter[] parameters
-    )
-    {
-        var command = new NpgsqlCommand(sql, connection);
-        command.Parameters.AddRange(parameters);
-        return command;
     }
 }

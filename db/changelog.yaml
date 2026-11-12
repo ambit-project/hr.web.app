@@ -1,8 +1,12 @@
-# Kolejność: DDL (niezmienne changesety) → rutyny modułów (runOnChange) → uprawnienia (runAlways).
+# Kolejność: DDL (niezmienne) → dane → rutyny modułów (runOnChange) → uprawnienia (runAlways).
 # Parametr changelogu: api_role (rola API, np. hr_api).
+# Konteksty: dev = dane deweloperskie (compose, testy); produkcja uruchamia z --contexts=main.
 databaseChangeLog:
   - includeAll:
       path: changelog/1-ddl/
+      relativeToChangelogFile: true
+  - includeAll:
+      path: changelog/2-data/
       relativeToChangelogFile: true
   - includeAll:
       path: changelog/modules/

@@ -1,3 +1,4 @@
+using HrWebApp.Api.Auth;
 using HrWebApp.Api.Common;
 using HrWebApp.Api.Database;
 using HrWebApp.Api.Features.Positions;
@@ -10,11 +11,14 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<DbErrorHandler>();
 builder.Services.AddHealthChecks();
 builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddSessionAuth(builder.Configuration);
 builder.Services.AddPositions();
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
@@ -23,6 +27,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthChecks("/health");
-app.MapPositions();
+
+var api = app.MapGroup("/api").RequireAuthorization();
+api.MapAuth();
+api.MapPositions();
 
 app.Run();

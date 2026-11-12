@@ -1,3 +1,4 @@
+using HrWebApp.Api.Database;
 using HrWebApp.Api.Features.Positions;
 using HrWebApp.Api.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +14,11 @@ public sealed class PositionHandlerTests(DatabaseFixture database)
     public async Task Created_position_is_listed_with_total()
     {
         var marker = Guid.NewGuid().ToString("N")[..8];
+        var kadry = await TestDb.DevUserAsync(database, "kadry");
         foreach (var suffix in new[] { "C", "A", "B" })
         {
             await using var scope = _factory.Services.CreateAsyncScope();
+            scope.ServiceProvider.GetRequiredService<DbSession>().ActorId = kadry;
             await scope
                 .ServiceProvider.GetRequiredService<CreatePositionHandler>()
                 .HandleAsync(
@@ -25,6 +28,7 @@ public sealed class PositionHandlerTests(DatabaseFixture database)
         }
 
         await using var listScope = _factory.Services.CreateAsyncScope();
+        listScope.ServiceProvider.GetRequiredService<DbSession>().ActorId = kadry;
         var page = await listScope
             .ServiceProvider.GetRequiredService<ListPositionsHandler>()
             .HandleAsync(new ListPositions.Query(marker, null, 2, 2), CancellationToken.None);

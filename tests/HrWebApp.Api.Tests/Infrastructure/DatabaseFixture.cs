@@ -111,6 +111,7 @@ public sealed class DatabaseFixture : IAsyncLifetime
                 "--search-path=/liquibase/changelog",
                 "--changelog-file=changelog.yaml",
                 "update",
+                "--contexts=dev",
                 "-Dapi_role=hr_api"
             )
             .Build();

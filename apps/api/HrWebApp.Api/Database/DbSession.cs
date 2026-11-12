@@ -4,11 +4,14 @@ namespace HrWebApp.Api.Database;
 
 /// <summary>
 /// Jedno połączenie na zakres żądania. Zapis tylko procedurą (CALL), odczyt funkcją <c>&lt;moduł&gt;_app</c>.
-/// Aktor (ustawienie sesji <c>hr.actor_id</c>, czyta je <c>platform.actor_id()</c>) dojdzie z logowaniem.
+/// Aktor (id konta z sesji) trafia do ustawienia <c>hr.actor_id</c>, które czyta <c>platform.actor_id()</c>.
 /// </summary>
 public sealed class DbSession(NpgsqlDataSource dataSource) : IAsyncDisposable
 {
     private NpgsqlConnection? _connection;
+
+    /// <summary>Ustawia SessionAuthenticationHandler przed pierwszym zapytaniem żądania.</summary>
+    public Guid? ActorId { get; set; }
 
     public async Task<T?> ScalarAsync<T>(
         string sql,
@@ -70,6 +73,12 @@ public sealed class DbSession(NpgsqlDataSource dataSource) : IAsyncDisposable
         }
 
         _connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
+            "SELECT set_config('hr.actor_id', $1, false)",
+            _connection
+        );
+        command.Parameters.Add(Db.Param(ActorId?.ToString() ?? string.Empty));
+        await command.ExecuteNonQueryAsync(cancellationToken);
         return _connection;
     }
 }

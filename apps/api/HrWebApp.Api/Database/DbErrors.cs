@@ -8,6 +8,9 @@ public static class DbErrors
     private const string Conflict = "U0003";
     private const string Forbidden = "U0004";
 
+    /// <summary>Logowanie nieudane (złe dane, blokada, nieaktywne konto) — zwraca API, nie baza.</summary>
+    public const string AuthFailed = "U0005";
+
     public static int? StatusCode(string sqlState) =>
         sqlState switch
         {

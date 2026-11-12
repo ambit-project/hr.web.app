@@ -51,6 +51,7 @@ services:
       - --search-path=/liquibase/changelog
       - --changelog-file=changelog.yaml
       - update
+      - --contexts=dev
       - -Dapi_role=hr_api
     restart: "no"
 
@@ -63,6 +64,7 @@ services:
         condition: service_completed_successfully
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      Auth__DevLogin: "true"
       ConnectionStrings__Hr: Host=postgres;Database=hr;Username=hr_api;Password=${HR_API_PASSWORD}
     ports:
       - "127.0.0.1:${HR_API_PORT:-6300}:8080"

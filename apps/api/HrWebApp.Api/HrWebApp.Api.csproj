@@ -3,6 +3,7 @@
     <RootNamespace>HrWebApp.Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Npgsql" />
     <PackageReference Include="Scalar.AspNetCore" />

@@ -12,7 +12,7 @@ public sealed class PositionHttpTests(DatabaseFixture database)
     [Fact]
     public async Task Post_creates_position_visible_in_list()
     {
-        using var client = _factory.CreateClient();
+        using var client = await _factory.ClientAsAsync("kadry");
         var name = Unique.Name("Specjalista ds. płac");
 
         var created = await client.PostAsJsonAsync(
@@ -35,7 +35,7 @@ public sealed class PositionHttpTests(DatabaseFixture database)
     [Fact]
     public async Task Post_duplicate_returns_validation_problem_with_codes()
     {
-        using var client = _factory.CreateClient();
+        using var client = await _factory.ClientAsAsync("administrator");
         var name = Unique.Name("Kadrowa");
         await client.PostAsJsonAsync("/api/positions", new { name });
 
