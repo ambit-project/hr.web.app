@@ -7,12 +7,13 @@ import { logoutFn, type Role } from "#/features/auth/auth.functions";
 import { hasRole, type Me } from "#/features/auth/session";
 
 type NavItem = {
-	to: "/positions" | "/companies" | "/legal-parameters" | "/users" | "/my";
+	to: "/positions" | "/companies" | "/legal-parameters" | "/users" | "/audit" | "/my";
 	label:
 		| "app.nav.positions"
 		| "app.nav.companies"
 		| "app.nav.legalParameters"
 		| "app.nav.users"
+		| "app.nav.audit"
 		| "app.nav.my";
 	roles: Role[];
 };
@@ -23,6 +24,7 @@ const NAV: NavItem[] = [
 	{ to: "/companies", label: "app.nav.companies", roles: ["kadry", "administrator"] },
 	{ to: "/legal-parameters", label: "app.nav.legalParameters", roles: ["administrator"] },
 	{ to: "/users", label: "app.nav.users", roles: ["administrator"] },
+	{ to: "/audit", label: "app.nav.audit", roles: ["administrator"] },
 	{ to: "/my", label: "app.nav.my", roles: ["pracownik"] },
 ];
 

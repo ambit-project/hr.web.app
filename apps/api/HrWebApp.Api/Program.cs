@@ -1,6 +1,7 @@
 using HrWebApp.Api.Auth;
 using HrWebApp.Api.Common;
 using HrWebApp.Api.Database;
+using HrWebApp.Api.Features.Audit;
 using HrWebApp.Api.Features.Companies;
 using HrWebApp.Api.Features.LegalParameters;
 using HrWebApp.Api.Features.Positions;
@@ -19,6 +20,7 @@ builder.Services.AddPositions();
 builder.Services.AddCompanies();
 builder.Services.AddLegalParameters();
 builder.Services.AddUsers();
+builder.Services.AddScoped<ListAuditHandler>();
 
 var app = builder.Build();
 
@@ -40,5 +42,6 @@ api.MapPositions();
 api.MapCompanies();
 api.MapLegalParameters();
 api.MapUsers();
+api.MapAudit();
 
 app.Run();
