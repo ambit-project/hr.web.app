@@ -214,10 +214,16 @@ Szczegóły list i przeliczeń: [09](09-payroll.md); PIT: [10](10-documents-and-
 5. Dane z poprzednich lat (np. podstawa chorobowego z 12 miesięcy) w scenariuszu wynikają ze stałej pensji, więc
    nie modelujemy list sprzed października 2026 — tylko wspominamy wrzesień.
 
-### 7.3. Pytania otwarte
+### 7.3. Decyzje do pytań otwartych (2026-11-12)
 
-1. Czy zlecenie z własnym pracownikiem (umowa o pracę i zlecenie w tej samej spółce) ma być obsłużone w pierwszej
-   wersji liczenia, czy wystarczy blokada takiego zbiegu z komunikatem?
-2. Czy lista płac ma obsługiwać kilka wypłat w miesiącu dla tej samej umowy (np. premia osobno), czy jedna lista
-   miesięczna na rodzaj umowy plus listy korygujące wystarczą?
-3. Czy pasek ma być wysyłany e-mailem pracownikowi (z hasłem), czy tylko dostępny w samoobsłudze?
+Właściciel przekazał te decyzje autorowi modelu. Zmiana którejkolwiek wymaga nowego wpisu tutaj albo ADR.
+
+1. **Zlecenie z własnym pracownikiem** (umowa o pracę i zlecenie tej samej kartoteki w tej samej spółce w nakładających
+   się okresach) — w pierwszej wersji **blokada**: baza odrzuca taką umowę błędem `U0003` z komunikatem, że ten zbieg
+   nie jest jeszcze obsługiwany. Obsługa (oskładkowanie jak umowa o pracę) wejdzie jako osobna specyfikacja.
+   Powód: rzadki przypadek, a pomyłka w oskładkowaniu jest kosztowna.
+2. **Jedna wypłata w miesiącu na umowę** — jedna zwykła lista na spółkę, rodzaj umowy i miesiąc, a do tego listy
+   korygujące. Premię wypłaca się na liście miesiąca albo listą korygującą. Osobnych list dodatkowych nie ma.
+   Powód: prostsze reguły PIT-2 i kosztów (raz w miesiącu) i mniej przypadków brzegowych.
+3. **Pasek tylko w samoobsłudze** — pracownik pobiera pasek po zalogowaniu, bez wysyłki e-mailem. Powód: e-mail
+   z danymi płacowymi wymagałby szyfrowania pliku i obsługi haseł, a samoobsługa daje audyt odczytu.

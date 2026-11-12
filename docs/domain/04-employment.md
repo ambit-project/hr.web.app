@@ -84,9 +84,9 @@ przyszła → trwa → zakończona     (wyliczane z dat i terminatedAt; nie ma r
 ```
 
 **Reguły:**
-- Dwie umowy o pracę tej samej kartoteki nie nakładają się okresami. Nakładanie umowy o pracę ze zleceniem w tej samej
-  spółce jest dozwolone, ale zlecenie jest wtedy oskładkowane jak umowa o pracę (zlecenie z własnym pracodawcą).
-  Wynika to z reguły zbiegu tytułów, którą opisze specyfikacja zatrudnienia.
+- Dwie umowy o pracę tej samej kartoteki nie nakładają się okresami.
+- Umowa zlecenie nakładająca się okresem z umową o pracę tej samej kartoteki (zlecenie z własnym pracodawcą) jest
+  w pierwszej wersji odrzucana błędem `U0003` ([decyzja 7.3.1](README.md#73-decyzje-do-pytań-otwartych-2026-11-12)).
 - Umowy użytej na zamkniętej liście płac nie usuwa się.
 
 **Przykłady:**

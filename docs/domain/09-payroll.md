@@ -110,6 +110,7 @@ otwarta → naliczona → zamknięta
 - Zamknięcie blokuje zmianę listy i danych, z których ją policzono, za ten okres (nieobecności, ewidencja). Zmiana
   takich danych wymaga listy korygującej.
 - Lista korygująca liczy tylko różnice i ma ślad do listy korygowanej; ta zostaje nietknięta.
+- Jedna zwykła lista na spółkę, rodzaj umowy i miesiąc; poza nią tylko listy korygujące ([decyzja 7.3.2](README.md#73-decyzje-do-pytań-otwartych-2026-11-12)).
 - Kwotę zmniejszającą podatek (PIT-2) stosuje się raz w miesiącu podatkowym. W scenariuszu bierze ją zwykła lista
   grudniowa, a nie korekta wypłacona wcześniej w grudniu. Kolejność ustali specyfikacja.
 
