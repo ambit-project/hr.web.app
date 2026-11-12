@@ -7,10 +7,14 @@ namespace HrWebApp.Api.Features.Employees;
 
 public static class ListEmployees
 {
-    /// <summary>Search: nazwisko, imię, numer; pełny poprawny PESEL szuka dokładnie (HMAC w bazie).</summary>
+    /// <summary>
+    /// Search: nazwisko, imię, numer; pełny poprawny PESEL szuka dokładnie (HMAC w bazie).
+    /// Status z umów: <c>active</c>, <c>future</c>, <c>former</c>, <c>none</c>.
+    /// </summary>
     public sealed record Query(
         [FromQuery(Name = "companyId")] Guid? CompanyId,
         [FromQuery(Name = "search")] string? Search,
+        [FromQuery(Name = "status")] string? Status,
         [FromQuery(Name = "page")] int? Page,
         [FromQuery(Name = "pageSize")] int? PageSize
     );
@@ -25,7 +29,8 @@ public static class ListEmployees
         string LastName,
         DateOnly BirthDate,
         string? City,
-        string? AccountLogin
+        string? AccountLogin,
+        string Status
     );
 
     public static async Task<Ok<PagedList<Item>>> Handle(
@@ -48,14 +53,15 @@ public sealed class ListEmployeesHandler(DbSession db)
         var items = await db.QueryAsync(
             """
             SELECT id, company_id, company_short_name, number, first_name, second_name, last_name, birth_date,
-                   city, account_login, total_count
-            FROM employees_app.employee_list($1, $2, $3, $4)
+                   city, account_login, total_count, status
+            FROM employees_app.employee_list($1, $2, $3, $4, $5)
             """,
             [
                 Db.Param(query.CompanyId),
                 Db.Param(query.Search),
                 Db.Param(size),
                 Db.Param(Paging.Offset(page, size)),
+                Db.Param(query.Status),
             ],
             reader =>
             {
@@ -70,7 +76,8 @@ public sealed class ListEmployeesHandler(DbSession db)
                     reader.GetString(6),
                     reader.GetFieldValue<DateOnly>(7),
                     reader.IsDBNull(8) ? null : reader.GetString(8),
-                    reader.IsDBNull(9) ? null : reader.GetString(9)
+                    reader.IsDBNull(9) ? null : reader.GetString(9),
+                    reader.GetString(11)
                 );
             },
             cancellationToken

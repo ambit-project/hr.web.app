@@ -768,6 +768,13 @@
             }
           },
           {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "schema": {
@@ -1344,6 +1351,423 @@
         }
       }
     },
+    "/api/employees/{id}/employments": {
+      "get": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "ListEmployments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListEmploymentsItem"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "CreateEmployment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmploymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmploymentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employments/{id}": {
+      "get": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "GetEmployment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmploymentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "UpdateEmployment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmploymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "DeleteEmployment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employments/{id}/terminate": {
+      "post": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "TerminateEmployment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateEmploymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employments/{id}/terms": {
+      "post": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "AddEmploymentTerms",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddEmploymentTermsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddEmploymentTermsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employments/{id}/terms/last": {
+      "delete": {
+        "tags": [
+          "Employments"
+        ],
+        "operationId": "DeleteLastEmploymentTerms",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/legal-parameters": {
       "get": {
         "tags": [
@@ -1791,6 +2215,110 @@
           }
         }
       },
+      "AddEmploymentTermsRequest": {
+        "required": [
+          "validFrom",
+          "positionId",
+          "fteNumerator",
+          "fteDenominator",
+          "payBasis",
+          "baseAmount",
+          "zusTitleCode",
+          "zusPensionCode",
+          "zusDisabilityCode",
+          "insurances",
+          "costKind"
+        ],
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "fteNumerator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "fteDenominator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "payBasis": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "baseAmount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "zusTitleCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zusPensionCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zusDisabilityCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "insurances": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "costKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AddEmploymentTermsResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "AddLegalParameterRequest": {
         "required": [
           "code",
@@ -2134,6 +2662,145 @@
           }
         }
       },
+      "CreateEmploymentRequest": {
+        "required": [
+          "number",
+          "kind",
+          "contractType",
+          "signedAt",
+          "startDate",
+          "endDate",
+          "positionId",
+          "fteNumerator",
+          "fteDenominator",
+          "payBasis",
+          "baseAmount",
+          "zusTitleCode",
+          "zusPensionCode",
+          "zusDisabilityCode",
+          "insurances",
+          "costKind"
+        ],
+        "type": "object",
+        "properties": {
+          "number": {
+            "maxLength": 40,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "contractType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "signedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "fteNumerator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "fteDenominator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "payBasis": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "baseAmount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "zusTitleCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zusPensionCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zusDisabilityCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "insurances": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "costKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CreateEmploymentResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "CreatePositionRequest": {
         "required": [
           "name",
@@ -2307,6 +2974,9 @@
           "email",
           "iban",
           "accountLogin",
+          "status",
+          "retentionUntil",
+          "retentionOpen",
           "rowVersion"
         ],
         "type": "object",
@@ -2390,9 +3060,209 @@
               "string"
             ]
           },
+          "status": {
+            "type": "string"
+          },
+          "retentionUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "retentionOpen": {
+            "type": "boolean"
+          },
           "rowVersion": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "GetEmploymentResponse": {
+        "required": [
+          "id",
+          "employeeId",
+          "employeeName",
+          "companyShortName",
+          "number",
+          "kind",
+          "contractType",
+          "signedAt",
+          "startDate",
+          "endDate",
+          "terminatedAt",
+          "status",
+          "retentionUntil",
+          "rowVersion",
+          "termsHistory"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeName": {
+            "type": "string"
+          },
+          "companyShortName": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "contractType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "signedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "terminatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "retentionUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "termsHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetEmploymentTerms"
+            }
+          }
+        }
+      },
+      "GetEmploymentTerms": {
+        "required": [
+          "id",
+          "validFrom",
+          "validTo",
+          "positionId",
+          "positionName",
+          "fteNumerator",
+          "fteDenominator",
+          "payBasis",
+          "baseAmount",
+          "zusTitleCode",
+          "zusPensionCode",
+          "zusDisabilityCode",
+          "insurances",
+          "costKind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "positionName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fteNumerator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "fteDenominator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "payBasis": {
+            "type": "string"
+          },
+          "baseAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "zusTitleCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zusPensionCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zusDisabilityCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "insurances": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "costKind": {
+            "type": "string"
           }
         }
       },
@@ -2687,7 +3557,8 @@
           "lastName",
           "birthDate",
           "city",
-          "accountLogin"
+          "accountLogin",
+          "status"
         ],
         "type": "object",
         "properties": {
@@ -2728,6 +3599,104 @@
             ]
           },
           "accountLogin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ListEmploymentsItem": {
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "contractType",
+          "signedAt",
+          "startDate",
+          "endDate",
+          "terminatedAt",
+          "status",
+          "retentionUntil",
+          "positionName",
+          "fteNumerator",
+          "fteDenominator",
+          "payBasis"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "contractType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "signedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "terminatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "retentionUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "positionName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fteNumerator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "fteDenominator": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "payBasis": {
             "type": [
               "null",
               "string"
@@ -3237,6 +4206,26 @@
           }
         }
       },
+      "TerminateEmploymentRequest": {
+        "required": [
+          "rowVersion",
+          "terminatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "terminatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
       "UpdateCompanyRequest": {
         "required": [
           "rowVersion",
@@ -3362,6 +4351,54 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "UpdateEmploymentRequest": {
+        "required": [
+          "rowVersion",
+          "number",
+          "contractType",
+          "signedAt",
+          "startDate",
+          "endDate"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "maxLength": 40,
+            "type": "string"
+          },
+          "contractType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "signedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },
@@ -3495,6 +4532,9 @@
     },
     {
       "name": "Employees"
+    },
+    {
+      "name": "Employments"
     },
     {
       "name": "LegalParameters"

@@ -6,7 +6,8 @@ namespace HrWebApp.Api.Database;
 
 /// <summary>
 /// Tłumaczy błędy z rutyn (SQLSTATE U…) na ProblemDetails. Kod trafia do rozszerzenia <c>code</c>,
-/// a przy U0001 pola z HINT do <c>errors</c> ({"pole": ["kod"]}) — front tłumaczy po kodach.
+/// a przy U0001 pola z HINT do <c>errors</c> ({"pole": ["kod"]}). Przy innych kodach niepusty HINT to powód
+/// (np. <c>retention</c>, <c>concurrentTitleUnsupported</c>) w rozszerzeniu <c>reason</c> — front tłumaczy po kodach.
 /// </summary>
 public sealed class DbErrorHandler(IProblemDetailsService problemDetails) : IExceptionHandler
 {
@@ -34,6 +35,10 @@ public sealed class DbErrorHandler(IProblemDetailsService problemDetails) : IExc
                 : new Microsoft.AspNetCore.Mvc.ProblemDetails();
         problem.Status = status.Value;
         problem.Extensions["code"] = sqlState;
+        if (sqlState != DbErrors.Validation && !string.IsNullOrWhiteSpace(postgres.Hint))
+        {
+            problem.Extensions["reason"] = postgres.Hint;
+        }
 
         return await problemDetails.TryWriteAsync(
             new ProblemDetailsContext

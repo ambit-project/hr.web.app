@@ -5,7 +5,11 @@ namespace HrWebApp.Api.Features.Employees;
 
 public static class GetEmployee
 {
-    /// <summary>Pełne dane z PESEL i rachunkiem; każde wywołanie zapisuje audyt odczytu w bazie.</summary>
+    /// <summary>
+    /// Pełne dane z PESEL i rachunkiem; każde wywołanie zapisuje audyt odczytu w bazie. Status z umów jak na liście;
+    /// RetentionUntil — do kiedy przechowywać dokumentację (brak przy braku umów albo przy umowie bez końca,
+    /// wtedy RetentionOpen = true).
+    /// </summary>
     public sealed record Response(
         Guid Id,
         Guid CompanyId,
@@ -23,6 +27,9 @@ public static class GetEmployee
         string? Email,
         string? Iban,
         string? AccountLogin,
+        string Status,
+        DateOnly? RetentionUntil,
+        bool RetentionOpen,
         long RowVersion
     );
 
@@ -45,7 +52,7 @@ public sealed class GetEmployeeHandler(DbSession db)
             """
             SELECT id, company_id, company_short_name, number, first_name, second_name, last_name, pesel,
                    identity_document, birth_date, tax_office_id, tax_office_code, tax_office_name, email, iban,
-                   account_login, row_version
+                   account_login, status, retention_until, retention_open, row_version
             FROM employees_app.employee_get($1)
             """,
             [Db.Param(id)],
@@ -66,7 +73,10 @@ public sealed class GetEmployeeHandler(DbSession db)
                 reader.IsDBNull(13) ? null : reader.GetString(13),
                 reader.IsDBNull(14) ? null : reader.GetString(14),
                 reader.IsDBNull(15) ? null : reader.GetString(15),
-                reader.GetInt64(16)
+                reader.GetString(16),
+                reader.IsDBNull(17) ? null : reader.GetFieldValue<DateOnly>(17),
+                reader.GetBoolean(18),
+                reader.GetInt64(19)
             ),
             cancellationToken
         );

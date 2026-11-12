@@ -22,3 +22,18 @@ BEGIN
     RETURN v_value;
 END;
 $$;
+
+--changeset hr:platform.legal_parameter_or_null runOnChange:true splitStatements:false
+--comment: Wartość parametru w dniu albo NULL — tylko dla sprawdzeń, które przy braku parametru się nie odbywają
+--comment: (np. płaca minimalna dla umów sprzed okresu wprowadzonych parametrów, 004 R13). Naliczenia używają
+--comment: legal_parameter (brak = U0006).
+CREATE OR REPLACE FUNCTION platform.legal_parameter_or_null(p_code text, p_on date)
+    RETURNS numeric
+    LANGUAGE sql
+    STABLE
+    SET search_path = pg_catalog, pg_temp
+AS $$
+    SELECT p.value
+    FROM platform.legal_parameters p
+    WHERE p.code = p_code AND daterange(p.valid_from, p.valid_to, '[]') @> p_on;
+$$;

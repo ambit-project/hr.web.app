@@ -2,12 +2,15 @@
 
 --changeset hr:employees_app.employee_list runOnChange:true splitStatements:false
 --comment: Lista kartotek (Kadry, Administrator): filtr spółki, wyszukiwanie po nazwisku, imieniu, numerze, a po pełnym
---comment: poprawnym PESEL dokładnie (HMAC). Bez PESEL i rachunku w wyniku.
-CREATE OR REPLACE FUNCTION employees_app.employee_list(
+--comment: poprawnym PESEL dokładnie (HMAC), filtr statusu z umów (004 R16). Bez PESEL i rachunku w wyniku.
+DROP FUNCTION IF EXISTS employees_app.employee_list(uuid, text, integer, integer);
+DROP FUNCTION IF EXISTS employees_app.employee_list(uuid, text, integer, integer, text);
+CREATE FUNCTION employees_app.employee_list(
     p_company_id uuid DEFAULT NULL,
     p_search text DEFAULT NULL,
     p_limit integer DEFAULT 50,
-    p_offset integer DEFAULT 0
+    p_offset integer DEFAULT 0,
+    p_status text DEFAULT NULL
 )
     RETURNS TABLE (
         id uuid,
@@ -20,6 +23,7 @@ CREATE OR REPLACE FUNCTION employees_app.employee_list(
         birth_date date,
         city text,
         account_login text,
+        status text,
         total_count bigint
     )
     LANGUAGE plpgsql
@@ -39,14 +43,16 @@ BEGIN
 
     RETURN QUERY
     SELECT e.id, e.company_id, c.short_name, e.number, e.first_name, e.second_name, e.last_name, e.birth_date,
-           a.city, u.login, count(*) OVER ()
+           a.city, u.login, s.status, count(*) OVER ()
     FROM employees.employees e
+    CROSS JOIN LATERAL (SELECT employment.employee_status(e.id, current_date) AS status) s
     JOIN platform.companies c ON c.id = e.company_id
     LEFT JOIN employees.addresses a
         ON a.employee_id = e.id AND a.kind = 'residence' AND a.valid_to IS NULL
     LEFT JOIN platform.user_employee_links l ON l.employee_id = e.id
     LEFT JOIN platform.users u ON u.id = l.user_id
     WHERE (p_company_id IS NULL OR e.company_id = p_company_id)
+      AND (nullif(p_status, '') IS NULL OR s.status = p_status)
       AND (
           v_search IS NULL
           OR (v_pesel_hmac IS NOT NULL AND e.pesel_hmac = v_pesel_hmac)
@@ -64,8 +70,10 @@ $$;
 
 --changeset hr:employees_app.employee_get runOnChange:true splitStatements:false
 --comment: Szczegóły kartoteki z odszyfrowanym PESEL, dokumentem i bieżącym rachunkiem (Kadry, Administrator).
---comment: Zapisuje audyt odczytu (R9), więc funkcja jest VOLATILE.
-CREATE OR REPLACE FUNCTION employees_app.employee_get(p_id uuid)
+--comment: Zapisuje audyt odczytu (R9), więc funkcja jest VOLATILE. Status i okres przechowywania z umów (004 R16, R17):
+--comment: retention_open = jest umowa bez daty zakończenia.
+DROP FUNCTION IF EXISTS employees_app.employee_get(uuid);
+CREATE FUNCTION employees_app.employee_get(p_id uuid)
     RETURNS TABLE (
         id uuid,
         company_id uuid,
@@ -83,6 +91,9 @@ CREATE OR REPLACE FUNCTION employees_app.employee_get(p_id uuid)
         email text,
         iban text,
         account_login text,
+        status text,
+        retention_until date,
+        retention_open boolean,
         row_version bigint
     )
     LANGUAGE plpgsql
@@ -103,8 +114,10 @@ BEGIN
            e.tax_office_id, t.code, t.name, e.email,
            (SELECT employees.decrypt(b.iban_enc) FROM employees.bank_accounts b
             WHERE b.employee_id = e.id AND b.valid_to IS NULL),
-           u.login, e.xmin::text::bigint
+           u.login, employment.employee_status(e.id, current_date),
+           nullif(r.until, 'infinity'), coalesce(r.until = 'infinity', false), e.xmin::text::bigint
     FROM employees.employees e
+    CROSS JOIN LATERAL (SELECT employment.employee_retention_until(e.id) AS until) r
     JOIN platform.companies c ON c.id = e.company_id
     LEFT JOIN dictionaries.tax_offices t ON t.id = e.tax_office_id
     LEFT JOIN platform.user_employee_links l ON l.employee_id = e.id
@@ -277,7 +290,8 @@ END;
 $$;
 
 --changeset hr:employees_app.employee_delete runOnChange:true splitStatements:false
---comment: Usunięcie kartoteki bez dokumentów (R11). Od modułu 004: kartoteka z umową → U0003 (retencja).
+--comment: Usunięcie kartoteki (R11). Z umowami — dopiero po upływie okresu przechowywania wszystkich umów, inaczej
+--comment: U0003 z powodem retention (004 R18); umowy znikają razem z kartoteką.
 CREATE OR REPLACE PROCEDURE employees_app.employee_delete(IN p_id uuid)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -290,6 +304,10 @@ BEGIN
     SELECT * INTO v_row FROM employees.employees e WHERE e.id = p_id FOR UPDATE;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'employee not found' USING ERRCODE = 'U0002';
+    END IF;
+    IF employment.employee_retention_until(p_id) >= current_date THEN
+        RAISE EXCEPTION 'employee records are within the retention period'
+            USING ERRCODE = 'U0003', HINT = 'retention';
     END IF;
 
     DELETE FROM employees.employees e WHERE e.id = p_id;

@@ -36,14 +36,17 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 |---|---|---|---|
 | `U0001` | walidacja | 400 | `HINT` = JSON `{"pole": ["kod", …]}`; kody pól: `required`, `maxLength`, `duplicate` |
 | `U0002` | nie znaleziono (albo brak dostępu do rekordu) | 404 | |
-| `U0003` | konflikt stanu | 409 | |
+| `U0003` | konflikt stanu | 409 | opcjonalny `HINT` = powód (API: rozszerzenie `reason`): `retention` (okres przechowywania), `concurrentTitleUnsupported` (zlecenie/dzieło z własnym pracownikiem), `onlyVersion` (jedyna wersja warunków); bez powodu = nieaktualna wersja wiersza |
 | `U0004` | brak uprawnień | 403 | |
 | `U0005` | logowanie nieudane (zły login lub hasło, blokada, konto wyłączone) | 401 | zwraca API, nie baza; zawsze ten sam |
 | `U0006` | brak parametru prawnego w dniu | 409 | `HINT` = `{"code": …, "on": …}` |
 
 Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`, `beforeFrom`
 (data „do” przed „od”), `notFound` (wskazana pozycja słownika nie istnieje), `inactive` (pozycja nieaktywna),
-`mismatch` (data urodzenia inna niż w PESEL).
+`mismatch` (data urodzenia inna niż w PESEL), `afterStart` (zawarcie po początku umowy), `overlap` (nakładanie się
+umów o pracę), `beforeTermination`, `termsOutsidePeriod` (wersja warunków poza okresem umowy), `outsidePeriod`,
+`missingMandatory` (brak obowiązkowego ubezpieczenia), `belowMinimum` (poniżej płacy minimalnej lub stawki
+godzinowej), `beforeStart`, `afterEnd`.
 
 Tłumaczenie na HTTP: `apps/api/HrWebApp.Api/Database/DbErrors.cs`. Front tłumaczy kody pól na teksty
 (`apps/web/src/i18n/pl.ts`, sekcja `validation`).
