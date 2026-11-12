@@ -212,6 +212,7 @@ w dwóch spółkach ma dwa powiązania, a w aplikacji widzi dwa profile. Powiąz
 | `id` | Identyfikator | tak | **PK**. |
 | `userId` | Identyfikator | tak | **FK → `UserAccount`**. |
 | `employeeId` | Identyfikator | tak | **FK → `Employee`**. Kartoteka ma najwyżej jedno konto (**UK**). |
+| `companyId` | Identyfikator | tak | Spółka kartoteki (powielona), żeby baza pilnowała: konto ma najwyżej jedną kartotekę w spółce (**UK** z `userId`). |
 | `linkedAt` | Data i czas | tak | |
 
 **Przykłady:**

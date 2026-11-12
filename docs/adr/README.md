@@ -13,3 +13,4 @@ ADR opisuje stan kodu. `Proposed` = decyzja jeszcze nie ma pokrycia w kodzie. No
 | [0006](0006-tests-on-real-postgresql.md) | Testy na prawdziwym PostgreSQL | Accepted |
 | [0007](0007-polish-ui-with-i18n.md) | UI po polsku przez i18n, błędy jako kody | Accepted |
 | [0008](0008-sessions-and-passwords-in-database.md) | Sesje w bazie, token w ciasteczku serwera frontu, hasła w pgcrypto | Accepted |
+| [0009](0009-personal-data-encryption.md) | Szyfrowanie PESEL i rachunku w bazie, klucz z env w ustawieniu sesji | Accepted |

@@ -52,6 +52,7 @@ Po zmianie w `db/` uruchom ponownie migracje: `docker compose -f infrastructure/
 | `Auth__MinPasswordLength` | 12 | minimalna długość hasła nadawanego przez Administratora |
 | `Auth__DevLogin` | false | logowanie jednym kliknięciem; działa tylko w `Development` |
 | `Auth__BootstrapAdmin__Login`, `__Email`, `__Password`, `__DisplayName` | — | pierwszy Administrator przy starcie, gdy żadnego nie ma |
+| `Data__EncryptionKey` | — (wymagany) | klucz szyfrowania PESEL i rachunku, co najmniej 32 znaki ([ADR-0009](docs/adr/0009-personal-data-encryption.md)); utrata = utrata tych danych. Compose: `HR_DATA_KEY` w `infrastructure/.env`, przy `dotnet run` ustaw zmienną sam |
 
 Front: `HR_API_URL` (adres API widziany z serwera frontu, domyślnie `http://localhost:6300`).
 Migracje produkcyjne: Liquibase z `--contexts=main` (bez kont deweloperskich).

@@ -32,5 +32,5 @@
 | R14, R15 | `UserHttpTests` |
 | R16, R17 | `CompanyRoutineTests`, `CompanyHttpTests` |
 | R18–R21 | `LegalParameterRoutineTests`, `LegalParameterHttpTests` |
-| R23 | tabela i `platform.read_audit` istnieją; test przyjdzie z modułem 003 (pierwszy odczyt danych pracownika) |
+| R23 | `EmployeeRoutineTests.Reading_details_is_audited_for_kadry_but_not_for_the_employee` (moduł 003) |
 | R24 | `AuditHttpTests` |
