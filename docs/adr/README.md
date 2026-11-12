@@ -12,3 +12,4 @@ ADR opisuje stan kodu. `Proposed` = decyzja jeszcze nie ma pokrycia w kodzie. No
 | [0005](0005-http-contract-and-openapi.md) | Ręczne endpointy, OpenAPI z kodu, klient orval | Accepted |
 | [0006](0006-tests-on-real-postgresql.md) | Testy na prawdziwym PostgreSQL | Accepted |
 | [0007](0007-polish-ui-with-i18n.md) | UI po polsku przez i18n, błędy jako kody | Accepted |
+| [0008](0008-sessions-and-passwords-in-database.md) | Sesje w bazie, token w ciasteczku serwera frontu, hasła w pgcrypto | Accepted |

@@ -12,4 +12,4 @@ Model danych: [docs/domain](../domain/README.md). Wymaganie bez testu w `tasks.m
 
 | Nr | Moduł | Stan |
 |---|---|---|
-| [001](001-platform/spec.md) | Platforma: logowanie, role, spółki, parametry prawne, audyt | w realizacji |
+| [001](001-platform/spec.md) | Platforma: logowanie, role, spółki, parametry prawne, audyt | część 1 zrobiona (R1–R24); część 2: OIDC |

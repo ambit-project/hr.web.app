@@ -1,7 +1,9 @@
 # hr.web.app
 
 Kadry i Płace zgodne z polskim prawem (kwoty w PLN): pracownicy, zatrudnienie, listy płac, paski, PIT.
-Projekt jest na etapie szkieletu — działa słownik stanowisk przez wszystkie warstwy. Decyzje: `docs/adr/`.
+Gotowa jest platforma (moduł 001): logowanie i role, spółki, parametry prawne 2026, użytkownicy, audyt zmian oraz
+słownik stanowisk. Produkt: `PRODUCT.md`, model domeny: `docs/domain/`, specyfikacje: `docs/specs/`, decyzje:
+`docs/adr/`.
 
 ## Stack
 
@@ -27,6 +29,9 @@ i uruchamia API oraz front:
 - API: http://127.0.0.1:6300 (OpenAPI `/openapi/v1.json`, Scalar `/scalar`, `/health`)
 - baza: `127.0.0.1:6332`, baza `hr`
 
+W Development strona logowania ma przyciski „Zaloguj jako Kadry / Administrator / Pracownik” (konta deweloperskie
+bez hasła).
+
 ## Praca nad kodem
 
 ```bash
@@ -36,6 +41,20 @@ cd apps/web && yarn install && yarn dev         # front na :6301 (HR_API_URL, do
 ```
 
 Po zmianie w `db/` uruchom ponownie migracje: `docker compose -f infrastructure/docker-compose.yml up migrate`.
+
+## Konfiguracja API (zmienne środowiskowe)
+
+| Zmienna | Domyślnie | Znaczenie |
+|---|---|---|
+| `ConnectionStrings__Hr` | — | połączenie jako rola `hr_api` (wymagane) |
+| `Auth__SessionHours` | 12 | ważność sesji |
+| `Auth__MaxFailedAttempts` / `Auth__LockoutMinutes` | 5 / 15 | blokada po nieudanych próbach logowania |
+| `Auth__MinPasswordLength` | 12 | minimalna długość hasła nadawanego przez Administratora |
+| `Auth__DevLogin` | false | logowanie jednym kliknięciem; działa tylko w `Development` |
+| `Auth__BootstrapAdmin__Login`, `__Email`, `__Password`, `__DisplayName` | — | pierwszy Administrator przy starcie, gdy żadnego nie ma |
+
+Front: `HR_API_URL` (adres API widziany z serwera frontu, domyślnie `http://localhost:6300`).
+Migracje produkcyjne: Liquibase z `--contexts=main` (bez kont deweloperskich).
 
 ## Build, testy, format
 

@@ -14,4 +14,23 @@
 - [x] T6. Parametry prawne: tabela z `EXCLUDE`, dane 2026, `legal_parameter`, rutyny, endpointy, ekran (R18–R21). Testy.
 - [x] T7. Użytkownicy: rutyny, endpointy, ekran (R14–R15). Testy.
 - [x] T8. Audyt: `audit_list`, endpoint, ekran (R24).
-- [ ] T9. ADR-0008, `db/README.md` (kod `U0005`), README, migawka OpenAPI.
+- [x] T9. ADR-0008, `db/README.md` (kod `U0005`), README, migawka OpenAPI.
+
+## Mapa wymaganie → test
+
+| R | Test |
+|---|---|
+| R1, R4, R5 | `SessionRoutineTests` (login/e-mail bez wielkości liter, złe hasło, blokada i odblokowanie, konto wyłączone) |
+| R2 | `SessionRoutineTests.Expired_and_logged_out_sessions_do_not_resolve`, `AuthHttpTests.Login_me_logout` |
+| R3 | ręcznie w przeglądarce: ciasteczko `hr_session` `httpOnly`; kod: `features/auth/auth.functions.ts` |
+| R6 | `AuthHttpTests.Api_requires_session` |
+| R7 | `AuthHttpTests.Login_me_logout` |
+| R8, R9 | `AuthHttpTests.Dev_login_is_enabled_in_development`, `Dev_login_does_not_exist_outside_development`, `SessionRoutineTests.Dev_login_uses_only_dev_accounts` |
+| R10 | `AuthHttpTests.Bootstrap_admin_is_created_once` |
+| R11, R13 | `PositionRoutineTests.Create_and_list_require_kadry_or_administrator`, `AuthHttpTests.Pracownik_gets_403_on_positions` |
+| R12, R22 | `PositionRoutineTests.Create_returns_id_trims_name_and_writes_audit`, `CompanyRoutineTests`, `LegalParameterRoutineTests` |
+| R14, R15 | `UserHttpTests` |
+| R16, R17 | `CompanyRoutineTests`, `CompanyHttpTests` |
+| R18–R21 | `LegalParameterRoutineTests`, `LegalParameterHttpTests` |
+| R23 | tabela i `platform.read_audit` istnieją; test przyjdzie z modułem 003 (pierwszy odczyt danych pracownika) |
+| R24 | `AuditHttpTests` |
