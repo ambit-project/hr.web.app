@@ -5,6 +5,9 @@ namespace HrWebApp.Api.Tests.Infrastructure;
 /// <summary>Połączenia do testów rutyn: jako rola API z aktorem albo jako superużytkownik do aranżacji.</summary>
 public static class TestDb
 {
+    /// <summary>Klucz danych osobowych tylko dla testów (ADR-0009).</summary>
+    public const string DataKey = "test-only-data-key-0123456789abcdef";
+
     public static async Task<NpgsqlConnection> ApiAsync(
         DatabaseFixture database,
         Guid? actorId = null
@@ -14,11 +17,12 @@ public static class TestDb
         await connection.OpenAsync();
         await using var command = Command(
             connection,
-            "SELECT set_config('hr.actor_id', $1, false)",
+            "SELECT set_config('hr.actor_id', $1, false), set_config('hr.data_key', $2, false)",
             new NpgsqlParameter<string>
             {
                 TypedValue = actorId is null || actorId == Guid.Empty ? "" : actorId.ToString(),
-            }
+            },
+            new NpgsqlParameter<string> { TypedValue = DataKey }
         );
         await command.ExecuteNonQueryAsync();
         return connection;
@@ -92,6 +96,24 @@ public static class TestDb
             """,
             new NpgsqlParameter<bool> { TypedValue = isActive }
         );
+
+    /// <summary>Zakłada spółkę bezpośrednio w tabeli — każdy test kartotek ma własną spółkę.</summary>
+    public static async Task<Guid> CompanyAsync(DatabaseFixture database)
+    {
+        var taxOffice = await TaxOfficeAsync(database);
+        return await AdminScalarAsync<Guid>(
+            database,
+            """
+            INSERT INTO platform.companies (short_name, name, nip, regon, street, postal_code, city, tax_office_id)
+            VALUES ($1, 'Spółka Testowa', $2, $3, 'ul. Testowa 1', '00-001', 'Przykładowo', $4)
+            RETURNING id
+            """,
+            new NpgsqlParameter<string> { TypedValue = Unique.Login() },
+            new NpgsqlParameter<string> { TypedValue = FakeIds.Nip() },
+            new NpgsqlParameter<string> { TypedValue = FakeIds.Regon() },
+            new NpgsqlParameter<Guid> { TypedValue = taxOffice }
+        );
+    }
 
     public static NpgsqlCommand Command(
         NpgsqlConnection connection,

@@ -19,6 +19,11 @@ public static class DatabaseSetup
             );
         }
 
+        services
+            .AddOptions<DataOptions>()
+            .Bind(configuration.GetSection(DataOptions.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         services.AddSingleton(_ => new NpgsqlDataSourceBuilder(connectionString).Build());
         services.AddScoped<DbSession>();
         return services;

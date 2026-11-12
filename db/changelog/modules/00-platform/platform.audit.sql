@@ -18,7 +18,7 @@ AS $$
 $$;
 
 --changeset hr:platform.read_audit runOnChange:true splitStatements:false
---comment: Wpis audytu odczytu (R23): zapis tylko, gdy czyta ktoś inny niż sam pracownik (moduły od 003).
+--comment: Wpis audytu odczytu (R23): zapis tylko, gdy czyta ktoś inny niż sam pracownik (konto powiązane z kartoteką).
 CREATE OR REPLACE FUNCTION platform.read_audit(p_employee_id uuid, p_resource text, p_resource_id text)
     RETURNS void
     LANGUAGE sql
@@ -26,5 +26,9 @@ CREATE OR REPLACE FUNCTION platform.read_audit(p_employee_id uuid, p_resource te
 AS $$
     INSERT INTO platform.read_audit_entries (actor_id, employee_id, resource, resource_id)
     SELECT platform.actor_id(), p_employee_id, p_resource, p_resource_id
-    WHERE platform.actor_id() IS NOT NULL;
+    WHERE platform.actor_id() IS NOT NULL
+      AND NOT EXISTS (
+          SELECT FROM platform.user_employee_links l
+          WHERE l.user_id = platform.actor_id() AND l.employee_id = p_employee_id
+      );
 $$;

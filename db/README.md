@@ -20,6 +20,10 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
   `USAGE` na `<moduł>_app` i `EXECUTE` na jego rutynach — żadnych praw do tabel.
 - Rutyny kontraktu: `SECURITY DEFINER`, `SET search_path = pg_catalog, pg_temp`, nazwy w pełni kwalifikowane.
 - Aktor: `platform.actor_id()` (ustawienie sesji `hr.actor_id`).
+- Klucz danych osobowych: `platform.data_key()` (ustawienie sesji `hr.data_key`, ADR-0009). PESEL, dokument
+  i rachunek są w kolumnach `*_enc` (`pgp_sym_encrypt`), unikalność PESEL po `pesel_hmac`. **Na produkcji nie włączaj
+  logowania parametrów zapytań** (`log_statement = all` z parametrami, `auto_explain.log_parameter_max_length`), bo
+  klucz trafiłby do logu.
 - Identyfikatory: `uuid` z `uuidv7()`; czas: `timestamptz`; kwoty: `numeric(12,2)`, zawsze PLN.
 - Changeset w DDL: autor `hr`, id `yyyymmdd-nn` (data dnia pracy, kolejny numer).
 - Rozszerzenia (`pgcrypto`, `btree_gist`) są w schemacie `ext`; rutyny wołają je z nazwą schematu.
@@ -38,7 +42,8 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 | `U0006` | brak parametru prawnego w dniu | 409 | `HINT` = `{"code": …, "on": …}` |
 
 Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`, `beforeFrom`
-(data „do” przed „od”), `notFound` (wskazana pozycja słownika nie istnieje), `inactive` (pozycja nieaktywna).
+(data „do” przed „od”), `notFound` (wskazana pozycja słownika nie istnieje), `inactive` (pozycja nieaktywna),
+`mismatch` (data urodzenia inna niż w PESEL).
 
 Tłumaczenie na HTTP: `apps/api/HrWebApp.Api/Database/DbErrors.cs`. Front tłumaczy kody pól na teksty
 (`apps/web/src/i18n/pl.ts`, sekcja `validation`).

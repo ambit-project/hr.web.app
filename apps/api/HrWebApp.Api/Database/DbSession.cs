@@ -1,12 +1,15 @@
+using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace HrWebApp.Api.Database;
 
 /// <summary>
 /// Jedno połączenie na zakres żądania. Zapis tylko procedurą (CALL), odczyt funkcją <c>&lt;moduł&gt;_app</c>.
-/// Aktor (id konta z sesji) trafia do ustawienia <c>hr.actor_id</c>, które czyta <c>platform.actor_id()</c>.
+/// Aktor (id konta z sesji) trafia do ustawienia <c>hr.actor_id</c>, które czyta <c>platform.actor_id()</c>, a klucz
+/// danych osobowych do <c>hr.data_key</c> (<c>platform.data_key()</c>, ADR-0009).
 /// </summary>
-public sealed class DbSession(NpgsqlDataSource dataSource) : IAsyncDisposable
+public sealed class DbSession(NpgsqlDataSource dataSource, IOptions<DataOptions> dataOptions)
+    : IAsyncDisposable
 {
     private NpgsqlConnection? _connection;
 
@@ -74,10 +77,11 @@ public sealed class DbSession(NpgsqlDataSource dataSource) : IAsyncDisposable
 
         _connection = await dataSource.OpenConnectionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            "SELECT set_config('hr.actor_id', $1, false)",
+            "SELECT set_config('hr.actor_id', $1, false), set_config('hr.data_key', $2, false)",
             _connection
         );
         command.Parameters.Add(Db.Param(ActorId?.ToString() ?? string.Empty));
+        command.Parameters.Add(Db.Param(dataOptions.Value.EncryptionKey));
         await command.ExecuteNonQueryAsync(cancellationToken);
         return _connection;
     }

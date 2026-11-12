@@ -26,7 +26,7 @@ public static class AuthEndpoints
         IReadOnlyList<ProfileResponse> Profiles
     );
 
-    /// <summary>Profil pracownika w spółce (od modułu 003).</summary>
+    /// <summary>Profil pracownika w spółce: kartoteka powiązana z kontem, po jednej na spółkę.</summary>
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public sealed record ProfileResponse(Guid EmployeeId, Guid CompanyId, string CompanyShortName);
 
@@ -123,7 +123,22 @@ public static class AuthEndpoints
             ),
             cancellationToken
         );
-        return rows.Count == 1 ? TypedResults.Ok(rows[0]) : TypedResults.Unauthorized();
+        if (rows.Count != 1)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var profiles = await db.QueryAsync(
+            "SELECT employee_id, company_id, company_short_name FROM platform_app.my_profiles()",
+            [],
+            reader => new ProfileResponse(
+                reader.GetGuid(0),
+                reader.GetGuid(1),
+                reader.GetString(2)
+            ),
+            cancellationToken
+        );
+        return TypedResults.Ok(rows[0] with { Profiles = profiles });
     }
 
     public static Ok<OptionsResponse> GetAuthOptions(

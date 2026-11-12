@@ -8,6 +8,11 @@ if [[ ! -f .env ]]; then
     cp .env-sample .env
     echo "Utworzono infrastructure/.env z .env-sample (wartości deweloperskie)."
 fi
+# .env sprzed modułu 003 nie ma klucza danych osobowych (ADR-0009): dopisz losowy.
+if ! grep -q '^HR_DATA_KEY=' .env; then
+    echo "HR_DATA_KEY=$(openssl rand -hex 32)" >> .env
+    echo "Dopisano losowy HR_DATA_KEY do infrastructure/.env."
+fi
 
 if [[ "${1:-}" == "--db-only" ]]; then
     docker compose up -d --wait postgres

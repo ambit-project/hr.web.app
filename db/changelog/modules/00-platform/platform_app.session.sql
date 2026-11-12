@@ -160,3 +160,20 @@ BEGIN
     p_created := true;
 END;
 $$;
+
+--changeset hr:platform_app.my_profiles runOnChange:true splitStatements:false
+--comment: Profile zalogowanego konta: kartoteki powiązane z kontem, po jednej na spółkę (R13 specyfikacji 003).
+CREATE OR REPLACE FUNCTION platform_app.my_profiles()
+    RETURNS TABLE (employee_id uuid, company_id uuid, company_short_name text)
+    LANGUAGE sql
+    STABLE
+    SECURITY DEFINER
+    SET search_path = pg_catalog, pg_temp
+AS $$
+    SELECT l.employee_id, l.company_id, c.short_name
+    FROM platform.user_employee_links l
+    JOIN platform.companies c ON c.id = l.company_id
+    JOIN platform.users u ON u.id = l.user_id AND u.is_active
+    WHERE l.user_id = platform.actor_id()
+    ORDER BY c.short_name COLLATE "pl-x-icu";
+$$;

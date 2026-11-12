@@ -16,6 +16,7 @@ public sealed class ApiFactory(
         builder.UseEnvironment(environment);
         builder.UseSetting("ConnectionStrings:Hr", database.ApiConnectionString);
         builder.UseSetting("Auth:DevLogin", "true");
+        builder.UseSetting("Data:EncryptionKey", TestDb.DataKey);
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {
             builder.UseSetting(key, value);

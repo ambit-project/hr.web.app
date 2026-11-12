@@ -65,6 +65,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       Auth__DevLogin: "true"
+      Data__EncryptionKey: ${HR_DATA_KEY:?Ustaw HR_DATA_KEY w infrastructure/.env (wzór w .env-sample)}
       ConnectionStrings__Hr: Host=postgres;Database=hr;Username=hr_api;Password=${HR_API_PASSWORD}
     ports:
       - "127.0.0.1:${HR_API_PORT:-6300}:8080"
