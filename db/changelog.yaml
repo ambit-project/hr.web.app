@@ -1,0 +1,12 @@
+# Kolejność: DDL (niezmienne changesety) → rutyny modułów (runOnChange) → uprawnienia (runAlways).
+# Parametr changelogu: api_role (rola API, np. hr_api).
+databaseChangeLog:
+  - includeAll:
+      path: changelog/1-ddl/
+      relativeToChangelogFile: true
+  - includeAll:
+      path: changelog/modules/
+      relativeToChangelogFile: true
+  - includeAll:
+      path: changelog/9-grants/
+      relativeToChangelogFile: true

@@ -1,0 +1,54 @@
+# Pliki zadań dla agentów (lokalnie, poza repo)
+.instructions/
+
+# Build
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+artifacts/
+publish/
+
+# Tests / coverage
+TestResults/
+coverage/
+*.trx
+coverage*.xml
+coverage*.json
+inspect.txt
+
+# IDE
+.idea/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+*.user
+*.suo
+*.DotSettings.user
+
+# Local config / secrets
+.env
+.env.*
+!.env-sample
+appsettings.*.local.json
+*.pfx
+
+# Node / front
+node_modules/
+.output/
+.nitro/
+.tanstack/
+dist/
+.yarn/*
+!.yarn/releases
+!.yarn/patches
+!.yarn/plugins
+.pnp.*
+playwright-report/
+test-results/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker local overrides
+docker-compose.override.yml

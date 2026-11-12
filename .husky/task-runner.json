@@ -1,0 +1,29 @@
+{
+  "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+  "tasks": [
+    {
+      "name": "csharpier-check",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": ["csharpier", "check", "."]
+    },
+    {
+      "name": "build",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": ["build", "--nologo", "-v", "q"]
+    },
+    {
+      "name": "build",
+      "group": "pre-push",
+      "command": "dotnet",
+      "args": ["build", "--nologo", "-v", "q"]
+    },
+    {
+      "name": "inspect-code",
+      "group": "pre-push",
+      "command": "bash",
+      "args": ["scripts/inspect-code.sh", "--no-build"]
+    }
+  ]
+}

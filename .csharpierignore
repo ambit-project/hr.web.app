@@ -1,0 +1,8 @@
+bin/
+obj/
+.git/
+*.xml
+*.csproj
+*.props
+*.targets
+apps/web/
