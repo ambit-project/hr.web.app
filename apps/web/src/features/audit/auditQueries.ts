@@ -11,6 +11,10 @@ export const AUDIT_ENTITIES = [
 	"position",
 	"zus_code",
 	"tax_office",
+	"employee",
+	"employee_address",
+	"employee_bank_account",
+	"employee_link",
 ] as const;
 export type AuditEntity = (typeof AUDIT_ENTITIES)[number];
 

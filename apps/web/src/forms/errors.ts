@@ -10,6 +10,7 @@ const KNOWN: readonly ValidationCode[] = [
 	"beforeFrom",
 	"notFound",
 	"inactive",
+	"mismatch",
 ];
 
 /**

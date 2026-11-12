@@ -19,7 +19,7 @@ describe("session", () => {
 
 	it("sends employees to their documents and staff to positions", () => {
 		expect(homePath(me(["pracownik"]))).toBe("/my");
-		expect(homePath(me(["administrator"]))).toBe("/positions");
+		expect(homePath(me(["administrator"]))).toBe("/employees");
 		expect(homePath(me([]))).toBeNull();
 	});
 });

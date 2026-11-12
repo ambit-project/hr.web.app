@@ -16,11 +16,11 @@ export function requireRoles(me: Me | null | undefined, ...roles: Role[]) {
 }
 
 /**
- * Start page by role: staff work with positions today, employees see their documents. An account without any role
+ * Start page by role: staff work with the employee files, employees see their documents. An account without any role
  * has no start page (null) and sees the no-access message instead of bouncing between guards.
  */
-export function homePath(me: Me): "/positions" | "/my" | null {
-	if (hasRole(me, "kadry", "administrator")) return "/positions";
+export function homePath(me: Me): "/employees" | "/my" | null {
+	if (hasRole(me, "kadry", "administrator")) return "/employees";
 	if (hasRole(me, "pracownik")) return "/my";
 	return null;
 }

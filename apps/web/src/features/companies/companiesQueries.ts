@@ -38,3 +38,12 @@ export function useUpdateCompany() {
 		unwrap(await updateCompanyFn({ data: variables })),
 	);
 }
+
+/** Active companies for pickers; a group has a handful of companies, so one page of 100 is the whole list. */
+export function activeCompaniesQuery() {
+	const params = { pageSize: 100 };
+	return queryOptions({
+		queryKey: companiesKeys.list(params),
+		queryFn: () => listCompaniesFn({ data: params }),
+	});
+}

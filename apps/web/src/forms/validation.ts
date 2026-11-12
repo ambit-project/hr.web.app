@@ -9,7 +9,8 @@ export type ValidationCode =
 	| "tooShort"
 	| "beforeFrom"
 	| "notFound"
-	| "inactive";
+	| "inactive"
+	| "mismatch";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {

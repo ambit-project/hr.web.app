@@ -8,6 +8,7 @@ import { hasRole, type Me } from "#/features/auth/session";
 
 type NavItem = {
 	to:
+		| "/employees"
 		| "/positions"
 		| "/zus-codes"
 		| "/tax-offices"
@@ -17,6 +18,7 @@ type NavItem = {
 		| "/audit"
 		| "/my";
 	label:
+		| "app.nav.employees"
 		| "app.nav.positions"
 		| "app.nav.zusCodes"
 		| "app.nav.taxOffices"
@@ -28,13 +30,20 @@ type NavItem = {
 	roles: Role[];
 };
 
-type NavSection = { label?: "app.nav.dictionaries" | "app.nav.administration"; items: NavItem[] };
+type NavSection = {
+	label?: "app.nav.staff" | "app.nav.dictionaries" | "app.nav.administration";
+	items: NavItem[];
+};
 
 const STAFF: Role[] = ["kadry", "administrator"];
 
 // Menu mirrors the database rules only to hide what would end in 403; the database stays the authority.
 const NAV: NavSection[] = [
 	{ items: [{ to: "/my", label: "app.nav.my", roles: ["pracownik"] }] },
+	{
+		label: "app.nav.staff",
+		items: [{ to: "/employees", label: "app.nav.employees", roles: STAFF }],
+	},
 	{
 		label: "app.nav.dictionaries",
 		items: [
