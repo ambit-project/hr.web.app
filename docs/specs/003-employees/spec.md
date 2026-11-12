@@ -39,8 +39,8 @@ kartotekę z kontem, a Pracownik po zalogowaniu widzi swoje profile, po jednym n
 - **R9.** Szczegóły kartoteki (z PESEL, dokumentem i rachunkiem) zapisuje audyt odczytów: kto, kiedy, którą
   kartotekę. Odczyt przez samego pracownika (konto powiązane z tą kartoteką) nie jest zapisywany.
 - **R10.** Administrator widzi audyt odczytów kartoteki na jej stronie (zakładka „Odczyty”).
-- **R11.** Kartotekę można usunąć tylko wtedy, gdy nie ma do niej żadnych dokumentów kadrowo-płacowych (dziś:
-  zawsze, od modułu 004: brak umów). Inaczej `U0003`. Okres przechowywania dokumentacji liczony od końca zatrudnienia
+- **R11.** Kartotekę można usunąć tylko wtedy, gdy nie ma do niej żadnych dokumentów kadrowo-płacowych (od modułu
+  004: brak umów albo upłynął okres ich przechowywania — [004 R18](../004-employment/spec.md)). Inaczej `U0003`. Okres przechowywania dokumentacji liczony od końca zatrudnienia
   i blokada usunięcia w tym okresie przychodzą z modułem 004, gdzie są daty końca umów. Usunięcie zostawia wpis audytu
   bez danych osobowych.
 

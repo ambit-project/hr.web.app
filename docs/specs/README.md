@@ -15,3 +15,4 @@ Model danych: [docs/domain](../domain/README.md). Wymaganie bez testu w `tasks.m
 | [001](001-platform/spec.md) | Platforma: logowanie, role, spółki, parametry prawne, audyt | część 1 zrobiona (R1–R24, R23 od 003); część 2: OIDC |
 | [002](002-dictionaries/spec.md) | Słowniki: stanowiska, kody ZUS, urzędy skarbowe | zrobione (R1–R12) |
 | [003](003-employees/spec.md) | Pracownicy: kartoteka, adresy, rachunki, szyfrowanie, profile | zrobione (R1–R15) |
+| [004](004-employment/spec.md) | Zatrudnienie: umowy, wersje warunków, zbieg, okres przechowywania | zrobione (R1–R21) |

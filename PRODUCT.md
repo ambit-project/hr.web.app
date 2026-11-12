@@ -61,7 +61,7 @@ Kolejność modułów wynika z zależności w [modelu domeny](docs/domain/README
 | 001 | Platforma: spółki, użytkownicy, role, logowanie (w tym deweloperskie), audyt, parametry prawne | zrobione (bez OIDC) |
 | 002 | Słowniki: stanowiska, kody ZUS, urzędy skarbowe | zrobione |
 | 003 | Pracownicy: kartoteka, adresy, rachunki, szyfrowanie, profile | zrobione |
-| 004 | Zatrudnienie: umowy i wersje warunków | do napisania |
+| 004 | Zatrudnienie: umowy i wersje warunków, status i okres przechowywania | zrobione |
 | 005 | Oświadczenia podatkowe | do napisania |
 | 006 | Składniki, zgody na potrącenia, tytuły egzekucyjne | do napisania |
 | 007 | Czas pracy i nieobecności | do napisania |
