@@ -12,4 +12,5 @@ export interface ListPositionsItem {
 	description: string | null;
 	isActive: boolean;
 	createdAt: string;
+	rowVersion: number;
 }

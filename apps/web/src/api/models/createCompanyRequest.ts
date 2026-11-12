@@ -15,4 +15,6 @@ export interface CreateCompanyRequest {
 	street: string;
 	postalCode: string;
 	city: string;
+	/** @nullable */
+	taxOfficeId: string | null;
 }

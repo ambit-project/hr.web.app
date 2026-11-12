@@ -6,6 +6,7 @@ import { positionsQuery } from "#/features/positions/positionsQueries";
 
 const searchSchema = z.object({
 	search: z.string().optional().catch(undefined),
+	inactive: z.boolean().optional().catch(undefined),
 	page: z.coerce.number().int().min(1).optional().catch(undefined),
 });
 

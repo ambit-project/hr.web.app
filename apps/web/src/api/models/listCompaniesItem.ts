@@ -15,5 +15,11 @@ export interface ListCompaniesItem {
 	postalCode: string;
 	city: string;
 	isActive: boolean;
+	/** @nullable */
+	taxOfficeId: string | null;
+	/** @nullable */
+	taxOfficeCode: string | null;
+	/** @nullable */
+	taxOfficeName: string | null;
 	rowVersion: number;
 }

@@ -62,6 +62,7 @@ export function CompaniesPage() {
 								<Table.Column>{t("companies.fields.name")}</Table.Column>
 								<Table.Column>{t("companies.fields.nip")}</Table.Column>
 								<Table.Column>{t("companies.fields.city")}</Table.Column>
+								<Table.Column>{t("companies.fields.taxOffice")}</Table.Column>
 								<Table.Column>{t("companies.fields.isActive")}</Table.Column>
 								<Table.Column>{""}</Table.Column>
 							</Table.Header>
@@ -78,6 +79,15 @@ export function CompaniesPage() {
 										<Table.Cell>{company.name}</Table.Cell>
 										<Table.Cell>{formatNip(company.nip)}</Table.Cell>
 										<Table.Cell>{company.city}</Table.Cell>
+										<Table.Cell className="text-sm">
+											{company.taxOfficeCode ? (
+												<code title={company.taxOfficeName ?? undefined}>
+													{company.taxOfficeCode}
+												</code>
+											) : (
+												"—"
+											)}
+										</Table.Cell>
 										<Table.Cell>
 											<Chip size="sm" color={company.isActive ? "success" : "default"}>
 												{company.isActive ? t("common.yes") : t("common.no")}

@@ -5,7 +5,8 @@ import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
-import { CreatePositionDrawer, type CreatePositionDrawerHandle } from "./CreatePositionDrawer";
+import { ToggleFilter } from "#/components/table/ToggleFilter";
+import { PositionDrawer, type PositionDrawerHandle } from "./PositionDrawer";
 import { POSITIONS_PAGE_SIZE, positionsQuery } from "./positionsQueries";
 
 const route = getRouteApi("/positions/");
@@ -14,13 +15,16 @@ export function PositionsPage() {
 	const { t } = useTranslation();
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
-	const drawer = useRef<CreatePositionDrawerHandle>(null);
+	const drawer = useRef<PositionDrawerHandle>(null);
 	const { data, isPending } = useQuery(positionsQuery(search));
 
 	const page = search.page ?? 1;
 	const onSearch = useCallback(
 		(term: string | undefined) =>
-			void navigate({ search: { search: term, page: undefined }, replace: true }),
+			void navigate({
+				search: (prev) => ({ ...prev, search: term, page: undefined }),
+				replace: true,
+			}),
 		[navigate],
 	);
 
@@ -33,14 +37,26 @@ export function PositionsPage() {
 						<p className="text-sm text-muted">{t("positions.total", { count: data.total })}</p>
 					) : null}
 				</div>
-				<Button onPress={() => drawer.current?.open()}>{t("common.add")}</Button>
+				<Button onPress={() => drawer.current?.create()}>{t("common.add")}</Button>
 			</header>
 
-			<ListSearch
-				value={search.search}
-				placeholder={t("positions.searchPlaceholder")}
-				onSearch={onSearch}
-			/>
+			<div className="flex flex-wrap items-center gap-4">
+				<ListSearch
+					value={search.search}
+					placeholder={t("positions.searchPlaceholder")}
+					onSearch={onSearch}
+				/>
+				<ToggleFilter
+					label={t("positions.showInactive")}
+					value={search.inactive ?? false}
+					onChange={(inactive) =>
+						void navigate({
+							search: (prev) => ({ ...prev, inactive: inactive || undefined, page: undefined }),
+							replace: true,
+						})
+					}
+				/>
+			</div>
 
 			{isPending ? (
 				<Spinner aria-label={t("common.loading")} />
@@ -49,9 +65,10 @@ export function PositionsPage() {
 					<Table.ScrollContainer>
 						<Table.Content aria-label={t("positions.title")} className="min-w-[560px]">
 							<Table.Header>
-								<Table.Column isRowHeader>{t("positions.columns.name")}</Table.Column>
-								<Table.Column>{t("positions.columns.description")}</Table.Column>
-								<Table.Column>{t("positions.columns.active")}</Table.Column>
+								<Table.Column isRowHeader>{t("positions.fields.name")}</Table.Column>
+								<Table.Column>{t("positions.fields.description")}</Table.Column>
+								<Table.Column>{t("positions.fields.isActive")}</Table.Column>
+								<Table.Column>{""}</Table.Column>
 							</Table.Header>
 							<Table.Body
 								renderEmptyState={() => (
@@ -68,6 +85,15 @@ export function PositionsPage() {
 											<Chip size="sm" color={position.isActive ? "success" : "default"}>
 												{position.isActive ? t("positions.active.yes") : t("positions.active.no")}
 											</Chip>
+										</Table.Cell>
+										<Table.Cell>
+											<Button
+												size="sm"
+												variant="ghost"
+												onPress={() => drawer.current?.edit(position)}
+											>
+												{t("common.edit")}
+											</Button>
 										</Table.Cell>
 									</Table.Row>
 								))}
@@ -90,7 +116,7 @@ export function PositionsPage() {
 				/>
 			) : null}
 
-			<CreatePositionDrawer ref={drawer} />
+			<PositionDrawer ref={drawer} />
 		</section>
 	);
 }

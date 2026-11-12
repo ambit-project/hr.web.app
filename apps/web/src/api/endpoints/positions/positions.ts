@@ -9,6 +9,7 @@ import type {
 	CreatePositionResponse,
 	ListPositionsParams,
 	PagedListOfListPositionsItem,
+	UpdatePositionRequest,
 } from "../../models";
 import type { BodyType } from "../../mutator.ts";
 import { customInstance } from "../../mutator.ts";
@@ -38,5 +39,21 @@ export const createPosition = (
 		options,
 	);
 };
+export const updatePosition = (
+	id: string,
+	updatePositionRequest: BodyType<UpdatePositionRequest>,
+	options?: SecondParameter<typeof customInstance<void>>,
+) => {
+	return customInstance<void>(
+		{
+			url: `/api/positions/${id}`,
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			data: updatePositionRequest,
+		},
+		options,
+	);
+};
 export type ListPositionsResult = NonNullable<Awaited<ReturnType<typeof listPositions>>>;
 export type CreatePositionResult = NonNullable<Awaited<ReturnType<typeof createPosition>>>;
+export type UpdatePositionResult = NonNullable<Awaited<ReturnType<typeof updatePosition>>>;

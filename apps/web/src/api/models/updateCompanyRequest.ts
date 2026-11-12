@@ -16,5 +16,7 @@ export interface UpdateCompanyRequest {
 	street: string;
 	postalCode: string;
 	city: string;
+	/** @nullable */
+	taxOfficeId: string | null;
 	isActive: boolean;
 }

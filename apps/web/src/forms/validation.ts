@@ -6,7 +6,10 @@ export type ValidationCode =
 	| "duplicate"
 	| "invalid"
 	| "beforeCurrent"
-	| "tooShort";
+	| "tooShort"
+	| "beforeFrom"
+	| "notFound"
+	| "inactive";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {

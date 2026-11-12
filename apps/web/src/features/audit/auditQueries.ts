@@ -4,7 +4,14 @@ import { listAuditFn } from "./audit.functions";
 
 export const AUDIT_PAGE_SIZE = 50;
 
-export const AUDIT_ENTITIES = ["user", "company", "legal_parameter", "position"] as const;
+export const AUDIT_ENTITIES = [
+	"user",
+	"company",
+	"legal_parameter",
+	"position",
+	"zus_code",
+	"tax_office",
+] as const;
 export type AuditEntity = (typeof AUDIT_ENTITIES)[number];
 
 export type AuditSearch = { entity?: AuditEntity; from?: string; to?: string; page?: number };

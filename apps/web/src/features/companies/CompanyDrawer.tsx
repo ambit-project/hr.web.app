@@ -3,7 +3,9 @@ import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { ListCompaniesItem } from "#/api/models";
+import { TaxOfficePicker } from "#/features/tax-offices/TaxOfficePicker";
 import { text, useAppForm } from "#/forms";
+import { errorCode } from "#/forms/errors";
 import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useCreateCompany, useUpdateCompany } from "./companiesQueries";
@@ -22,6 +24,7 @@ const schema = z.object({
 	street: text({ required: true, max: 200 }),
 	postalCode: text({ required: true, max: 6 }).regex(/^\d{2}-\d{3}$/, "invalid"),
 	city: text({ required: true, max: 100 }),
+	taxOfficeId: z.string().min(1, "required"),
 	isActive: z.boolean(),
 });
 
@@ -36,6 +39,7 @@ const EMPTY: Values = {
 	street: "",
 	postalCode: "",
 	city: "",
+	taxOfficeId: "",
 	isActive: true,
 };
 
@@ -70,7 +74,7 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 	const update = useUpdateCompany();
 
 	const form = useAppForm({
-		defaultValues: target.mode === "edit" ? { ...target.company } : EMPTY,
+		defaultValues: target.mode === "edit" ? toValues(target.company) : EMPTY,
 		validators: { onChange: schema },
 		onSubmit: async ({ value, formApi }) => {
 			const fields = {
@@ -81,6 +85,7 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 				street: value.street,
 				postalCode: value.postalCode,
 				city: value.city,
+				taxOfficeId: value.taxOfficeId,
 			};
 			try {
 				if (target.mode === "create") {
@@ -100,7 +105,7 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 					onDone();
 				} else if (
 					!(error instanceof ProblemError) ||
-					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
+					!applyFieldErrors(formApi, error.problem.errors, [...FIELDS, "taxOfficeId"] as const)
 				) {
 					toast.danger(t("common.serverError"));
 				}
@@ -130,6 +135,22 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 							{(field) => <field.TextInput label={t(`companies.fields.${name}`)} isRequired />}
 						</form.AppField>
 					))}
+					<form.Field name="taxOfficeId">
+						{(field) => {
+							const code = errorCode(field.state.meta.errors);
+							return (
+								<TaxOfficePicker
+									label={t("companies.fields.taxOffice")}
+									value={field.state.value}
+									initialLabel={officeLabel(target)}
+									onChange={field.handleChange}
+									onBlur={field.handleBlur}
+									isRequired
+									errorMessage={code && field.state.meta.isTouched ? t(`validation.${code}`) : null}
+								/>
+							);
+						}}
+					</form.Field>
 					{target.mode === "edit" ? (
 						<form.AppField name="isActive">
 							{(field) => <field.SwitchInput label={t("companies.fields.isActive")} />}
@@ -151,4 +172,23 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 			</Drawer.Footer>
 		</Drawer.Dialog>
 	);
+}
+
+function toValues(company: ListCompaniesItem): Values {
+	return {
+		shortName: company.shortName,
+		name: company.name,
+		nip: company.nip,
+		regon: company.regon,
+		street: company.street,
+		postalCode: company.postalCode,
+		city: company.city,
+		taxOfficeId: company.taxOfficeId ?? "",
+		isActive: company.isActive,
+	};
+}
+
+function officeLabel(target: Target): string | undefined {
+	if (target.mode !== "edit" || !target.company.taxOfficeCode) return undefined;
+	return `${target.company.taxOfficeCode} ${target.company.taxOfficeName ?? ""}`.trim();
 }

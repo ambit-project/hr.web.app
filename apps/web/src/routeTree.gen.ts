@@ -17,7 +17,9 @@ import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as LegalParametersIndexRouteImport } from './routes/legal-parameters/index'
 import { Route as MyIndexRouteImport } from './routes/my/index'
 import { Route as PositionsIndexRouteImport } from './routes/positions/index'
+import { Route as TaxOfficesIndexRouteImport } from './routes/tax-offices/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as ZusCodesIndexRouteImport } from './routes/zus-codes/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,9 +61,19 @@ const PositionsIndexRoute = PositionsIndexRouteImport.update({
   path: '/positions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaxOfficesIndexRoute = TaxOfficesIndexRouteImport.update({
+  id: '/tax-offices/',
+  path: '/tax-offices/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UsersIndexRoute = UsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZusCodesIndexRoute = ZusCodesIndexRouteImport.update({
+  id: '/zus-codes/',
+  path: '/zus-codes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -74,7 +86,9 @@ export interface FileRoutesByFullPath {
   '/legal-parameters/': typeof LegalParametersIndexRoute
   '/my/': typeof MyIndexRoute
   '/positions/': typeof PositionsIndexRoute
+  '/tax-offices/': typeof TaxOfficesIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/zus-codes/': typeof ZusCodesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,7 +99,9 @@ export interface FileRoutesByTo {
   '/legal-parameters': typeof LegalParametersIndexRoute
   '/my': typeof MyIndexRoute
   '/positions': typeof PositionsIndexRoute
+  '/tax-offices': typeof TaxOfficesIndexRoute
   '/users': typeof UsersIndexRoute
+  '/zus-codes': typeof ZusCodesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,7 +113,9 @@ export interface FileRoutesById {
   '/legal-parameters/': typeof LegalParametersIndexRoute
   '/my/': typeof MyIndexRoute
   '/positions/': typeof PositionsIndexRoute
+  '/tax-offices/': typeof TaxOfficesIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/zus-codes/': typeof ZusCodesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +128,9 @@ export interface FileRouteTypes {
     | '/legal-parameters/'
     | '/my/'
     | '/positions/'
+    | '/tax-offices/'
     | '/users/'
+    | '/zus-codes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,7 +141,9 @@ export interface FileRouteTypes {
     | '/legal-parameters'
     | '/my'
     | '/positions'
+    | '/tax-offices'
     | '/users'
+    | '/zus-codes'
   id:
     | '__root__'
     | '/'
@@ -132,7 +154,9 @@ export interface FileRouteTypes {
     | '/legal-parameters/'
     | '/my/'
     | '/positions/'
+    | '/tax-offices/'
     | '/users/'
+    | '/zus-codes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,7 +168,9 @@ export interface RootRouteChildren {
   LegalParametersIndexRoute: typeof LegalParametersIndexRoute
   MyIndexRoute: typeof MyIndexRoute
   PositionsIndexRoute: typeof PositionsIndexRoute
+  TaxOfficesIndexRoute: typeof TaxOfficesIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  ZusCodesIndexRoute: typeof ZusCodesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,11 +231,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PositionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tax-offices/': {
+      id: '/tax-offices/'
+      path: '/tax-offices'
+      fullPath: '/tax-offices/'
+      preLoaderRoute: typeof TaxOfficesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/users/': {
       id: '/users/'
       path: '/users'
       fullPath: '/users/'
       preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zus-codes/': {
+      id: '/zus-codes/'
+      path: '/zus-codes'
+      fullPath: '/zus-codes/'
+      preLoaderRoute: typeof ZusCodesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -224,7 +264,9 @@ const rootRouteChildren: RootRouteChildren = {
   LegalParametersIndexRoute: LegalParametersIndexRoute,
   MyIndexRoute: MyIndexRoute,
   PositionsIndexRoute: PositionsIndexRoute,
+  TaxOfficesIndexRoute: TaxOfficesIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  ZusCodesIndexRoute: ZusCodesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
