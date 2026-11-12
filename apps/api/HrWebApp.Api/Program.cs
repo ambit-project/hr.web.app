@@ -4,6 +4,7 @@ using HrWebApp.Api.Database;
 using HrWebApp.Api.Features.Companies;
 using HrWebApp.Api.Features.LegalParameters;
 using HrWebApp.Api.Features.Positions;
+using HrWebApp.Api.Features.Users;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddSessionAuth(builder.Configuration);
 builder.Services.AddPositions();
 builder.Services.AddCompanies();
 builder.Services.AddLegalParameters();
+builder.Services.AddUsers();
 
 var app = builder.Build();
 
@@ -37,5 +39,6 @@ api.MapAuth();
 api.MapPositions();
 api.MapCompanies();
 api.MapLegalParameters();
+api.MapUsers();
 
 app.Run();

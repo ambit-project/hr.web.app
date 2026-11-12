@@ -12,6 +12,6 @@
       guard w root, menu według ról, wylogowanie.
 - [x] T5. Spółki: tabela, `nip_valid`, `regon_valid`, rutyny, endpointy, ekran (R16–R17). Testy.
 - [x] T6. Parametry prawne: tabela z `EXCLUDE`, dane 2026, `legal_parameter`, rutyny, endpointy, ekran (R18–R21). Testy.
-- [ ] T7. Użytkownicy: rutyny, endpointy, ekran (R14–R15). Testy.
+- [x] T7. Użytkownicy: rutyny, endpointy, ekran (R14–R15). Testy.
 - [ ] T8. Audyt: `audit_list`, endpoint, ekran (R24).
 - [ ] T9. ADR-0008, `db/README.md` (kod `U0005`), README, migawka OpenAPI.

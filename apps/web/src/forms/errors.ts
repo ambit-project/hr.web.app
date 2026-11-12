@@ -6,6 +6,7 @@ const KNOWN: readonly ValidationCode[] = [
 	"duplicate",
 	"invalid",
 	"beforeCurrent",
+	"tooShort",
 ];
 
 /**
