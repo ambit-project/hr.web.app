@@ -220,6 +220,7 @@ export const pl = {
 			company: "Spółka",
 			name: "Nazwisko i imię",
 			number: "Numer ewidencyjny",
+			numberShort: "Nr ewid.",
 			numberHint: "Puste = kolejny wolny numer w spółce.",
 			acronym: "Akronim",
 			acronymHint: "Nadany przy dodaniu (rok, miesiąc, kod) — można zmienić; unikalny w spółce.",
