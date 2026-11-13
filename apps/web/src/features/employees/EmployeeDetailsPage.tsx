@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { GetEmployeeResponse } from "#/api/models";
 import { hasRole } from "#/features/auth/session";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
+import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
 import { ProblemError } from "#/lib/problem";
 import { EmployeeDrawer, type EmployeeDrawerHandle } from "./EmployeeDrawer";
 import { employeeQuery, useDeleteEmployee } from "./employeesQueries";
@@ -75,6 +76,9 @@ export function EmployeeDetailsPage() {
 				</Tabs.Panel>
 				<Tabs.Panel id="employments" className="pt-4">
 					<EmploymentsSection employeeId={employee.id} />
+				</Tabs.Panel>
+				<Tabs.Panel id="taxDeclarations" className="pt-4">
+					<TaxDeclarationsSection employeeId={employee.id} />
 				</Tabs.Panel>
 				<Tabs.Panel id="addresses" className="pt-4">
 					<AddressesSection employeeId={employee.id} />

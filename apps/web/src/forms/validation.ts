@@ -19,7 +19,10 @@ export type ValidationCode =
 	| "missingMandatory"
 	| "belowMinimum"
 	| "beforeStart"
-	| "afterEnd";
+	| "afterEnd"
+	| "future"
+	| "outsideAllowed"
+	| "beforeSubmission";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {

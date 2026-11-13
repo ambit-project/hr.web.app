@@ -1,6 +1,9 @@
-import { Card } from "@heroui/react";
+import { Card, Spinner } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { TaxDeclarationsTable } from "#/features/tax-declarations/TaxDeclarationsTable";
+import { taxDeclarationsQuery } from "#/features/tax-declarations/taxDeclarationsQueries";
 
 const route = getRouteApi("/my/");
 
@@ -19,13 +22,15 @@ export function MyPage() {
 					{profiles.length > 1 ? (
 						<p className="text-sm text-muted">{t("my.profilesHint")}</p>
 					) : null}
-					<div className="grid gap-4 sm:grid-cols-2">
+					<div className="flex flex-col gap-4">
 						{profiles.map((profile) => (
 							<Card key={profile.employeeId}>
 								<Card.Header>
 									<Card.Title>{profile.companyShortName}</Card.Title>
 								</Card.Header>
-								<Card.Content>
+								<Card.Content className="flex flex-col gap-3">
+									<h2 className="text-sm font-semibold">{t("my.taxDeclarations")}</h2>
+									<ProfileDeclarations employeeId={profile.employeeId} />
 									<p className="text-sm text-muted">{t("my.empty")}</p>
 								</Card.Content>
 							</Card>
@@ -34,5 +39,15 @@ export function MyPage() {
 				</>
 			)}
 		</section>
+	);
+}
+
+function ProfileDeclarations({ employeeId }: { employeeId: string }) {
+	const { t } = useTranslation();
+	const { data, isPending } = useQuery(taxDeclarationsQuery(employeeId));
+	return isPending ? (
+		<Spinner aria-label={t("common.loading")} />
+	) : (
+		<TaxDeclarationsTable items={data ?? []} />
 	);
 }

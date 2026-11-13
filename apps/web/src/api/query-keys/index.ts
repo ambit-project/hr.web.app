@@ -4,6 +4,7 @@ export { employeesKeys } from "./employeesKeys";
 export { employmentsKeys } from "./employmentsKeys";
 export { legalParametersKeys } from "./legalParametersKeys";
 export { positionsKeys } from "./positionsKeys";
+export { taxDeclarationsKeys } from "./taxDeclarationsKeys";
 export { taxOfficesKeys } from "./taxOfficesKeys";
 export { usersKeys } from "./usersKeys";
 export { zusCodesKeys } from "./zusCodesKeys";

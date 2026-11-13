@@ -44,9 +44,10 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`, `beforeFrom`
 (data „do” przed „od”), `notFound` (wskazana pozycja słownika nie istnieje), `inactive` (pozycja nieaktywna),
 `mismatch` (data urodzenia inna niż w PESEL), `afterStart` (zawarcie po początku umowy), `overlap` (nakładanie się
-umów o pracę), `beforeTermination`, `termsOutsidePeriod` (wersja warunków poza okresem umowy), `outsidePeriod`,
+umów o pracę albo oświadczeń podatkowych tego samego rodzaju), `beforeTermination`, `termsOutsidePeriod` (wersja warunków poza okresem umowy), `outsidePeriod`,
 `missingMandatory` (brak obowiązkowego ubezpieczenia), `belowMinimum` (poniżej płacy minimalnej lub stawki
-godzinowej), `beforeStart`, `afterEnd`.
+godzinowej), `beforeStart`, `afterEnd`, `future` (data z przyszłości), `outsideAllowed` (miesiąc spoza
+dozwolonych: oświadczenie działa od miesiąca złożenia albo następnego), `beforeSubmission` (wycofanie przed złożeniem).
 
 Tłumaczenie na HTTP: `apps/api/HrWebApp.Api/Database/DbErrors.cs`. Front tłumaczy kody pól na teksty
 (`apps/web/src/i18n/pl.ts`, sekcja `validation`).

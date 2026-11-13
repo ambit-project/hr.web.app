@@ -20,6 +20,9 @@ const KNOWN: readonly ValidationCode[] = [
 	"belowMinimum",
 	"beforeStart",
 	"afterEnd",
+	"future",
+	"outsideAllowed",
+	"beforeSubmission",
 ];
 
 /**

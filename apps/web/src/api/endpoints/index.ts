@@ -5,6 +5,7 @@ export * from "./employees/employees.ts";
 export * from "./employments/employments.ts";
 export * from "./legal-parameters/legal-parameters.ts";
 export * from "./positions/positions.ts";
+export * from "./tax-declarations/tax-declarations.ts";
 export * from "./tax-offices/tax-offices.ts";
 export * from "./users/users.ts";
 export * from "./zus-codes/zus-codes.ts";
