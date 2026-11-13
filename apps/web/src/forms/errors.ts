@@ -23,6 +23,9 @@ const KNOWN: readonly ValidationCode[] = [
 	"future",
 	"outsideAllowed",
 	"beforeSubmission",
+	"consentMissing",
+	"aboveConsent",
+	"afterStatus",
 ];
 
 /**

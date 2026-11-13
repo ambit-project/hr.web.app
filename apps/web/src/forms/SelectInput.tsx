@@ -7,10 +7,12 @@ export function SelectInput({
 	label,
 	options,
 	isRequired,
+	isDisabled,
 }: {
 	label: string;
 	options: readonly Option[];
 	isRequired?: boolean;
+	isDisabled?: boolean;
 }) {
 	const field = useFieldContext<string>();
 	const { t } = useTranslation();
@@ -25,6 +27,7 @@ export function SelectInput({
 			onChange={field.handleChange}
 			onBlur={field.handleBlur}
 			isRequired={isRequired}
+			isDisabled={isDisabled}
 			errorMessage={showError && code ? t(`validation.${code}`) : null}
 		/>
 	);

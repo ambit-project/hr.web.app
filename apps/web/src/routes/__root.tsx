@@ -11,10 +11,12 @@ import {
 	useRouter,
 	useRouterState,
 } from "@tanstack/react-router";
+import { TriangleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import { RouterProvider } from "react-aria-components";
+import { useTranslation } from "react-i18next";
 import { AppLayout } from "#/components/layout/AppLayout";
-import { getMeFn } from "#/features/auth/auth.functions";
+import { getAuthOptionsFn, getMeFn } from "#/features/auth/auth.functions";
 import type { Me } from "#/features/auth/session";
 import { THEME_INIT_SCRIPT } from "#/features/theme/theme";
 import { DEFAULT_LANGUAGE, i18next } from "#/i18n";
@@ -30,12 +32,20 @@ declare module "react-aria-components" {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient; me?: Me | null }>()({
 	// Every page needs the account: without a session everything except the login page leads to it.
-	beforeLoad: async ({ location }) => {
-		const me = await getMeFn();
+	beforeLoad: async ({ location, context }) => {
+		const [me, options] = await Promise.all([
+			getMeFn(),
+			// The API's dev-login switch is also the dev-environment flag; it does not change while the app runs.
+			context.queryClient.query({
+				queryKey: ["auth-options"],
+				queryFn: () => getAuthOptionsFn(),
+				staleTime: "static",
+			}),
+		]);
 		if (!me && location.pathname !== "/login") {
 			throw redirect({ to: "/login", search: { redirect: location.href } });
 		}
-		return { me };
+		return { me, isDevEnvironment: options.devLogin };
 	},
 	head: () => ({
 		meta: [
@@ -69,13 +79,14 @@ function RootDocument({ children }: { children: ReactNode }) {
 
 function RootComponent() {
 	const router = useRouter();
-	const { me } = Route.useRouteContext();
+	const { me, isDevEnvironment } = Route.useRouteContext();
 	const isLogin = useRouterState({ select: (state) => state.location.pathname === "/login" });
 	return (
 		<RouterProvider
 			navigate={(to, options) => router.navigate({ ...options, to })}
 			useHref={(to) => router.buildLocation({ to }).href}
 		>
+			{isDevEnvironment ? <DevBanner /> : null}
 			{me && !isLogin ? (
 				<AppLayout me={me}>
 					<Outlet />
@@ -84,5 +95,16 @@ function RootComponent() {
 				<Outlet />
 			)}
 		</RouterProvider>
+	);
+}
+
+/** Shown whenever the API runs with dev login: nobody should take this data for real people or companies. */
+function DevBanner() {
+	const { t } = useTranslation();
+	return (
+		<div role="note" className="dev-banner">
+			<TriangleAlert className="size-3.5 shrink-0" aria-hidden />
+			{t("app.devBanner")}
+		</div>
 	);
 }

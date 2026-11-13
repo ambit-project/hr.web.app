@@ -19,6 +19,7 @@ import { Route as EmployeesIdRouteImport } from './routes/employees/$id'
 import { Route as EmploymentsIdRouteImport } from './routes/employments/$id'
 import { Route as LegalParametersIndexRouteImport } from './routes/legal-parameters/index'
 import { Route as MyIndexRouteImport } from './routes/my/index'
+import { Route as PayComponentsIndexRouteImport } from './routes/pay-components/index'
 import { Route as PositionsIndexRouteImport } from './routes/positions/index'
 import { Route as TaxOfficesIndexRouteImport } from './routes/tax-offices/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
@@ -74,6 +75,11 @@ const MyIndexRoute = MyIndexRouteImport.update({
   path: '/my/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PayComponentsIndexRoute = PayComponentsIndexRouteImport.update({
+  id: '/pay-components/',
+  path: '/pay-components/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PositionsIndexRoute = PositionsIndexRouteImport.update({
   id: '/positions/',
   path: '/positions/',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/employees/': typeof EmployeesIndexRoute
   '/legal-parameters/': typeof LegalParametersIndexRoute
   '/my/': typeof MyIndexRoute
+  '/pay-components/': typeof PayComponentsIndexRoute
   '/positions/': typeof PositionsIndexRoute
   '/tax-offices/': typeof TaxOfficesIndexRoute
   '/users/': typeof UsersIndexRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/employees': typeof EmployeesIndexRoute
   '/legal-parameters': typeof LegalParametersIndexRoute
   '/my': typeof MyIndexRoute
+  '/pay-components': typeof PayComponentsIndexRoute
   '/positions': typeof PositionsIndexRoute
   '/tax-offices': typeof TaxOfficesIndexRoute
   '/users': typeof UsersIndexRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/employees/': typeof EmployeesIndexRoute
   '/legal-parameters/': typeof LegalParametersIndexRoute
   '/my/': typeof MyIndexRoute
+  '/pay-components/': typeof PayComponentsIndexRoute
   '/positions/': typeof PositionsIndexRoute
   '/tax-offices/': typeof TaxOfficesIndexRoute
   '/users/': typeof UsersIndexRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/employees/'
     | '/legal-parameters/'
     | '/my/'
+    | '/pay-components/'
     | '/positions/'
     | '/tax-offices/'
     | '/users/'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/employees'
     | '/legal-parameters'
     | '/my'
+    | '/pay-components'
     | '/positions'
     | '/tax-offices'
     | '/users'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/employees/'
     | '/legal-parameters/'
     | '/my/'
+    | '/pay-components/'
     | '/positions/'
     | '/tax-offices/'
     | '/users/'
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   EmployeesIndexRoute: typeof EmployeesIndexRoute
   LegalParametersIndexRoute: typeof LegalParametersIndexRoute
   MyIndexRoute: typeof MyIndexRoute
+  PayComponentsIndexRoute: typeof PayComponentsIndexRoute
   PositionsIndexRoute: typeof PositionsIndexRoute
   TaxOfficesIndexRoute: typeof TaxOfficesIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pay-components/': {
+      id: '/pay-components/'
+      path: '/pay-components'
+      fullPath: '/pay-components/'
+      preLoaderRoute: typeof PayComponentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/positions/': {
       id: '/positions/'
       path: '/positions'
@@ -326,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmployeesIndexRoute: EmployeesIndexRoute,
   LegalParametersIndexRoute: LegalParametersIndexRoute,
   MyIndexRoute: MyIndexRoute,
+  PayComponentsIndexRoute: PayComponentsIndexRoute,
   PositionsIndexRoute: PositionsIndexRoute,
   TaxOfficesIndexRoute: TaxOfficesIndexRoute,
   UsersIndexRoute: UsersIndexRoute,

@@ -15,6 +15,10 @@ export const AUDIT_ENTITIES = [
 	"employee_address",
 	"employee_bank_account",
 	"employee_link",
+	"pay_component_type",
+	"employment_component",
+	"deduction_consent",
+	"garnishment",
 ] as const;
 export type AuditEntity = (typeof AUDIT_ENTITIES)[number];
 

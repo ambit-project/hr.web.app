@@ -217,3 +217,17 @@ a.text-link,
 	--button-bg-hover: var(--color-topbar-hover);
 	--button-bg-pressed: var(--color-topbar-hover);
 }
+
+/* Pasek wersji deweloperskiej nad całą aplikacją. */
+.dev-banner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.3125rem 1rem;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3d2b00;
+	background: repeating-linear-gradient(-45deg, #ffd24d 0 14px, #ffc61a 14px 28px);
+	border-bottom: 1px solid #c99700;
+}

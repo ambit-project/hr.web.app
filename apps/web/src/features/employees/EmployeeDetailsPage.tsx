@@ -7,6 +7,7 @@ import type { GetEmployeeResponse } from "#/api/models";
 import { EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
+import { DeductionsSection } from "#/features/pay-components/DeductionsSection";
 import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
 import { birthDateWithAge } from "#/lib/age";
 import { ProblemError } from "#/lib/problem";
@@ -82,6 +83,9 @@ export function EmployeeDetailsPage() {
 				</Tabs.Panel>
 				<Tabs.Panel id="taxDeclarations" className="pt-4">
 					<TaxDeclarationsSection employeeId={employee.id} />
+				</Tabs.Panel>
+				<Tabs.Panel id="deductions" className="pt-4">
+					<DeductionsSection employeeId={employee.id} />
 				</Tabs.Panel>
 				<Tabs.Panel id="addresses" className="pt-4">
 					<AddressesSection employeeId={employee.id} />

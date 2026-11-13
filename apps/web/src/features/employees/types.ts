@@ -3,6 +3,7 @@ export const EMPLOYEE_TABS = [
 	"data",
 	"employments",
 	"taxDeclarations",
+	"deductions",
 	"addresses",
 	"bank",
 	"account",

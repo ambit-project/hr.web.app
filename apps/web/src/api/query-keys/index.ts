@@ -3,6 +3,7 @@ export { companiesKeys } from "./companiesKeys";
 export { employeesKeys } from "./employeesKeys";
 export { employmentsKeys } from "./employmentsKeys";
 export { legalParametersKeys } from "./legalParametersKeys";
+export { payComponentsKeys } from "./payComponentsKeys";
 export { positionsKeys } from "./positionsKeys";
 export { taxDeclarationsKeys } from "./taxDeclarationsKeys";
 export { taxOfficesKeys } from "./taxOfficesKeys";

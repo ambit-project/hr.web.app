@@ -12,6 +12,7 @@ type NavItem = {
 	to:
 		| "/employees"
 		| "/positions"
+		| "/pay-components"
 		| "/zus-codes"
 		| "/tax-offices"
 		| "/companies"
@@ -22,6 +23,7 @@ type NavItem = {
 	label:
 		| "app.nav.employees"
 		| "app.nav.positions"
+		| "app.nav.payComponents"
 		| "app.nav.zusCodes"
 		| "app.nav.taxOffices"
 		| "app.nav.companies"
@@ -50,6 +52,7 @@ const NAV: NavSection[] = [
 		label: "app.nav.dictionaries",
 		items: [
 			{ to: "/positions", label: "app.nav.positions", roles: STAFF },
+			{ to: "/pay-components", label: "app.nav.payComponents", roles: STAFF },
 			{ to: "/zus-codes", label: "app.nav.zusCodes", roles: STAFF },
 			{ to: "/tax-offices", label: "app.nav.taxOffices", roles: STAFF },
 		],

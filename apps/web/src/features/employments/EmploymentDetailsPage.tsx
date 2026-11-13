@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmploymentResponse } from "#/api/models";
 import { AddButton, EditButton } from "#/components/ui/AddButton";
+import { EmploymentComponentsSection } from "#/features/pay-components/EmploymentComponentsSection";
 import { ProblemError } from "#/lib/problem";
 import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
@@ -153,6 +154,9 @@ export function EmploymentDetailsPage() {
 					</Table.Content>
 				</Table.ScrollContainer>
 			</Table>
+			<EmploymentComponentsSection
+				contract={{ id: employment.id, kind: employment.kind, employeeId: employment.employeeId }}
+			/>
 			<EmploymentDialog ref={dialog} />
 		</section>
 	);

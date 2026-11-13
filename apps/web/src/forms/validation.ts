@@ -22,7 +22,10 @@ export type ValidationCode =
 	| "afterEnd"
 	| "future"
 	| "outsideAllowed"
-	| "beforeSubmission";
+	| "beforeSubmission"
+	| "consentMissing"
+	| "aboveConsent"
+	| "afterStatus";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {
