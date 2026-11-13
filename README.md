@@ -42,6 +42,9 @@ cd apps/web && yarn install && yarn dev         # front na :6301 (HR_API_URL, do
 
 Po zmianie w `db/` uruchom ponownie migracje: `docker compose -f infrastructure/docker-compose.yml up migrate`.
 
+Fikcyjne numery PESEL dla kartotek deweloperskich bez PESEL (szyfrowane kluczem `HR_DATA_KEY` z `infrastructure/.env`;
+migracja tego nie robi, bo nie zna klucza): `scripts/dev-pesel.sh`.
+
 ## Konfiguracja API (zmienne środowiskowe)
 
 | Zmienna | Domyślnie | Znaczenie |
