@@ -17,6 +17,7 @@ export * from "./optima/optima.ts";
 export * from "./optima-agent/optima-agent.ts";
 export * from "./overtime/overtime.ts";
 export * from "./pay-component-types/pay-component-types.ts";
+export * from "./payroll/payroll.ts";
 export * from "./positions/positions.ts";
 export * from "./ppk/ppk.ts";
 export * from "./tax-declarations/tax-declarations.ts";

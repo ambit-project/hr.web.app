@@ -66,7 +66,7 @@ Kolejność modułów wynika z zależności w [modelu domeny](docs/domain/README
 | 006 | Składniki, zgody na potrącenia, tytuły egzekucyjne | zrobione |
 | 007 | Czas pracy i nieobecności | zrobione |
 | 008 | PPK | zrobione |
-| 009 | Listy płac, liczenie, korekty | w realizacji |
+| 009 | Listy płac, liczenie, korekty | zrobione |
 | 010 | Paski, dokumenty zgód, PIT | w realizacji |
 | 011 | Integracja z Comarch ERP Optima przez agenta: rodzaje płac, eksport pracowników, potrąceń i dodatków, listy płac z Optimy | API zrobione, front do zrobienia |
 

@@ -12,6 +12,7 @@ type NavItem = {
 	to:
 		| "/employees"
 		| "/ppk"
+		| "/payrolls"
 		| "/calendar"
 		| "/holidays"
 		| "/positions"
@@ -26,6 +27,7 @@ type NavItem = {
 	label:
 		| "app.nav.employees"
 		| "app.nav.ppk"
+		| "app.nav.payrolls"
 		| "app.nav.calendar"
 		| "app.nav.holidays"
 		| "app.nav.positions"
@@ -41,7 +43,12 @@ type NavItem = {
 };
 
 type NavSection = {
-	label?: "app.nav.staff" | "app.nav.workTime" | "app.nav.dictionaries" | "app.nav.administration";
+	label?:
+		| "app.nav.staff"
+		| "app.nav.pay"
+		| "app.nav.workTime"
+		| "app.nav.dictionaries"
+		| "app.nav.administration";
 	items: NavItem[];
 };
 
@@ -56,6 +63,10 @@ const NAV: NavSection[] = [
 			{ to: "/employees", label: "app.nav.employees", roles: STAFF },
 			{ to: "/ppk", label: "app.nav.ppk", roles: STAFF },
 		],
+	},
+	{
+		label: "app.nav.pay",
+		items: [{ to: "/payrolls", label: "app.nav.payrolls", roles: STAFF }],
 	},
 	{
 		label: "app.nav.workTime",

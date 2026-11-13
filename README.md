@@ -4,8 +4,8 @@ Kadry i Płace zgodne z polskim prawem (kwoty w PLN): kartoteki pracowników, um
 płacowe, zgody na potrącenia i zajęcia wynagrodzenia — a docelowo listy płac, paski i PIT.
 
 > [!WARNING]
-> **Projekt nie jest gotowy do produkcji.** To otwarty projekt w budowie: nie liczy jeszcze list płac (moduł 009)
-> i nie przeszedł audytu prawnego ani bezpieczeństwa. Nie używaj go do rozliczania prawdziwych wynagrodzeń bez
+> **Projekt nie jest gotowy do produkcji.** To otwarty projekt w budowie: listy płac (moduł 009) są nowe i nie zostały
+> porównane z innym systemem, a projekt nie przeszedł audytu prawnego ani bezpieczeństwa. Nie używaj go do rozliczania prawdziwych wynagrodzeń bez
 > własnej weryfikacji.
 
 ## Stan prawny: listopad 2026
@@ -30,7 +30,7 @@ grupę spółek. Żeby było to łatwe:
 
 Gotowe moduły: 001 Platforma (logowanie, role, spółki, parametry prawne, użytkownicy, audyt), 002 Słowniki,
 003 Pracownicy (kartoteki, akronim, szyfrowany PESEL, kopiowanie między spółkami), 004 Zatrudnienie, 005 Oświadczenia
-podatkowe, 006 Składniki, zgody i zajęcia, 007 Czas pracy i nieobecności, 008 PPK. Kolejne: 009 Listy płac, 010
+podatkowe, 006 Składniki, zgody i zajęcia, 007 Czas pracy i nieobecności, 008 PPK, 009 Listy płac. Kolejne: 010
 Dokumenty i PIT (`PRODUCT.md`).
 
 ## Stack

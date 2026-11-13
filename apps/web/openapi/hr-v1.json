@@ -5183,6 +5183,811 @@
         }
       }
     },
+    "/api/companies/{id}/payroll-settings": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "ListPayrollSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayrollSettingsItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "AddPayrollSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPayrollSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddPayrollSettingsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{id}/payrolls": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "ListPayrolls",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayrollsItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "CreatePayroll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayrollRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayrollResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payrolls/{id}": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "GetPayroll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "DeletePayroll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "rowVersion",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payrolls/{id}/calculate": {
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "CalculatePayroll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollVersion"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payrolls/{id}/close": {
+      "post": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "ClosePayroll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollVersion"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payrolls/{id}/members": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "ListPayrollMembers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayrollMembersItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "SetPayrollMembers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPayrollMembersRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payrolls/{id}/entries": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "ListPayrollEntries",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayrollEntriesItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payroll-entries/{id}": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "GetPayrollEntry",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollEntryResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employees/{id}/year-totals/{year}": {
+      "get": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "GetPayrollYearTotals",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetYearTotalsResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/legal-parameters": {
       "get": {
         "tags": [
@@ -6766,6 +7571,48 @@
           }
         }
       },
+      "AddPayrollSettingsRequest": {
+        "required": [
+          "validFrom",
+          "accidentRate",
+          "paysSicknessAllowance"
+        ],
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "accidentRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "paysSicknessAllowance": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
+      "AddPayrollSettingsResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "AddPpkSettingsRequest": {
         "required": [
           "validFrom",
@@ -7762,6 +8609,56 @@
         }
       },
       "CreateOperationResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreatePayrollRequest": {
+        "required": [
+          "kind",
+          "period",
+          "paymentDate",
+          "correctsPayrollId"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "period": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "paymentDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "correctsPayrollId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "CreatePayrollResponse": {
         "required": [
           "id"
         ],
@@ -9534,6 +10431,206 @@
           }
         }
       },
+      "GetPayrollEntryLine": {
+        "required": [
+          "seq",
+          "code",
+          "side",
+          "base",
+          "rate",
+          "amount",
+          "componentTypeId",
+          "componentName",
+          "inZusBase",
+          "inHealthBase",
+          "taxable",
+          "inSicknessBase",
+          "trace"
+        ],
+        "type": "object",
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "base": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "componentTypeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "componentName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "inZusBase": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "inHealthBase": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "taxable": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "inSicknessBase": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "trace": {
+            "$ref": "#/components/schemas/JsonObject"
+          }
+        }
+      },
+      "GetPayrollEntryResponse": {
+        "required": [
+          "id",
+          "payrollId",
+          "payrollNumber",
+          "payrollStatus",
+          "employmentId",
+          "employmentNumber",
+          "employeeId",
+          "employeeNumber",
+          "firstName",
+          "lastName",
+          "termsId",
+          "gross",
+          "net",
+          "payout",
+          "normHours",
+          "workedHours",
+          "overtimeHours",
+          "warnings",
+          "lines"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payrollId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payrollNumber": {
+            "type": "string"
+          },
+          "payrollStatus": {
+            "type": "string"
+          },
+          "employmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employmentNumber": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "termsId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
+          },
+          "normHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "workedHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "overtimeHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayrollWarning"
+            }
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetPayrollEntryLine"
+            }
+          }
+        }
+      },
       "GetPayrollPeriodResponse": {
         "required": [
           "databaseName",
@@ -9552,6 +10649,159 @@
           "month": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "GetPayrollResponse": {
+        "required": [
+          "id",
+          "companyId",
+          "number",
+          "kind",
+          "periodFrom",
+          "periodTo",
+          "paymentDate",
+          "paymentDateLate",
+          "correctsPayrollId",
+          "correctsNumber",
+          "status",
+          "isStale",
+          "calculatedAt",
+          "closedAt",
+          "entryCount",
+          "warningCount",
+          "memberCount",
+          "excludedCount",
+          "gross",
+          "employeeContributions",
+          "health",
+          "pit",
+          "ppkEmployee",
+          "net",
+          "deductions",
+          "payout",
+          "employerCost",
+          "rowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "companyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDateLate": {
+            "type": "boolean"
+          },
+          "correctsPayrollId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "correctsNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "isStale": {
+            "type": "boolean"
+          },
+          "calculatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "entryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "warningCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "memberCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "excludedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "employeeContributions": {
+            "type": "number",
+            "format": "double"
+          },
+          "health": {
+            "type": "number",
+            "format": "double"
+          },
+          "pit": {
+            "type": "number",
+            "format": "double"
+          },
+          "ppkEmployee": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "deductions": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
+          },
+          "employerCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -9651,6 +10901,43 @@
           }
         }
       },
+      "GetYearTotalsResponse": {
+        "required": [
+          "pensionBase",
+          "taxBaseEmployment",
+          "taxBaseAll",
+          "exemptIncome",
+          "authorCosts",
+          "employeeCosts"
+        ],
+        "type": "object",
+        "properties": {
+          "pensionBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxBaseEmployment": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxBaseAll": {
+            "type": "number",
+            "format": "double"
+          },
+          "exemptIncome": {
+            "type": "number",
+            "format": "double"
+          },
+          "authorCosts": {
+            "type": "number",
+            "format": "double"
+          },
+          "employeeCosts": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
       "HttpValidationProblemDetails": {
         "type": "object",
         "properties": {
@@ -9695,6 +10982,9 @@
             }
           }
         }
+      },
+      "JsonObject": {
+        "type": "object"
       },
       "LinkEmployeeAccountRequest": {
         "required": [
@@ -10925,6 +12215,276 @@
           }
         }
       },
+      "ListPayrollEntriesItem": {
+        "required": [
+          "id",
+          "employmentId",
+          "employmentNumber",
+          "employeeId",
+          "employeeNumber",
+          "acronym",
+          "firstName",
+          "lastName",
+          "gross",
+          "employeeContributions",
+          "health",
+          "pit",
+          "ppkEmployee",
+          "net",
+          "deductions",
+          "payout",
+          "employerCost",
+          "warnings"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employmentNumber": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "acronym": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "employeeContributions": {
+            "type": "number",
+            "format": "double"
+          },
+          "health": {
+            "type": "number",
+            "format": "double"
+          },
+          "pit": {
+            "type": "number",
+            "format": "double"
+          },
+          "ppkEmployee": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "deductions": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
+          },
+          "employerCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayrollWarning"
+            }
+          }
+        }
+      },
+      "ListPayrollMembersItem": {
+        "required": [
+          "employmentId",
+          "employmentNumber",
+          "employeeId",
+          "employeeNumber",
+          "acronym",
+          "firstName",
+          "lastName",
+          "excluded",
+          "entryId"
+        ],
+        "type": "object",
+        "properties": {
+          "employmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employmentNumber": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "acronym": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "excluded": {
+            "type": "boolean"
+          },
+          "entryId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "ListPayrollSettingsItem": {
+        "required": [
+          "id",
+          "validFrom",
+          "validTo",
+          "accidentRate",
+          "paysSicknessAllowance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "accidentRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "paysSicknessAllowance": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ListPayrollsItem": {
+        "required": [
+          "id",
+          "number",
+          "kind",
+          "periodFrom",
+          "periodTo",
+          "paymentDate",
+          "paymentDateLate",
+          "correctsPayrollId",
+          "correctsNumber",
+          "status",
+          "isStale",
+          "entryCount",
+          "gross",
+          "net",
+          "payout",
+          "rowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDateLate": {
+            "type": "boolean"
+          },
+          "correctsPayrollId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "correctsNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "isStale": {
+            "type": "boolean"
+          },
+          "entryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "ListPayTypesItem": {
         "required": [
           "optimaId",
@@ -11681,6 +13241,36 @@
           }
         }
       },
+      "PayrollVersion": {
+        "required": [
+          "rowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "PayrollWarning": {
+        "required": [
+          "code",
+          "details"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "details": {
+            "$ref": "#/components/schemas/JsonObject"
+          }
+        }
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -11898,6 +13488,39 @@
               "integer"
             ],
             "format": "int64"
+          }
+        }
+      },
+      "SetPayrollMembersRequest": {
+        "required": [
+          "rowVersion",
+          "employmentIds",
+          "excluded"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "employmentIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "excluded": {
+            "type": [
+              "null",
+              "boolean"
+            ]
           }
         }
       },
@@ -12575,6 +14198,9 @@
     },
     {
       "name": "PayComponentTypes"
+    },
+    {
+      "name": "Payroll"
     },
     {
       "name": "Positions"

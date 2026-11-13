@@ -10,16 +10,36 @@
       godzinowa, 30-krotność, próg PPK, kwoty wolne — okresy 2026 zamknięte 31.12.2026). Silnik w
       `db/changelog/modules/80-payroll/` (etapy niżej), blokady w rutynach 004–008, kwota ściągnięta z zajęcia
       w `pay_components_app.garnishment_list`, uprawnienia `payroll_app`. Testy rutyn.
-- [ ] T2. API: `/api/companies/{id}/payroll-settings` (`company_settings_list`, `company_settings_set`),
+- [x] T2. API: `/api/companies/{id}/payroll-settings` (`company_settings_list`, `company_settings_set`),
       `/api/companies/{id}/payrolls?year=` (`payroll_list`, `payroll_create`), `/api/payrolls/{id}` (`payroll_get`,
       `payroll_delete`), `/calculate` (`payroll_calculate`), `/close` (`payroll_close`), `/members`
       (`payroll_member_list`, `payroll_members_set`), `/api/payrolls/{id}/entries` (`entry_list`),
       `/api/payroll-entries/{id}` (`entry_get` + `entry_lines`), roczne sumy kartoteki (`year_totals`); migawka
       OpenAPI, testy HTTP. Zapis listy przyjmuje `rowVersion` (NULL = bez sprawdzania).
-- [ ] T3. Front: „Płace → Listy płac” (lista, kreator, strona listy z wypłatami, szczegóły wypłaty ze śladem, akcje
+- [x] T3. Front: „Płace → Listy płac” (lista, kreator, strona listy z wypłatami, szczegóły wypłaty ze śladem, akcje
       nalicz / zamknij / usuń / korekta, skład z wyłączaniem), ustawienia płacowe spółki, tłumaczenia kodów błędów
       i ostrzeżeń z `db/README.md`, etykiety audytu (`payroll`, `payroll_company_settings`).
-- [ ] T4. Dokumentacja: PRODUCT, sprawdzenie w przeglądarce, potwierdzenie spraw otwartych niżej.
+- [x] T4. Dokumentacja: PRODUCT, sprawdzenie w przeglądarce, potwierdzenie spraw otwartych niżej.
+
+## API i front (T2, T3)
+
+- API: `apps/api/HrWebApp.Api/Features/Payroll/` (tag `Payroll`), testy `tests/HrWebApp.Api.Tests/Features/Payroll/PayrollHttpTests.cs`.
+  Zapis listy (`/calculate`, `/close`, `PUT /members`, `DELETE ?rowVersion=`) przyjmuje `rowVersion` (pusta — bez
+  sprawdzania). Ślad pozycji i szczegóły ostrzeżeń jako obiekt JSON (`JsonObject` → w OpenAPI `{"type": "object"}`),
+  ostrzeżenia rozdzielone na `code` i `details`. Stopa wypadkowa w API jak w bazie — ułamek; front pokazuje procent **[D]**.
+- Front: menu „Płace → Listy płac” (`/payrolls?companyId=&year=&tab=lists|settings`), strona listy `/payrolls/$id`,
+  wypłata `/payroll-entries/$id`. Kreator **[D]**: krok 1 tworzy listę (skład liczy baza przy zakładaniu, więc bez
+  listy nie ma czego pokazać w kroku „Skład”); „Anuluj” w dalszych krokach zostawia otwartą listę (komunikat w
+  kreatorze), krok „Skład” zapisuje tylko różnice wyłączeń, „Podsumowanie” — „Nalicz teraz” albo „Przejdź do listy”.
+  Korekta: przycisk „Korekta” przy zamkniętej liście zwykłej otwiera kreator z wybraną listą; umowy korekty wybiera
+  się w kroku „Skład”. Ślad i ostrzeżenia idą z server function jako tekst JSON (TanStack Start nie przepuszcza typu
+  `unknown`) i są parsowane w przeglądarce. Sumy roczne na stronie wypłaty — rok okresu listy.
+- Sprawdzenie w przeglądarce 2026-11-13 (Kadry, spółka Demo): kreator utworzył listę `2026/11/UP` (13 umów), „Nalicz
+  teraz” — 13 wypłat, brutto 107 706,00, do wypłaty 74 329,93; wypłata Anny Testowej: ZASAD 6 000,00, składki
+  pracownika 1 288,57, PIT 302,00 (podstawa 5 017, kwota zmniejszająca 300), PPK 120,00 + 90,00 pracodawcy, potrącenie
+  KARTA 120,00, do wypłaty 4 169,43; ślad ZUS-E-P i PIT czytelny (parametry z datami, oświadczenie, sumy roczne
+  przed listą). Lista **zostawiona naliczona, niezamknięta** (dane dev do ponownego użycia; można ją usunąć na
+  stronie listy). Ustawień płacowych spółki Demo nie dopisywano.
 
 ## Silnik
 
