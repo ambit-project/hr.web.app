@@ -36,7 +36,14 @@ export const pl = {
 		no: "nie",
 	},
 	auth: {
-		title: "Zaloguj się, aby kontynuować.",
+		heading: "Zaloguj się",
+		title: "Do kartotek, list płac i dokumentów swojej spółki.",
+		brand: {
+			files: { title: "Kartoteki.", text: "Umowy, warunki płacy i oświadczenia w jednym miejscu." },
+			payroll: { title: "Płace.", text: "Składki, PIT, PPK i potrącenia zgodnie z przepisami." },
+			pit: { title: "Dokumenty.", text: "Paski i PIT-y dla pracownika po zalogowaniu." },
+			tagline: "Kadry i płace zgodne z polskim prawem.",
+		},
 		login: "Login lub e-mail",
 		password: "Hasło",
 		submit: "Zaloguj",
@@ -44,8 +51,7 @@ export const pl = {
 		logout: "Wyloguj",
 		noAccess: "Twoje konto nie ma jeszcze żadnej roli. Poproś administratora o nadanie uprawnień.",
 		dev: {
-			hint: "Środowisko deweloperskie — logowanie bez hasła:",
-			as: "Zaloguj jako {{role}}",
+			hint: "Środowisko deweloperskie — wejdź bez hasła jako",
 		},
 	},
 	roles: { kadry: "Kadry", administrator: "Administrator", pracownik: "Pracownik" },

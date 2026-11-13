@@ -50,6 +50,7 @@
 	--color-on-status: #ffffff;
 
 	--color-segment: #ffffff;
+	--color-row-alt: #f2f4f7;
 	--color-backdrop: rgba(16, 24, 40, 0.4);
 
 	--font-family:
@@ -107,6 +108,7 @@
 	--color-on-status: #0d1320;
 
 	--color-segment: #263457;
+	--color-row-alt: #19223a;
 	--color-backdrop: rgba(0, 0, 0, 0.6);
 
 	--shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.35);
