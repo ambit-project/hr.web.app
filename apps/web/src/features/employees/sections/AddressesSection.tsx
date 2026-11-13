@@ -1,7 +1,8 @@
-import { Button, EmptyState, Spinner, Table } from "@heroui/react";
+import { EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { AddButton } from "#/components/ui/AddButton";
 import { AddressDialog, type AddressDialogHandle } from "../AddressDialog";
 import { employeeAddressesQuery } from "../employeesQueries";
 import type { AddressKind } from "../types";
@@ -14,9 +15,10 @@ export function AddressesSection({ employeeId }: { employeeId: string }) {
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex gap-2">
-				<Button onPress={() => dialog.current?.open("residence")}>
-					{t("employees.addresses.add")}
-				</Button>
+				<AddButton
+					label={t("employees.addresses.add")}
+					onPress={() => dialog.current?.open("residence")}
+				/>
 			</div>
 			{isPending ? (
 				<Spinner aria-label={t("common.loading")} />

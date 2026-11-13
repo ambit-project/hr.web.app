@@ -5,6 +5,7 @@ import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
+import { AddButton, EditButton } from "#/components/ui/AddButton";
 import type { Role } from "#/features/auth/auth.functions";
 import { UserDialog, type UserDialogHandle } from "./UserDialog";
 import { USERS_PAGE_SIZE, usersQuery } from "./usersQueries";
@@ -28,7 +29,7 @@ export function UsersPage() {
 		<section className="flex flex-col gap-4">
 			<header className="flex flex-wrap items-center justify-between gap-3">
 				<h1 className="text-2xl font-semibold">{t("users.title")}</h1>
-				<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
+				<AddButton label={t("users.create.title")} onPress={() => dialog.current?.create()} />
 			</header>
 
 			<ListSearch
@@ -85,13 +86,12 @@ export function UsersPage() {
 										</Table.Cell>
 										<Table.Cell>
 											<div className="flex gap-1">
-												<Button
+												<EditButton
 													size="sm"
 													variant="ghost"
+													label={t("common.edit")}
 													onPress={() => dialog.current?.edit(user)}
-												>
-													{t("common.edit")}
-												</Button>
+												/>
 												<Button
 													size="sm"
 													variant="ghost"

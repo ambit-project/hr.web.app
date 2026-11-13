@@ -1,10 +1,11 @@
-import { Button, EmptyState, Label, ListBox, Select, Spinner, Table } from "@heroui/react";
+import { EmptyState, Label, ListBox, Select, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
+import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { DayInput } from "#/components/ui/DateInputs";
 import { hasRole } from "#/features/auth/session";
 import { ZUS_CODE_KINDS, type ZusCodeKind } from "./types";
@@ -41,7 +42,10 @@ export function ZusCodesPage() {
 					<p className="text-sm text-muted">{t("zusCodes.hint")}</p>
 				</div>
 				{canEdit ? (
-					<Button onPress={() => dialog.current?.create(search.kind)}>{t("common.add")}</Button>
+					<AddButton
+						label={t("zusCodes.create.title")}
+						onPress={() => dialog.current?.create(search.kind)}
+					/>
 				) : null}
 			</header>
 
@@ -132,13 +136,12 @@ export function ZusCodesPage() {
 										<Table.Cell>{code.validTo ?? "—"}</Table.Cell>
 										<Table.Cell>
 											{canEdit ? (
-												<Button
+												<EditButton
 													size="sm"
 													variant="ghost"
+													label={t("common.edit")}
 													onPress={() => dialog.current?.edit(code)}
-												>
-													{t("common.edit")}
-												</Button>
+												/>
 											) : null}
 										</Table.Cell>
 									</Table.Row>

@@ -1,8 +1,10 @@
-import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { AddButton } from "#/components/ui/AddButton";
+import { OpenIcon, openLinkClass } from "#/components/ui/OpenLink";
 import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
 import { employmentsQuery } from "./employmentsQueries";
@@ -17,9 +19,10 @@ export function EmploymentsSection({ employeeId }: { employeeId: string }) {
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex gap-2">
-				<Button onPress={() => dialog.current?.create(employeeId)}>
-					{t("employments.create.title")}
-				</Button>
+				<AddButton
+					label={t("employments.create.title")}
+					onPress={() => dialog.current?.create(employeeId)}
+				/>
 			</div>
 			{isPending ? (
 				<Spinner aria-label={t("common.loading")} />
@@ -34,6 +37,9 @@ export function EmploymentsSection({ employeeId }: { employeeId: string }) {
 								<Table.Column>{t("employments.fields.position")}</Table.Column>
 								<Table.Column>{t("employments.status.label")}</Table.Column>
 								<Table.Column>{t("employments.retentionUntil")}</Table.Column>
+								<Table.Column className="w-12">
+									<span className="sr-only">{t("common.open")}</span>
+								</Table.Column>
 							</Table.Header>
 							<Table.Body
 								renderEmptyState={() => (
@@ -78,6 +84,17 @@ export function EmploymentsSection({ employeeId }: { employeeId: string }) {
 											<EmploymentStatusChip status={item.status as EmploymentStatus} />
 										</Table.Cell>
 										<Table.Cell>{item.retentionUntil ?? "—"}</Table.Cell>
+										<Table.Cell>
+											<RouterLink
+												to="/employments/$id"
+												params={{ id: item.id }}
+												className={openLinkClass}
+												aria-label={t("common.open")}
+												title={t("common.open")}
+											>
+												<OpenIcon />
+											</RouterLink>
+										</Table.Cell>
 									</Table.Row>
 								))}
 							</Table.Body>

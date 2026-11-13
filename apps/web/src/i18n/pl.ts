@@ -31,6 +31,7 @@ export const pl = {
 		edit: "Edytuj",
 		actions: "Akcje",
 		back: "Wstecz",
+		open: "Otwórz",
 		continue: "Dalej",
 		yes: "tak",
 		no: "nie",

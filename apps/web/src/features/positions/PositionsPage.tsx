@@ -1,4 +1,4 @@
-import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
+import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { PositionDialog, type PositionDialogHandle } from "./PositionDialog";
 import { POSITIONS_PAGE_SIZE, positionsQuery } from "./positionsQueries";
 
@@ -37,7 +38,7 @@ export function PositionsPage() {
 						<p className="text-sm text-muted">{t("positions.total", { count: data.total })}</p>
 					) : null}
 				</div>
-				<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
+				<AddButton label={t("positions.create.title")} onPress={() => dialog.current?.create()} />
 			</header>
 
 			<div className="flex flex-wrap items-center gap-4">
@@ -87,13 +88,12 @@ export function PositionsPage() {
 											</Chip>
 										</Table.Cell>
 										<Table.Cell>
-											<Button
+											<EditButton
 												size="sm"
 												variant="ghost"
+												label={t("common.edit")}
 												onPress={() => dialog.current?.edit(position)}
-											>
-												{t("common.edit")}
-											</Button>
+											/>
 										</Table.Cell>
 									</Table.Row>
 								))}

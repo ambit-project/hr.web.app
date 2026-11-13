@@ -4,6 +4,7 @@ import { getRouteApi, Link as RouterLink, useNavigate } from "@tanstack/react-ro
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmploymentResponse } from "#/api/models";
+import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { ProblemError } from "#/lib/problem";
 import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
@@ -78,7 +79,7 @@ export function EmploymentDetailsPage() {
 				))}
 			</dl>
 			<div className="flex flex-wrap gap-2">
-				<Button onPress={() => dialog.current?.edit(employment)}>{t("common.edit")}</Button>
+				<EditButton label={t("common.edit")} onPress={() => dialog.current?.edit(employment)} />
 				<Button variant="secondary" onPress={() => dialog.current?.terminate(employment)}>
 					{t("employments.terminate.action")}
 				</Button>
@@ -87,9 +88,10 @@ export function EmploymentDetailsPage() {
 
 			<h2 className="pt-4 text-lg font-semibold">{t("employments.terms.history")}</h2>
 			<div className="flex gap-2">
-				<Button onPress={() => dialog.current?.addTerms(employment)}>
-					{t("employments.terms.add")}
-				</Button>
+				<AddButton
+					label={t("employments.terms.add")}
+					onPress={() => dialog.current?.addTerms(employment)}
+				/>
 				{employment.termsHistory.length > 1 ? (
 					<DeleteLastTermsButton employment={employment} />
 				) : null}

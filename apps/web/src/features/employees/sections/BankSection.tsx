@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmployeeResponse } from "#/api/models";
+import { AddButton } from "#/components/ui/AddButton";
 import { BankAccountDialog, type BankAccountDialogHandle } from "../BankAccountDialog";
 import { employeeBankAccountsQuery } from "../employeesQueries";
 
@@ -23,7 +24,7 @@ export function BankSection({ employee }: { employee: GetEmployeeResponse }) {
 				{employee.iban ? <code>{formatIban(employee.iban)}</code> : t("employees.bank.cash")}
 			</p>
 			<div className="flex gap-2">
-				<Button onPress={() => dialog.current?.open("add")}>{t("employees.bank.add")}</Button>
+				<AddButton label={t("employees.bank.add")} onPress={() => dialog.current?.open("add")} />
 				{employee.iban ? (
 					<Button variant="secondary" onPress={() => dialog.current?.open("close")}>
 						{t("employees.bank.close")}

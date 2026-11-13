@@ -4,6 +4,7 @@ import { getRouteApi, Link as RouterLink, useNavigate } from "@tanstack/react-ro
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmployeeResponse } from "#/api/models";
+import { EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
@@ -153,7 +154,7 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 				))}
 			</dl>
 			<div className="flex gap-2">
-				<Button onPress={() => dialog.current?.edit(employee)}>{t("common.edit")}</Button>
+				<EditButton label={t("common.edit")} onPress={() => dialog.current?.edit(employee)} />
 				<AlertDialog>
 					<Button variant="danger-soft">{t("employees.delete.action")}</Button>
 					<AlertDialog.Backdrop isDismissable={false} isKeyboardDismissDisabled>

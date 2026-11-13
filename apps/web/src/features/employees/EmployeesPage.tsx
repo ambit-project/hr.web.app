@@ -1,10 +1,12 @@
-import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi, Link as RouterLink } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
+import { AddButton } from "#/components/ui/AddButton";
+import { OpenIcon, openLinkClass } from "#/components/ui/OpenLink";
 import { OptionSelect } from "#/components/ui/OptionSelect";
 import { CompanySelect } from "#/features/companies/CompanySelect";
 import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
@@ -45,7 +47,10 @@ export function EmployeesPage() {
 						<p className="text-sm text-muted">{t("employees.total", { count: data.total })}</p>
 					) : null}
 				</div>
-				<Button onPress={() => dialog.current?.create(search.companyId)}>{t("common.add")}</Button>
+				<AddButton
+					label={t("employees.create.title")}
+					onPress={() => dialog.current?.create(search.companyId)}
+				/>
 			</header>
 
 			<div className="flex flex-wrap items-end gap-4">
@@ -102,6 +107,9 @@ export function EmployeesPage() {
 								<Table.Column>{t("employees.fields.city")}</Table.Column>
 								<Table.Column>{t("employees.fields.account")}</Table.Column>
 								<Table.Column>{t("employees.status.label")}</Table.Column>
+								<Table.Column className="w-12">
+									<span className="sr-only">{t("common.open")}</span>
+								</Table.Column>
 							</Table.Header>
 							<Table.Body
 								renderEmptyState={() => (
@@ -133,6 +141,18 @@ export function EmployeesPage() {
 											<Chip size="sm" color={STATUS_COLORS[employee.status as EmployeeStatus]}>
 												{t(`employees.status.${employee.status as EmployeeStatus}`)}
 											</Chip>
+										</Table.Cell>
+										<Table.Cell>
+											<RouterLink
+												to="/employees/$id"
+												params={{ id: employee.id }}
+												search={{ tab: undefined }}
+												className={openLinkClass}
+												aria-label={t("common.open")}
+												title={t("common.open")}
+											>
+												<OpenIcon />
+											</RouterLink>
 										</Table.Cell>
 									</Table.Row>
 								))}

@@ -1,10 +1,11 @@
-import { Button, EmptyState, Spinner, Table } from "@heroui/react";
+import { EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
+import { AddButton } from "#/components/ui/AddButton";
 import { DayInput } from "#/components/ui/DateInputs";
 import {
 	AddLegalParameterDialog,
@@ -37,7 +38,7 @@ export function LegalParametersPage() {
 					<h1 className="text-2xl font-semibold">{t("legalParameters.title")}</h1>
 					<p className="text-sm text-muted">{t("legalParameters.hint")}</p>
 				</div>
-				<Button onPress={() => dialog.current?.open()}>{t("common.add")}</Button>
+				<AddButton label={t("legalParameters.add.title")} onPress={() => dialog.current?.open()} />
 			</header>
 
 			<div className="flex flex-wrap items-end gap-4">
@@ -92,13 +93,12 @@ export function LegalParametersPage() {
 											{parameter.source}
 										</Table.Cell>
 										<Table.Cell>
-											<Button
+											<AddButton
 												size="sm"
 												variant="ghost"
+												label={t("legalParameters.add.title")}
 												onPress={() => dialog.current?.open(parameter.code)}
-											>
-												{t("common.add")}
-											</Button>
+											/>
 										</Table.Cell>
 									</Table.Row>
 								))}

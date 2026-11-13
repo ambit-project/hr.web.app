@@ -1,4 +1,4 @@
-import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
+import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
 import { TaxOfficeDialog, type TaxOfficeDialogHandle } from "./TaxOfficeDialog";
 import { TAX_OFFICES_PAGE_SIZE, taxOfficesQuery } from "./taxOfficesQueries";
@@ -39,7 +40,10 @@ export function TaxOfficesPage() {
 					<p className="text-sm text-muted">{t("taxOffices.hint")}</p>
 				</div>
 				{canEdit ? (
-					<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
+					<AddButton
+						label={t("taxOffices.create.title")}
+						onPress={() => dialog.current?.create()}
+					/>
 				) : null}
 			</header>
 
@@ -93,13 +97,12 @@ export function TaxOfficesPage() {
 										</Table.Cell>
 										<Table.Cell>
 											{canEdit ? (
-												<Button
+												<EditButton
 													size="sm"
 													variant="ghost"
+													label={t("common.edit")}
 													onPress={() => dialog.current?.edit(office)}
-												>
-													{t("common.edit")}
-												</Button>
+												/>
 											) : null}
 										</Table.Cell>
 									</Table.Row>

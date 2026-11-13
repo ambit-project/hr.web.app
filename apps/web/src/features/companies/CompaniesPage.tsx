@@ -1,10 +1,11 @@
-import { Button, Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
+import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
 import { CompanyDialog, type CompanyDialogHandle } from "./CompanyDialog";
 import { COMPANIES_PAGE_SIZE, companiesQuery } from "./companiesQueries";
@@ -41,7 +42,7 @@ export function CompaniesPage() {
 					) : null}
 				</div>
 				{canEdit ? (
-					<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
+					<AddButton label={t("companies.create.title")} onPress={() => dialog.current?.create()} />
 				) : null}
 			</header>
 
@@ -95,13 +96,12 @@ export function CompaniesPage() {
 										</Table.Cell>
 										<Table.Cell>
 											{canEdit ? (
-												<Button
+												<EditButton
 													size="sm"
 													variant="ghost"
+													label={t("common.edit")}
 													onPress={() => dialog.current?.edit(company)}
-												>
-													{t("common.edit")}
-												</Button>
+												/>
 											) : null}
 										</Table.Cell>
 									</Table.Row>

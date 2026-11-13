@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ListTaxDeclarationsItem } from "#/api/models";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
+import { AddButton } from "#/components/ui/AddButton";
 import { ProblemError } from "#/lib/problem";
 import { TaxDeclarationDialog, type TaxDeclarationDialogHandle } from "./TaxDeclarationDialog";
 import { TaxDeclarationsTable } from "./TaxDeclarationsTable";
@@ -20,9 +21,10 @@ export function TaxDeclarationsSection({ employeeId }: { employeeId: string }) {
 		<div className="flex flex-col gap-4">
 			<p className="max-w-3xl text-sm text-muted">{t("taxDeclarations.hint")}</p>
 			<div className="flex flex-wrap items-center gap-4">
-				<Button onPress={() => dialog.current?.create(employeeId)}>
-					{t("taxDeclarations.create.title")}
-				</Button>
+				<AddButton
+					label={t("taxDeclarations.create.title")}
+					onPress={() => dialog.current?.create(employeeId)}
+				/>
 				<ToggleFilter
 					label={t("taxDeclarations.onlyActive")}
 					value={onlyActive}
