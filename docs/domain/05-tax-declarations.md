@@ -47,9 +47,9 @@ oświadczenia odwołującego.
 |---|---|---|---|
 | `id` | Identyfikator | tak | **PK**. |
 | `employeeId` | Identyfikator | tak | **FK → `Employee`**. |
-| `kind` | Wyliczenie | tak | `PIT-2`, `ulga dla młodych — rezygnacja`, `ulga na powrót`, `ulga dla rodzin 4+`, `ulga dla pracujących seniorów`, `podwyższone koszty`, `rezygnacja z kosztów autorskich`, `wniosek o niepobieranie zaliczek` (lista do potwierdzenia w specyfikacji). |
-| `details` | Struktura | warunkowo | Np. dla PIT-2: `share` = `1/12`, `1/24`, `1/36` (kwota zmniejszająca w całości, w połowie albo w jednej trzeciej). |
-| `submittedAt` | Data | tak | Data złożenia. Od niej (albo od miesiąca po niej, zależnie od przepisu) oświadczenie działa. |
+| `kind` | Wyliczenie | tak | Lista z podstawą prawną w [specyfikacji 005 R1](../specs/005-tax-declarations/spec.md): PIT-2, wniosek o niestosowanie ulgi dla młodych, ulgi na powrót / dla rodzin 4+ / dla seniorów, podwyższone koszty, wnioski o niestosowanie kosztów pracowniczych i kosztów 50%, niepobieranie zaliczek, wyższa stawka. |
+| `details` | Struktura | warunkowo | Dla PIT-2: `share` = `1/12`, `1/24`, `1/36` (art. 31b ust. 3; wybiera podatnik); dla ulgi na powrót: `yearFrom`, `yearTo`. |
+| `submittedAt` | Data | tak | Data złożenia. Płatnik stosuje wpis od miesiąca złożenia albo najpóźniej od następnego (art. 31a ust. 5). |
 | `validFrom` | Data | tak | Początek stosowania. |
 | `validTo` | Data | nie | Koniec stosowania. |
 
