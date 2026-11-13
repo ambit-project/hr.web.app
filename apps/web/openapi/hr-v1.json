@@ -5274,7 +5274,8 @@
           "city",
           "accountLogin",
           "status",
-          "acronym"
+          "acronym",
+          "peselMasked"
         ],
         "type": "object",
         "properties": {
@@ -5325,6 +5326,12 @@
           },
           "acronym": {
             "type": "string"
+          },
+          "peselMasked": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

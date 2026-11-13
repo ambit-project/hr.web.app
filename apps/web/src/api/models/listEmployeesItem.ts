@@ -21,4 +21,6 @@ export interface ListEmployeesItem {
 	accountLogin: string | null;
 	status: string;
 	acronym: string;
+	/** @nullable */
+	peselMasked: string | null;
 }

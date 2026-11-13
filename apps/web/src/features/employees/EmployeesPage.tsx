@@ -109,6 +109,7 @@ export function EmployeesPage() {
 									</span>
 								</Table.Column>
 								<Table.Column>{t("employees.fields.acronym")}</Table.Column>
+								<Table.Column>{t("employees.fields.pesel")}</Table.Column>
 								<Table.Column>{t("employees.fields.birthDate")}</Table.Column>
 								<Table.Column>{t("employees.fields.city")}</Table.Column>
 								<Table.Column>{t("employees.fields.account")}</Table.Column>
@@ -142,6 +143,9 @@ export function EmployeesPage() {
 										</Table.Cell>
 										<Table.Cell>
 											<code>{employee.acronym}</code>
+										</Table.Cell>
+										<Table.Cell>
+											{employee.peselMasked ? <code>{employee.peselMasked}</code> : "—"}
 										</Table.Cell>
 										<Table.Cell>{birthDateWithAge(employee.birthDate)}</Table.Cell>
 										<Table.Cell>{employee.city ?? "—"}</Table.Cell>

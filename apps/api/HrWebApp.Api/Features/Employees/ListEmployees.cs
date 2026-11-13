@@ -31,7 +31,8 @@ public static class ListEmployees
         string? City,
         string? AccountLogin,
         string Status,
-        string Acronym
+        string Acronym,
+        string? PeselMasked
     );
 
     public static async Task<Ok<PagedList<Item>>> Handle(
@@ -54,7 +55,7 @@ public sealed class ListEmployeesHandler(DbSession db)
         var items = await db.QueryAsync(
             """
             SELECT id, company_id, company_short_name, number, first_name, second_name, last_name, birth_date,
-                   city, account_login, total_count, status, acronym
+                   city, account_login, total_count, status, acronym, pesel_masked
             FROM employees_app.employee_list($1, $2, $3, $4, $5)
             """,
             [
@@ -79,7 +80,8 @@ public sealed class ListEmployeesHandler(DbSession db)
                     reader.IsDBNull(8) ? null : reader.GetString(8),
                     reader.IsDBNull(9) ? null : reader.GetString(9),
                     reader.GetString(11),
-                    reader.GetString(12)
+                    reader.GetString(12),
+                    reader.IsDBNull(13) ? null : reader.GetString(13)
                 );
             },
             cancellationToken

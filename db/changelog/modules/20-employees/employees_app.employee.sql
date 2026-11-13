@@ -2,7 +2,7 @@
 
 --changeset hr:employees_app.employee_list runOnChange:true splitStatements:false
 --comment: Lista kartotek (Kadry, Administrator): filtr spółki, wyszukiwanie po nazwisku, imieniu, numerze, akronimie, a po pełnym
---comment: poprawnym PESEL dokładnie (HMAC), filtr statusu z umów (004 R16). Bez PESEL i rachunku w wyniku.
+--comment: poprawnym PESEL dokładnie (HMAC), filtr statusu z umów (004 R16). PESEL tylko maskowany (5 cyfr), bez rachunku.
 DROP FUNCTION IF EXISTS employees_app.employee_list(uuid, text, integer, integer);
 DROP FUNCTION IF EXISTS employees_app.employee_list(uuid, text, integer, integer, text);
 CREATE FUNCTION employees_app.employee_list(
@@ -25,7 +25,8 @@ CREATE FUNCTION employees_app.employee_list(
         city text,
         account_login text,
         status text,
-        total_count bigint
+        total_count bigint,
+        pesel_masked text
     )
     LANGUAGE plpgsql
     STABLE
@@ -44,7 +45,10 @@ BEGIN
 
     RETURN QUERY
     SELECT e.id, e.company_id, c.short_name, e.number, e.acronym, e.first_name, e.second_name, e.last_name,
-           e.birth_date, a.city, u.login, s.status, count(*) OVER ()
+           e.birth_date, a.city, u.login, s.status, count(*) OVER (),
+           -- Na liście tylko pierwsze 5 cyfr (decyzja właściciela 2026-11-13): bez audytu odczytu; pełny PESEL
+           -- wyłącznie w szczegółach kartoteki, z audytem.
+           CASE WHEN e.pesel_enc IS NOT NULL THEN left(employees.decrypt(e.pesel_enc), 5) || '******' END
     FROM employees.employees e
     CROSS JOIN LATERAL (SELECT employment.employee_status(e.id, current_date) AS status) s
     JOIN platform.companies c ON c.id = e.company_id

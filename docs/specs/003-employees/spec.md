@@ -59,6 +59,8 @@ kartotekę z kontem, a Pracownik po zalogowaniu widzi swoje profile, po jednym n
   i nazwisku. Przy założeniu baza nadaje go jako RRRRMM dnia dodania + kod z alfabetu bez mylących znaków (bez
   0/O, 1/I/L) — od 2026-11-13 8 znaków, np. `202611K7Q2MX4P`; Kadry mogą go zmienić (litery, cyfry, `.`, `-`, `_`, do 30 znaków). Unikalny w spółce
   bez względu na wielkość liter (`duplicate`). Lista pokazuje akronim i wyszukuje po nim.
+- **R17.** (dodane 2026-11-13, decyzja właściciela) Lista kartotek pokazuje PESEL **maskowany** — pierwsze 5 cyfr
+  i `******` — bez wpisu w audycie odczytów. Pełny PESEL tylko w szczegółach kartoteki (audyt odczytu, R9).
 
 ## Przypadki brzegowe
 - PESEL wpisany ze spacjami lub kreskami → zostają same cyfry.
