@@ -67,7 +67,7 @@ Kolejność modułów wynika z zależności w [modelu domeny](docs/domain/README
 | 007 | Czas pracy i nieobecności | zrobione |
 | 008 | PPK | zrobione |
 | 009 | Listy płac, liczenie, korekty | w realizacji |
-| 010 | Paski, dokumenty zgód, PIT | do napisania |
+| 010 | Paski, dokumenty zgód, PIT | w realizacji |
 | 011 | Integracja z Comarch ERP Optima przez agenta: rodzaje płac, eksport pracowników, potrąceń i dodatków, listy płac z Optimy | API zrobione, front do zrobienia |
 
 Pomysły spoza zakresu dopisuje się tu jako kolejne wiersze, a nie do kodu.
