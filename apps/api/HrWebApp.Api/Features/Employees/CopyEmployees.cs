@@ -18,9 +18,9 @@ public static class CopyEmployees
         string? Status
     );
 
-    public sealed record Skipped(Guid EmployeeId, string Name, string Reason);
+    public sealed record SkippedEmployee(Guid EmployeeId, string Name, string Reason);
 
-    public sealed record Response(int Copied, List<Skipped> Skipped);
+    public sealed record Response(int Copied, List<SkippedEmployee> Skipped);
 
     public static async Task<Ok<Response>> Handle(
         Request request,
@@ -60,7 +60,11 @@ public sealed class CopyEmployeesHandler(DbSession db)
             rows.Count(row => row.Reason is null),
             [
                 .. rows.Where(row => row.Reason is not null)
-                    .Select(row => new CopyEmployees.Skipped(row.Id, row.Name, row.Reason!)),
+                    .Select(row => new CopyEmployees.SkippedEmployee(
+                        row.Id,
+                        row.Name,
+                        row.Reason!
+                    )),
             ]
         );
     }

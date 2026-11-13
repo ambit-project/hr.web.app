@@ -5,7 +5,7 @@
  * OpenAPI spec version: v1
  */
 
-export interface CopyEmployeesSkipped {
+export interface CopyEmployeesSkippedEmployee {
 	employeeId: string;
 	name: string;
 	reason: string;

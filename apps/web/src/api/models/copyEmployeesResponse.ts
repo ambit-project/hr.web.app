@@ -4,9 +4,9 @@
  * hr.web.app API
  * OpenAPI spec version: v1
  */
-import type { CopyEmployeesSkipped } from "./copyEmployeesSkipped.ts";
+import type { CopyEmployeesSkippedEmployee } from "./copyEmployeesSkippedEmployee.ts";
 
 export interface CopyEmployeesResponse {
 	copied: number;
-	skipped: CopyEmployeesSkipped[];
+	skipped: CopyEmployeesSkippedEmployee[];
 }

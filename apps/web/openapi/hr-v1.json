@@ -3797,12 +3797,12 @@
           "skipped": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CopyEmployeesSkipped"
+              "$ref": "#/components/schemas/CopyEmployeesSkippedEmployee"
             }
           }
         }
       },
-      "CopyEmployeesSkipped": {
+      "CopyEmployeesSkippedEmployee": {
         "required": [
           "employeeId",
           "name",

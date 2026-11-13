@@ -24,7 +24,7 @@ export * from "./authEndpointsProfileResponse.ts";
 export * from "./closeEmployeeBankAccountRequest.ts";
 export * from "./copyEmployeesRequest.ts";
 export * from "./copyEmployeesResponse.ts";
-export * from "./copyEmployeesSkipped.ts";
+export * from "./copyEmployeesSkippedEmployee.ts";
 export * from "./createCompanyRequest.ts";
 export * from "./createCompanyResponse.ts";
 export * from "./createComponentTypeRequest.ts";

@@ -61,7 +61,7 @@ public sealed class EmployeeCopyRoutineTests(DatabaseFixture database)
         );
         Assert.Equal(
             ["personExists", "peselExists"],
-            second.OrderBy(row => row.Reason).Select(row => row.Reason)
+            second.OrderBy(row => row.Reason, StringComparer.Ordinal).Select(row => row.Reason)
         );
         Assert.Equal("sameCompany", Assert.Single(same).Reason);
     }
