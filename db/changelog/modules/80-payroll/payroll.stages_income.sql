@@ -82,7 +82,8 @@ $$;
 --changeset hr:payroll.stage_base_pay runOnChange:true splitStatements:false
 --comment: Etap 1 — wynagrodzenie zasadnicze umowy o pracę (R5, R6, R8): ZASAD z każdej wersji warunków w okresie
 --comment: (cały miesiąc — proporcja dni kalendarzowych [D], część miesiąca — godziny wymiaru, R1996 § 12 ust. 2);
---comment: ZASAD-CH — 1/30 za dzień choroby (R1996 § 11; cały okres w chorobie — całe zasadnicze [?]); ZASAD-NB —
+--comment: ZASAD-CH — 1/30 za dzień choroby (R1996 § 11 ust. 1 — tylko przy przepracowanej części miesiąca; cały
+--comment: okres w chorobie — całe zasadnicze, bo bez pracy wynagrodzenie nie przysługuje, KP art. 80); ZASAD-NB —
 --comment: godziny UB, UOP, NN i SW × wynagrodzenie ÷ wymiar miesiąca (§ 12 ust. 1); SW50 — 50% za godziny siły
 --comment: wyższej (KP art. 148¹). Wymiar i godziny — kalendarz spółki pełnego etatu (proporcja ta sama dla etatu).
 CREATE OR REPLACE FUNCTION payroll.stage_base_pay(p_ctx payroll.ctx_t, p_lines payroll.line_t[])
@@ -174,7 +175,9 @@ $$;
 --changeset hr:payroll.stage_absence_pay runOnChange:true splitStatements:false
 --comment: Etap 2 — choroba i urlop (R6–R8). Dni choroby kartoteki w roku liczone kolejno: do 33 (14 po roku
 --comment: ukończenia 50 lat) — CHOR (wynagrodzenie chorobowe, KP art. 92), dalej zasiłek: ZAS-CH, gdy spółka wypłaca
---comment: zasiłki, inaczej informacyjnie ZAS-ZUS. Zlecenie — od pierwszego dnia zasiłek. Dzienna = podstawa ÷ 30
+--comment: zasiłki, inaczej informacyjnie ZAS-ZUS. Zlecenie — od pierwszego dnia zasiłek. Niezdolność w okresie
+--comment: wyczekiwania (art. 4: 30 / 90 dni od początku ubezpieczenia u płatnika) albo bez ustalonej podstawy (sickness_base)
+--comment: — bez kwot, ostrzeżenie blokujące zamknięcie. Dzienna = podstawa ÷ 30
 --comment: (do grosza) × 80% albo 100% (CHW, CHC; do grosza) × dni. URLOP-ZM — średnia godzinowa zmiennych z 3 miesięcy
 --comment: × godziny urlopu i płatnych zwolnień (UW, UZ, UO, OD) [D: bez składników procentowych — liczone od
 --comment: zasadniczego, które za urlop nie jest pomniejszane].
@@ -236,10 +239,21 @@ BEGIN
                 + 1;
         END IF;
 
+        -- Okres wyczekiwania (ustawa zasiłkowa art. 4 ust. 1; KP art. 92 § 3): 30 dni ubezpieczenia obowiązkowego,
+        -- 90 dobrowolnego. Wcześniejsze ubezpieczenie u innych płatników i wyjątki z art. 4 ust. 2–3 są poza
+        -- systemem, więc niezdolność w tym okresie nie jest liczona.
+        IF v_absence.date_from < payroll.insured_from(p_ctx.employment_id)
+            + (CASE WHEN p_ctx.contract_kind = 'employment' THEN 30 ELSE 90 END) THEN
+            v_lines := v_lines || payroll.warning('sicknessWaitingPeriod',
+                jsonb_build_object('absenceId', v_absence.id, 'insuredFrom', payroll.insured_from(p_ctx.employment_id)));
+            CONTINUE;
+        END IF;
         v_chain := payroll.sickness_chain_start(p_ctx.employee_id, p_ctx.contract_kind, v_absence.date_from);
         SELECT * INTO v_base FROM payroll.sickness_base(p_ctx, v_chain);
         IF v_base.warning IS NOT NULL THEN
-            v_lines := v_lines || payroll.warning(v_base.warning, jsonb_build_object('absenceId', v_absence.id));
+            v_lines := v_lines || payroll.warning(v_base.warning,
+                jsonb_build_object('absenceId', v_absence.id, 'base', v_base.trace));
+            CONTINUE;
         END IF;
         v_rate := CASE WHEN v_absence.payment = 'sickness100' THEN 1
                        ELSE platform.legal_parameter('chorobowe.stawka', v_absence.date_from) END;
@@ -291,8 +305,10 @@ END;
 $$;
 
 --changeset hr:payroll.stage_overtime runOnChange:true splitStatements:false
---comment: Etap 3 — nadgodziny umowy o pracę (R9): stawka = zasadnicze z dnia ÷ wymiar miesiąca (godziny kalendarza
---comment: × etat; R1996 § 4a) × godziny × 1,5 albo 2,0 [?] (normalne wynagrodzenie + dodatek 50% albo 100%).
+--comment: Etap 3 — nadgodziny umowy o pracę (R9): normalne wynagrodzenie i dodatek 50% albo 100% (KP art. 151¹ § 1)
+--comment: od wynagrodzenia z osobistego zaszeregowania (§ 3): zasadnicze z dnia ÷ wymiar miesiąca (godziny kalendarza
+--comment: × etat; R1996 § 4a) × godziny × 1,5 albo 2,0. Umowa z innymi składnikami dodatkowymi w okresie — nie
+--comment: liczone, ostrzeżenie blokujące overtimeNormalPayUnknown.
 CREATE OR REPLACE FUNCTION payroll.stage_overtime(p_ctx payroll.ctx_t, p_lines payroll.line_t[])
     RETURNS payroll.line_t[]
     LANGUAGE plpgsql
@@ -307,6 +323,18 @@ DECLARE
 BEGIN
     IF p_ctx.contract_kind <> 'employment' THEN
         RETURN v_lines;
+    END IF;
+    IF EXISTS (
+        SELECT FROM time_absence.overtime_entries o
+        WHERE o.employment_id = p_ctx.employment_id AND o.date BETWEEN p_ctx.from_date AND p_ctx.to_date
+    ) AND EXISTS (
+        SELECT FROM pay_components.employment_components c
+        JOIN pay_components.component_types t ON t.id = c.component_type_id
+        WHERE c.employment_id = p_ctx.employment_id AND t.kind = 'addition' AND NOT t.is_system
+          AND daterange(c.valid_from, c.valid_to, '[]') && daterange(p_ctx.from_date, p_ctx.to_date, '[]')
+    ) THEN
+        -- Czy inne składniki wchodzą do „normalnego wynagrodzenia” (KP art. 151¹ § 1) — niesprawdzone.
+        RETURN v_lines || payroll.warning('overtimeNormalPayUnknown', '{}');
     END IF;
     FOR v_group IN
         SELECT o.rate, sum(o.hours) AS hours,
@@ -338,7 +366,9 @@ $$;
 --comment: umowy. Składniki: kwota stała (umowa o pracę — payroll.fixed_due, inne — pełna), procent zasadniczego (po
 --comment: pomniejszeniach; zlecenie — procent ZLEC), stawka × godziny (zlecenie — potwierdzone godziny; umowa o pracę —
 --comment: poza zakresem, ostrzeżenie). EKWIW w miesiącu końca umowy o pracę: saldo godzin urlopu × (zasadnicze +
---comment: średnia zmiennych) ÷ (współczynnik × etat) ÷ 8 (rozp. urlopowe § 18–19; dzienna i godzinowa do grosza).
+--comment: średnia zmiennych) ÷ (dni pracy roku ÷ 12 × etat) ÷ 8 (rozp. urlopowe § 18–19; bez zaokrąglania kwot
+--comment: pośrednich). Umowa ze składnikami dodatkowymi w dniu końca — ekwiwalent nie liczony, ostrzeżenie blokujące
+--comment: equivalentComponentsUnknown.
 CREATE OR REPLACE FUNCTION payroll.stage_components(p_ctx payroll.ctx_t, p_lines payroll.line_t[])
     RETURNS payroll.line_t[]
     LANGUAGE plpgsql
@@ -456,21 +486,31 @@ BEGIN
             v_balance := time_absence.leave_entitled(p_ctx.employment_id, v_year)
                 + time_absence.leave_carried(p_ctx.employment_id, v_year)
                 - time_absence.leave_used(p_ctx.employment_id, v_year);
-            IF v_balance > 0 THEN
+            IF v_balance > 0 AND EXISTS (
+                SELECT FROM pay_components.employment_components c
+                JOIN pay_components.component_types t ON t.id = c.component_type_id
+                WHERE c.employment_id = p_ctx.employment_id AND t.kind = 'addition' AND NOT t.is_system
+                  AND daterange(c.valid_from, c.valid_to, '[]') @> p_ctx.contract_end
+            ) THEN
+                -- Składniki umowy w ekwiwalencie (rozp. urlopowe § 15–17) — niesprawdzone, ekwiwalent nie liczony.
+                v_lines := v_lines || payroll.warning('equivalentComponentsUnknown', jsonb_build_object('year', v_year));
+            ELSIF v_balance > 0 THEN
                 SELECT * INTO v_variable FROM payroll.variable_pay(p_ctx);
-                v_coefficient := platform.legal_parameter('urlop.ekwiwalent.wspolczynnik', p_ctx.contract_end);
-                -- Rozp. urlopowe § 19 ust. 3: przy niepełnym etacie współczynnik proporcjonalnie obniżony; saldo
-                -- urlopu jest w godzinach dnia 8-godzinnego (KP art. 154²), więc godzinowy = dzienny ÷ 8.
-                v_daily := round((p_ctx.base_amount + v_variable.monthly) / (v_coefficient * p_ctx.fte), 2);
-                v_hourly := round(v_daily / 8, 2);
+                -- Rozp. urlopowe § 19 ust. 2: dni pracy roku ÷ 12, bez zaokrąglenia (przepis go nie przewiduje);
+                -- ust. 3: przy niepełnym etacie współczynnik proporcjonalnie obniżony. § 18 ust. 2: ekwiwalent za
+                -- godzinę = za dzień ÷ dobowa norma (8 h; saldo urlopu w godzinach, KP art. 154²). Kwoty pośrednie
+                -- bez zaokrąglania — zaokrąglony jest tylko ekwiwalent.
+                v_coefficient := platform.legal_parameter('urlop.ekwiwalent.dni', p_ctx.contract_end) / 12;
+                v_daily := (p_ctx.base_amount + v_variable.monthly) / (v_coefficient * p_ctx.fte);
+                v_hourly := v_daily / 8;
                 -- Ekwiwalent: ZUS, zdrowotna i PIT, bez podstawy chorobowego.
-                v_lines := v_lines || payroll.income('EKWIW', v_balance, v_hourly, round(v_hourly * v_balance, 2),
-                    NULL, true, true, true, false,
-                    jsonb_build_object('year', v_year, 'balanceHours', v_balance, 'daily', v_daily,
+                v_lines := v_lines || payroll.income('EKWIW', v_balance, round(v_hourly, 4),
+                    round(v_hourly * v_balance, 2), NULL, true, true, true, false,
+                    jsonb_build_object('year', v_year, 'balanceHours', v_balance, 'daily', round(v_daily, 4),
+                                       'coefficient', round(v_coefficient, 6),
                                        'variableMonthly', v_variable.monthly, 'variable', v_variable.trace,
                                        'termsId', p_ctx.terms_id,
-                                       'params', payroll.params(ARRAY['urlop.ekwiwalent.wspolczynnik'],
-                                                                p_ctx.contract_end)));
+                                       'params', payroll.params(ARRAY['urlop.ekwiwalent.dni'], p_ctx.contract_end)));
             END IF;
         END IF;
     END IF;

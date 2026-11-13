@@ -260,4 +260,45 @@ public sealed class PayrollHttpTests(DatabaseFixture database)
         Assert.Equal(HttpStatusCode.Forbidden, create.StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, totals.StatusCode);
     }
+
+    [Fact]
+    public async Task Kadry_record_the_ppk_payment_date_of_a_closed_list()
+    {
+        using var kadry = await database.Api.ClientAsAsync("kadry");
+        var company = await _kit.CompanyAsync();
+        var employee = await _kit.EmployeeAsync(company, "Wpłata", D(1990, 1, 1), "90010112345");
+        await _kit.EmploymentAsync(
+            employee,
+            "employment",
+            D(2026, 1, 1),
+            null,
+            "monthly",
+            7000m,
+            EmploymentInsurances
+        );
+        var open = await _kit.MonthAsync(company, 9, close: false);
+
+        var notClosed = await kadry.PutAsJsonAsync(
+            $"/api/payrolls/{open}/ppk-paid",
+            new { rowVersion = (long?)null, paidOn = "2026-10-10" }
+        );
+        Assert.Equal(HttpStatusCode.Conflict, notClosed.StatusCode);
+        Assert.Contains("payrollNotClosed", await notClosed.Content.ReadAsStringAsync());
+
+        await _kit.CloseAsync(open);
+        var early = await kadry.PutAsJsonAsync(
+            $"/api/payrolls/{open}/ppk-paid",
+            new { rowVersion = (long?)null, paidOn = "2026-09-01" }
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, early.StatusCode);
+        Assert.Contains("beforePayment", await early.Content.ReadAsStringAsync());
+        var saved = await kadry.PutAsJsonAsync(
+            $"/api/payrolls/{open}/ppk-paid",
+            new { rowVersion = (long?)null, paidOn = "2026-10-10" }
+        );
+        Assert.Equal(HttpStatusCode.NoContent, saved.StatusCode);
+        var payroll = await kadry.GetFromJsonAsync<JsonElement>($"/api/payrolls/{open}");
+        Assert.Equal("2026-10-10", payroll.GetProperty("ppkPaidOn").GetString());
+        Assert.Equal(0, payroll.GetProperty("blockedCount").GetInt32());
+    }
 }

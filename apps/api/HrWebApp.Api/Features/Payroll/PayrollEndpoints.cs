@@ -63,6 +63,13 @@ public static class PayrollEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status409Conflict);
         payroll
+            .MapPut("/ppk-paid", SetPayrollPpkPaid.Handle)
+            .WithName("SetPayrollPpkPaid")
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict);
+        payroll
             .MapGet("/members", ListPayrollMembers.Handle)
             .WithName("ListPayrollMembers")
             .ProducesProblem(StatusCodes.Status403Forbidden)

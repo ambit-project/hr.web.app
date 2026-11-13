@@ -64,11 +64,15 @@ po kodzie i stronie (`prior_lines`, `diff_lines`), koszty = koszty okresu − ko
 w miesiącu daty wypłaty korekty. Sumy roczne (`payroll.year_totals`) i kwota ściągnięta z zajęcia
 (`payroll.garnishment_collected`) — z pozycji zamkniętych list, bez tabeli.
 
-## Decyzje i odstępstwa ([D] — decyzja wykonawcy, [?] — do potwierdzenia)
+## Decyzje i odstępstwa ([D] — decyzja wykonawcy)
 
-- **Ekwiwalent (R11):** godzinowy = (zasadnicze + średnia zmiennych) ÷ (współczynnik × etat) ÷ 8, dzienny i godzinowy
-  do grosza — współczynnik przy niepełnym etacie obniżony proporcjonalnie (R1997 § 19 ust. 3); decyzja koordynatora
-  2026-11-13, tekst R11 w spec poprawiony (był „× etat”).
+Zasada właściciela 2026-11-13 „czego nie wiemy, tego nie robimy”: wszystkie dawne punkty [?] sprawdzone w źródłach
+(tekst jednolity ze strony Sejmu, akty wykonawcze); potwierdzone zostały, niepotwierdzone nie są liczone — ostrzeżenie
+blokujące zamknięcie (R28). Wynik w tabeli „Weryfikacja [?]” niżej.
+
+- **Ekwiwalent (R11):** godzinowy = (zasadnicze + średnia zmiennych) ÷ (dni pracy roku ÷ 12 × etat) ÷ 8, bez
+  zaokrąglania kwot pośrednich (R1997 § 19 ust. 2–3 nie przewiduje zaokrąglenia); przy składnikach umowy — nie
+  liczony (`equivalentComponentsUnknown`).
 - **Korekta a blokady (R4, R25) [D]:** dane zamkniętego okresu można zmienić tylko wtedy, gdy istnieje otwarta albo
   naliczona lista korygująca tej listy z tą umową w składzie; po zamknięciu korekty okres znów jest zablokowany.
   Korekta nie liczy potrąceń (ostrzeżenie `deductionsNotRecalculated`, gdy kartoteka ma aktywne zajęcie), umowa bez
@@ -94,30 +98,56 @@ w miesiącu daty wypłaty korekty. Sumy roczne (`payroll.year_totals`) i kwota �
   zlecenie godzinowe — potwierdzone godziny z końcem wpisu w okresie. Dzieło — w miesiącu końca umowy (tylko wtedy
   w składzie listy).
 - **Choroba (R6, R7) [D]:** dni w roku liczone ze wszystkich umów o pracę kartoteki; zlecenie (dobrowolne chorobowe) —
-  zasiłek od pierwszego dnia, bez historii przy stawce godzinowej podstawa 0 i `sicknessBaseMissing`. Miesiąc
+  zasiłek od pierwszego dnia niezdolności po okresie wyczekiwania 90 dni; przypadki nieustalone — ostrzeżenia
+  blokujące (`sicknessWaitingPeriod`, `sicknessBaseUnknown`, `sicknessBaseMissing`, `sicknessBaseSupplement`,
+  `sicknessBaseFteChange`). Ciągłość ubezpieczenia u płatnika — kolejne umowy tego samego rodzaju kartoteki bez
+  przerwy (`payroll.insured_from`); miesiąc „znany” — zamknięta lista spółki tego rodzaju za miesiąc (umowa o pracę —
+  z wypłatą tej umowy). Miesiąc
   pomijany, gdy przepracowane godziny (wymiar − nieobecności) < ½ wymiaru miesiąca × etat. Składki w podstawie —
   proporcjonalnie, gdy część przychodu ze składkami nie jest w podstawie chorobowego. Limity dni w parametrach
   `chorobowe.pracodawca.dni` (33) i `.50` (14).
 - **FP i FGŚP (R14) [D]:** zwolnienie od miesiąca po miesiącu ukończenia 55 / 60 lat; płeć z 10. cyfry PESEL. FP
   i FGŚP tylko przy ubezpieczeniach `fp` / `fgsp` w warunkach (004 R12).
-- **PIT [?]:** ryczałt 12% od przychodu (spec R18); koszty 50% ponad limit roczny — 0; `noAdvances` — zaliczka od
-  nadwyżki ponad 30 000 zł w miesiącu przekroczenia; składki odliczane w części przypadającej na przychód
-  opodatkowany przy częściowym zwolnieniu.
+- **PIT:** ryczałt 12% od przychodu (art. 30 ust. 1 pkt 5a — potwierdzone); koszty 50% — limit art. 22 ust. 9a,
+  ponad limit nie liczone (`authorCostsLimitReached`); `noAdvances` — bez zaliczki do 30 000 zł, po przekroczeniu
+  zaliczka bez kwoty zmniejszającej (art. 31c ust. 3), miesiąc przekroczenia nie liczony (`noAdvancesThresholdCrossed`);
+  składki odliczane w części przypadającej na przychód opodatkowany przy częściowym zwolnieniu [D].
 - **Potrącenia (R22):** granice do grosza w dół; zlecenie i dzieło bez etatu przy kwocie wolnej; zajęcie z całą
   kwotą ściągniętą przechodzi przy zamknięciu listy w `paidOff` z datą wypłaty.
-- **Parametry 2027 [?]:** płaca minimalna 4 950 zł i 30-krotność 300 990 zł z planu; podstawa minimalna chorobowego,
-  próg PPK i kwoty wolne od potrąceń wyliczone tym samym sposobem co 2026 (sprawdzonym na wartościach 2026);
-  współczynnik ekwiwalentu 2027 = 251 ÷ 12 z kalendarza świąt 2027.
-- **Składka zdrowotna (R15):** ograniczenie z art. 83 (zaliczka według przepisów z 2021 r.) nie jest liczone [?]; bez
-  ostrzeżenia — porównanie z bieżącą zaliczką dawało fałszywe alarmy (decyzja koordynatora 2026-11-13).
+- **Parametry 2027:** płaca minimalna 4 950 zł i 32,30 zł/h (Dz.U. 2026 poz. 1213), 30-krotność 300 990 zł (M.P. 2026
+  poz. 1098), próg PPK 5 940 zł (1,2 × płaca minimalna, ustawa o PPK art. 27 ust. 2), dni pracy 2027 = 251 (§ 19
+  ust. 2). Usunięte (changeset 20261113-37), bo nieogłoszone albo zależne od nieustalonego zaokrąglenia: podstawa
+  minimalna chorobowego 2027 i kwoty wolne od potrąceń 2027 — naliczenie, które ich potrzebuje, kończy się `U0006`.
+- **Składka zdrowotna (R15):** obniżenie do zaliczki 2021 liczone w przypadku ustalonym (`payroll.health_cap`),
+  w innych — `healthCapUnknown`. Najpierw sprawdzenie „na pewno bez obniżenia” (składka ≤ 17% podstawy minus
+  największa możliwa kwota zmniejszająca), więc zwykłe pensje nie dostają ostrzeżenia.
+- **Wpłata PPK pracodawcy (R19):** data przekazania na liście (`payroll.payrolls.ppk_paid_on`,
+  `payroll_app.payroll_ppk_paid`), przychód `PPK-PRZ` ze śladem `sourceEntryIds`; PIT-11 bierze `PPK-PRZ` i wpłaty
+  przekazane w roku, nieujęte na liście (`documents.pit11_untaxed_ppk`).
+
+## Weryfikacja [?] (2026-11-13)
+
+| Punkt | Wynik | Źródło |
+|---|---|---|
+| R6 pełny miesiąc choroby → 0 | potwierdzone | R1996 § 11 ust. 1 (tylko przepracowana część miesiąca), KP art. 80 |
+| R7 podstawa bez uzupełniania, z warunków bez historii | częściowo: uzupełnianie wymagane — nie liczone; przed pełnym miesiącem — potwierdzone; brak historii — nie liczone | ustawa zasiłkowa art. 36–38, 40, 48–49 (Dz.U. 2026 poz. 854) |
+| R6 okres wyczekiwania (znalezione przy weryfikacji) | nie liczone w okresie | ustawa zasiłkowa art. 4, KP art. 92 § 3 |
+| R9 nadgodziny normalne + dodatek | potwierdzone dla samego zasadniczego; przy innych składnikach nie liczone | KP art. 151¹ § 1 i 3, R1996 § 4a |
+| R11 współczynnik 20,92 | zmienione na 251 ÷ 12 bez zaokrąglenia | R1997 § 19 ust. 2 (Dz.U. 2003 nr 230 poz. 2290) |
+| R15 ograniczenie zdrowotnej | liczone w przypadku ustalonym, inne — blokada | ustawa o świadczeniach art. 83 (Dz.U. 2025 poz. 1461), PIT 2021 art. 32, 41 |
+| R18 ryczałt 12% | potwierdzone | PIT art. 30 ust. 1 pkt 5a |
+| R18 koszty 50% ponad limit | nie liczone | PIT art. 22 ust. 9a (limit kosztów, brak reguły ponad limit) |
+| R16 noAdvances w miesiącu przekroczenia | nie liczone; po przekroczeniu bez kwoty zmniejszającej | PIT art. 31c ust. 3 |
+| R19 PPK w miesiącu listy | zmienione: przychód w dniu przekazania | stanowisko MF 2019 (podatki.gov.pl), ustawa o PPK art. 26 ust. 5 |
+| Parametry 2027 | płaca minimalna, 30-krotność, próg PPK — potwierdzone; podstawa chorobowego i kwoty wolne — usunięte | Dz.U. 2026 poz. 1213, M.P. 2026 poz. 1098 |
 
 ## Różnice od przeliczeń scenariusza (docs/domain/09-payroll.md)
 
 | Przypadek | Scenariusz | Implementacja | Powód |
 |---|---|---|---|
-| Anna X | PIT 459, netto 5 280,29 | PIT 460, netto 5 279,29 | R19: wpłata pracodawcy PPK (112,50) przychodem w miesiącu listy, nie następnym (105,00 za IX) |
-| Anna XI | podstawa chorobowego 6 076,25, CHOR 810,15, brutto 7 341,40, zdrowotna 580,14, PIT 457, netto 5 278,19 | 6 083,45, 811,10, 7 342,35, 580,22, 455, 5 281,06 | podstawa ze średniej faktycznych składek z 10 zamkniętych list I–X 2026 (scenariusz: 12 miesięcy z 13,71%); PPK pracodawcy XI (97,97) w miesiącu listy |
-| Korekta X (wypłata 10.12) | PIT 52, netto 330,62 | PIT 53, netto 329,62 | różnica wpłaty pracodawcy PPK (7,50) przychodem korekty (R19) |
+| Anna X | PIT 459, netto 5 280,29 | zgodne (wpłata IX przekazana 10.10) | — |
+| Anna XI | podstawa chorobowego 6 076,25, CHOR 810,15, brutto 7 341,40, zdrowotna 580,14, PIT 457, netto 5 278,19 | 6 083,45, 811,10, 7 342,35, 580,22, 457, 5 279,06 | podstawa ze średniej faktycznych składek z 10 zamkniętych list I–X 2026 (scenariusz: 12 miesięcy z 13,71%) |
+| Korekta X (wypłata 10.12) | PIT 52, netto 330,62 | zgodne | — |
 | Dzieło Anny w Becie | okres listy 1–18.12 | okres = miesiąc, wypłata w miesiącu końca umowy | R1, R12 |
 
 Zgodne ze scenariuszem: Piotr (netto 2 041,62, koszt pracodawcy z FGŚP 2,60, bez FP), Marek X (2 247,76), Ewa X
@@ -161,7 +191,10 @@ Testy modułów 004–008 po dopisaniu blokad przechodzą (`~TaxDeclaration|~Pay
 
 ## Otwarte
 
-- Do potwierdzenia: parametry 2027, sprawy [?] ze spec.
-- Nie testowane wprost: `PPK-PRD` (wpłata dodatkowa pracodawcy), `noAdvances`, koszty 50% ponad limit, zaliczki
-  pieniężne i kary w potrąceniach, `NADG100`, zasiłek przy zleceniu.
+- Przypadki nie liczone (R28) — do zrobienia po sprawdzeniu przepisów: uzupełnianie podstawy chorobowego, nadgodziny
+  i ekwiwalent przy składnikach, obniżenie zdrowotnej przy PIT-2 1/24 i 1/36 i kilku wypłatach, koszty 50% ponad
+  limit, miesiąc przekroczenia 30 000 zł przy `noAdvances`, podstawa minimalna chorobowego i kwoty wolne 2027.
+- Testy zasady: `PayrollUnverifiedRoutineTests`, `Kadry_record_the_ppk_payment_date_of_a_closed_list`.
+- Nie testowane wprost: `PPK-PRD` (wpłata dodatkowa pracodawcy), zaliczki pieniężne i kary w potrąceniach,
+  `NADG100`, zasiłek przy zleceniu.
 - Nowa umowa trafia na listę dopiero przy przeliczeniu (dodanie umowy nie oznacza listy jako `stale`).

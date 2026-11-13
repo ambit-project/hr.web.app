@@ -65,6 +65,7 @@ export const LINE_CODES = [
 	"PPK-PD",
 	"PPK-PR",
 	"PPK-PRD",
+	"PPK-PRZ",
 	"ZDROW",
 	"ZWOL-MLODZI",
 	"KUP",
@@ -193,8 +194,35 @@ export const WARNING_CODES = [
 	"negativeTaxBase",
 	"negativeCorrection",
 	"deductionsNotRecalculated",
+	"sicknessBaseUnknown",
+	"sicknessBaseSupplement",
+	"sicknessBaseFteChange",
+	"sicknessWaitingPeriod",
+	"overtimeNormalPayUnknown",
+	"equivalentComponentsUnknown",
+	"healthCapUnknown",
+	"authorCostsLimitReached",
+	"noAdvancesThresholdCrossed",
 ] as const;
 export type WarningCode = (typeof WARNING_CODES)[number];
+
+/** Warnings that stop the list from closing — cases the system does not calculate (payroll.blocking_warnings). */
+export const BLOCKING_WARNINGS: readonly WarningCode[] = [
+	"sicknessBaseMissing",
+	"sicknessBaseUnknown",
+	"sicknessBaseSupplement",
+	"sicknessBaseFteChange",
+	"sicknessWaitingPeriod",
+	"overtimeNormalPayUnknown",
+	"equivalentComponentsUnknown",
+	"healthCapUnknown",
+	"authorCostsLimitReached",
+	"noAdvancesThresholdCrossed",
+];
+
+export function isBlockingWarning(code: string): boolean {
+	return (BLOCKING_WARNINGS as readonly string[]).includes(code);
+}
 
 export function isWarningCode(code: string): code is WarningCode {
 	return (WARNING_CODES as readonly string[]).includes(code);

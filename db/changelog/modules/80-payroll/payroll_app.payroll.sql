@@ -74,7 +74,8 @@ $$;
 
 --changeset hr:payroll_app.payroll_get runOnChange:true splitStatements:false
 --comment: Lista płac z podsumowaniem (R2, R24): sumy przychodu, składek pracownika i pracodawcy, zdrowotnej, PIT, PPK,
---comment: netto, potrąceń, do wypłaty, liczba wypłat z ostrzeżeniami. Bez kwot osób — bez audytu odczytu.
+--comment: netto, potrąceń, do wypłaty, liczba wypłat z ostrzeżeniami i z ostrzeżeniami blokującymi zamknięcie
+--comment: (payroll.blocking_warnings), data przekazania wpłat PPK (R19). Bez kwot osób — bez audytu odczytu.
 DROP FUNCTION IF EXISTS payroll_app.payroll_get(uuid);
 CREATE FUNCTION payroll_app.payroll_get(p_id uuid)
     RETURNS TABLE (
@@ -92,8 +93,10 @@ CREATE FUNCTION payroll_app.payroll_get(p_id uuid)
         is_stale boolean,
         calculated_at timestamptz,
         closed_at timestamptz,
+        ppk_paid_on date,
         entry_count integer,
         warning_count integer,
+        blocked_count integer,
         member_count integer,
         excluded_count integer,
         gross numeric,
@@ -131,9 +134,12 @@ BEGIN
     )
     SELECT p.id, p.company_id, p.number, p.kind, p.period_from, p.period_to, p.payment_date,
            p.payment_date > (p.period_from + interval '1 month 9 days')::date,
-           p.corrects_payroll_id, c.number, p.status, p.is_stale, p.calculated_at, p.closed_at,
+           p.corrects_payroll_id, c.number, p.status, p.is_stale, p.calculated_at, p.closed_at, p.ppk_paid_on,
            (SELECT count(*)::integer FROM payroll.entries e WHERE e.payroll_id = p.id),
            (SELECT count(*)::integer FROM payroll.entries e WHERE e.payroll_id = p.id AND e.warnings <> '[]'),
+           (SELECT count(*)::integer FROM payroll.entries e WHERE e.payroll_id = p.id AND EXISTS (
+                SELECT FROM jsonb_array_elements(e.warnings) w
+                WHERE w ->> 'code' = ANY (payroll.blocking_warnings()))),
            (SELECT count(*)::integer FROM payroll.members m WHERE m.payroll_id = p.id),
            (SELECT count(*)::integer FROM payroll.members m WHERE m.payroll_id = p.id AND m.excluded),
            coalesce((SELECT sum(e.gross) FROM payroll.entries e WHERE e.payroll_id = p.id), 0),
@@ -340,8 +346,9 @@ END;
 $$;
 
 --changeset hr:payroll_app.payroll_close runOnChange:true splitStatements:false
---comment: Zamknięcie listy (R25): tylko naliczona (notCalculated) i aktualna (stale). Zajęcia z ściągniętą całą kwotą
---comment: przechodzą w paidOff z datą wypłaty (006 R19).
+--comment: Zamknięcie listy (R25): tylko naliczona (notCalculated), aktualna (stale) i bez wypłat z ostrzeżeniem
+--comment: blokującym (unsupportedCases — przypadki, których system nie liczy, payroll.blocking_warnings). Zajęcia
+--comment: z ściągniętą całą kwotą przechodzą w paidOff z datą wypłaty (006 R19).
 CREATE OR REPLACE PROCEDURE payroll_app.payroll_close(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -359,6 +366,14 @@ BEGIN
     END IF;
     IF v_row.is_stale THEN
         RAISE EXCEPTION 'payroll is stale' USING ERRCODE = 'U0003', HINT = 'stale';
+    END IF;
+    IF EXISTS (
+        SELECT FROM payroll.entries e
+        CROSS JOIN LATERAL jsonb_array_elements(e.warnings) w
+        WHERE e.payroll_id = p_id AND w ->> 'code' = ANY (payroll.blocking_warnings())
+    ) THEN
+        RAISE EXCEPTION 'payroll has cases the system does not calculate' USING ERRCODE = 'U0003',
+            HINT = 'unsupportedCases';
     END IF;
     UPDATE payroll.payrolls p SET status = 'closed', closed_at = now(), closed_by = platform.actor_id()
     WHERE p.id = p_id
@@ -403,5 +418,52 @@ BEGIN
     END IF;
     DELETE FROM payroll.payrolls p WHERE p.id = p_id;
     PERFORM platform.audit('payroll', p_id::text, 'delete', to_jsonb(v_row), NULL);
+END;
+$$;
+
+--changeset hr:payroll_app.payroll_ppk_paid runOnChange:true splitStatements:false
+--comment: Data przekazania wpłat PPK zamkniętej listy do instytucji finansowej (R19): od niej wpłaty pracodawcy są
+--comment: przychodem pracownika — liczy go lista z wypłatą w tym miesiącu nie wcześniej niż w tym dniu. Tylko lista
+--comment: zamknięta (payrollNotClosed), data nie przed datą wypłaty listy (paidOn beforePayment) i nie z przyszłości (future).
+--comment: Zmiana albo usunięcie daty, gdy wpłaty są już przychodem na zamkniętej liście — U0003 ppkIncomeTaxed. Naliczone
+--comment: listy z tymi wpłatami albo z wypłatą w miesiącu nowej daty stają się nieaktualne.
+CREATE OR REPLACE PROCEDURE payroll_app.payroll_ppk_paid(IN p_id uuid, IN p_row_version bigint, IN p_paid_on date)
+    LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = pg_catalog, pg_temp
+AS $$
+DECLARE
+    v_row payroll.payrolls%ROWTYPE;
+BEGIN
+    PERFORM platform.require_role('kadry', 'administrator');
+    v_row := payroll.payroll_lock(p_id, p_row_version);
+    IF v_row.status <> 'closed' THEN
+        RAISE EXCEPTION 'payroll is not closed' USING ERRCODE = 'U0003', HINT = 'payrollNotClosed';
+    END IF;
+    IF p_paid_on IS NOT NULL AND p_paid_on < v_row.payment_date THEN
+        PERFORM platform.fail_validation('{"paidOn": ["beforePayment"]}');
+    END IF;
+    IF p_paid_on > current_date THEN
+        PERFORM platform.fail_validation('{"paidOn": ["future"]}');
+    END IF;
+    IF p_paid_on IS NOT DISTINCT FROM v_row.ppk_paid_on THEN
+        RETURN;
+    END IF;
+    IF EXISTS (
+        SELECT FROM payroll.ppk_taxed_entries(ARRAY['closed']) t
+        JOIN payroll.entries e ON e.id = t.entry_id AND e.payroll_id = p_id
+    ) THEN
+        RAISE EXCEPTION 'ppk contributions already taxed' USING ERRCODE = 'U0003', HINT = 'ppkIncomeTaxed';
+    END IF;
+
+    UPDATE payroll.payrolls p SET is_stale = true
+    WHERE p.status = 'calculated' AND p.company_id = v_row.company_id
+      AND (p.id IN (SELECT t.taxed_on_payroll_id FROM payroll.ppk_taxed_entries(ARRAY['calculated']) t
+                    JOIN payroll.entries e ON e.id = t.entry_id AND e.payroll_id = p_id)
+           OR (p_paid_on IS NOT NULL AND date_trunc('month', p.payment_date) = date_trunc('month', p_paid_on)
+               AND p.payment_date >= p_paid_on));
+    UPDATE payroll.payrolls p SET ppk_paid_on = p_paid_on WHERE p.id = p_id;
+    PERFORM platform.audit('payroll', p_id::text, 'update', jsonb_build_object('ppk_paid_on', v_row.ppk_paid_on),
+        jsonb_build_object('ppk_paid_on', p_paid_on, 'operation', 'ppkPaid'));
 END;
 $$;

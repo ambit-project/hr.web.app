@@ -17,6 +17,9 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
     {
         var company = await _kit.CompanyAsync();
         var (_, employment) = await AnnaAsync(company);
+        var september = await _kit.MonthAsync(company, 9);
+        // R19: wpłaty PPK września przekazane 10.10 — przychód października (lista wypłacona 31.10).
+        await _kit.PpkPaidAsync(september, D(2026, 10, 10));
 
         var october = await _kit.MonthAsync(company, 10, close: false);
         var entry = await _kit.EntryAsync(october, employment);
@@ -30,13 +33,15 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
         Assert.Equal(150.00m, entry.Amount("PPK-P"));
         Assert.Equal(112.50m, entry.Amount("PPK-PR"));
         Assert.Equal(250.00m, entry.Amount("KUP"));
-        // R19: wpłata pracodawcy PPK tego miesiąca w przychodzie — 7 500 + 112,50 − 1 028,25 − 250 = 6 334,25.
-        Assert.Equal(6334m, entry.Amount("PODST-PIT"));
+        // R19: wpłata pracodawcy PPK września (105,00) przekazana w październiku — 7 500 + 105 − 1 028,25 − 250 =
+        // 6 326,75 (jak w scenariuszu docs/domain/09-payroll.md).
+        Assert.Equal(105.00m, entry.Amount("PPK-PRZ"));
+        Assert.Equal(6327m, entry.Amount("PODST-PIT"));
         Assert.Equal(300.00m, entry.Amount("PIT-ZMN"));
-        Assert.Equal(460m, entry.Amount("PIT"));
+        Assert.Equal(459m, entry.Amount("PIT"));
         Assert.Equal(7500.00m, entry.Gross);
-        Assert.Equal(5279.29m, entry.Net);
-        Assert.Equal(5279.29m, entry.Payout);
+        Assert.Equal(5280.29m, entry.Net);
+        Assert.Equal(5280.29m, entry.Payout);
         // Koszt pracodawcy: emerytalna, rentowa 6,5%, wypadkowa 1,67%, FP + FS 2,45%, FGŚP 0,1%.
         Assert.Equal(732.00m, entry.Amount("ZUS-E-PR"));
         Assert.Equal(487.50m, entry.Amount("ZUS-R-PR"));
@@ -50,11 +55,13 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
     {
         var company = await _kit.CompanyAsync();
         var (_, employment) = await AnnaAsync(company);
+        var october = Guid.Empty;
         for (var month = 1; month <= 10; month++)
         {
-            await _kit.MonthAsync(company, month);
+            october = await _kit.MonthAsync(company, month);
         }
 
+        await _kit.PpkPaidAsync(october, D(2026, 11, 12));
         await _kit.AbsenceAsync(employment, "CH", D(2026, 11, 16), D(2026, 11, 20));
         await _kit.OvertimeAsync(employment, D(2026, 11, 3), 2m, 50);
         await _kit.OvertimeAsync(employment, D(2026, 11, 4), 2m, 50);
@@ -76,9 +83,11 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
         Assert.Equal(580.22m, entry.Amount("ZDROW"));
         Assert.Equal(130.63m, entry.Amount("PPK-P"));
         Assert.Equal(97.97m, entry.Amount("PPK-PR"));
-        Assert.Equal(6295m, entry.Amount("PODST-PIT"));
-        Assert.Equal(455m, entry.Amount("PIT"));
-        Assert.Equal(5281.06m, entry.Net);
+        // R19: przychód z wpłaty PPK października (112,50) przekazanej 12.11.
+        Assert.Equal(112.50m, entry.Amount("PPK-PRZ"));
+        Assert.Equal(6309m, entry.Amount("PODST-PIT"));
+        Assert.Equal(457m, entry.Amount("PIT"));
+        Assert.Equal(5279.06m, entry.Net);
         Assert.Equal(424.53m, entry.Amount("ZUS-R-PR"));
         Assert.Equal(109.07m, entry.Amount("ZUS-W-PR"));
         Assert.Equal(160.02m, entry.Amount("FP"));
@@ -171,13 +180,15 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
             6000m,
             EmploymentInsurances
         );
-        // 27 dni w styczniu + 20 w lutym: dni 28–33 (1–6.02) płaci pracodawca, od 7.02 zasiłek.
-        await _kit.AbsenceAsync(employment, "CH", D(2026, 1, 5), D(2026, 2, 20));
+        await _kit.MonthAsync(company, 1);
+        // 27 dni w lutym + 20 w marcu: dni 28–33 (1–6.03) płaci pracodawca, od 7.03 zasiłek.
+        await _kit.AbsenceAsync(employment, "CH", D(2026, 2, 2), D(2026, 3, 20));
 
-        var february = await _kit.MonthAsync(company, 2, close: false);
-        var entry = await _kit.EntryAsync(february, employment);
+        var march = await _kit.MonthAsync(company, 3, close: false);
+        var entry = await _kit.EntryAsync(march, employment);
 
-        // Bez zamkniętych list: 6 000 − 822,60 składek = 5 177,40; dzienna 172,58 × 80% = 138,06.
+        // Podstawa ze stycznia (jedyny pełny miesiąc ubezpieczenia, art. 36 ust. 2): 6 000 − 822,60 składek =
+        // 5 177,40; dzienna 172,58 × 80% = 138,06.
         Assert.Equal(5177.40m, entry.Bases["CHOR"]);
         Assert.Equal(828.36m, entry.Amount("CHOR"));
         Assert.Equal(1932.84m, entry.Amount("ZAS-ZUS"));
@@ -186,17 +197,17 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
         Assert.Equal(2000.00m + 828.36m, entry.Gross);
 
         await _kit.KadryAsync<object>(
-            "CALL payroll_app.company_settings_set($1, DATE '2026-01-01', 0.0167, true, NULL)",
+            "CALL payroll_app.company_settings_set($1, DATE '2026-03-01', 0.0167, true, NULL)",
             company
         );
         Assert.True(
             await _kit.AdminAsync<bool>(
                 "SELECT is_stale FROM payroll.payrolls WHERE id = $1",
-                february
+                march
             )
         );
-        await _kit.CalculateAsync(february);
-        entry = await _kit.EntryAsync(february, employment);
+        await _kit.CalculateAsync(march);
+        entry = await _kit.EntryAsync(march, employment);
         Assert.Equal(1932.84m, entry.Amount("ZAS-CH"));
         Assert.Equal(2000.00m + 828.36m + 1932.84m, entry.Gross);
         // Zasiłek bez składek: podstawa ZUS = samo zasadnicze.
@@ -263,11 +274,12 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
         var december = await _kit.MonthAsync(company, 12, close: false);
         var entry = await _kit.EntryAsync(december, employment);
 
-        Assert.Equal(113135m, totals);
-        Assert.Equal(10285m, entry.Amount("PODST-PIT"));
-        // 12% × 6 865 + 32% × 3 420 − 300 = 1 618,20.
-        Assert.Equal(1618m, entry.Amount("PIT"));
-        Assert.Equal(7444.87m, entry.Net);
+        // Wpłaty pracodawcy PPK bez daty przekazania nie są przychodem (R19).
+        Assert.Equal(111155m, totals);
+        Assert.Equal(10105m, entry.Amount("PODST-PIT"));
+        // 12% × 8 845 + 32% × 1 260 − 300 = 1 164,60.
+        Assert.Equal(1165m, entry.Amount("PIT"));
+        Assert.Equal(7897.87m, entry.Net);
         // Kobieta od 55 lat: bez FP i FGŚP.
         Assert.False(entry.Amounts.ContainsKey("FP"));
         Assert.False(entry.Amounts.ContainsKey("FGSP"));
@@ -296,11 +308,12 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
         var november = await _kit.MonthAsync(company, 11, close: false);
         var entry = await _kit.EntryAsync(november, employment);
 
-        // Limit 19 dni (11/12 z 20) = 152 h − 16 h = 136 h; 6 000 / 20,92 = 286,81 / 8 = 35,85 zł/h.
+        // Limit 19 dni (11/12 z 20) = 152 h − 16 h = 136 h; współczynnik 251 ÷ 12 bez zaokrąglenia:
+        // 6 000 ÷ 20,91667 ÷ 8 × 136 = 4 876,49.
         Assert.Equal(136m, entry.Bases["EKWIW"]);
-        Assert.Equal(4875.60m, entry.Amount("EKWIW"));
+        Assert.Equal(4876.49m, entry.Amount("EKWIW"));
         Assert.Equal(6000.00m, entry.Amount("ZASAD"));
-        Assert.Equal(10875.60m, entry.Bases["ZUS-E-P"]);
+        Assert.Equal(10876.49m, entry.Bases["ZUS-E-P"]);
     }
 
     [Fact]
@@ -317,21 +330,22 @@ public sealed class PayrollEmploymentRoutineTests(DatabaseFixture database)
             6000m,
             EmploymentInsurances
         );
-        await _kit.AbsenceAsync(employment, "CH", D(2026, 1, 12), D(2026, 1, 16));
         await _kit.MonthAsync(company, 1);
-        await _kit.TermsAsync(employment, D(2026, 2, 1), 8000m);
-        await _kit.AbsenceAsync(employment, "CH", D(2026, 2, 9), D(2026, 2, 10));
+        await _kit.AbsenceAsync(employment, "CH", D(2026, 2, 9), D(2026, 2, 13));
+        await _kit.MonthAsync(company, 2);
+        await _kit.TermsAsync(employment, D(2026, 3, 1), 8000m);
+        await _kit.AbsenceAsync(employment, "CH", D(2026, 3, 9), D(2026, 3, 10));
 
-        var february = await _kit.EntryAsync(
-            await _kit.MonthAsync(company, 2, close: false),
+        var march = await _kit.EntryAsync(
+            await _kit.MonthAsync(company, 3, close: false),
             employment
         );
 
-        // Przerwa krótsza niż miesiąc (art. 43): podstawa ze stycznia (warunki 6 000 − składki), a nie ze stycznia
-        // jako zamkniętego miesiąca (5 000 − 685,50).
-        Assert.Equal(5177.40m, february.Bases["CHOR"]);
-        Assert.Equal(276.12m, february.Amount("CHOR"));
-        Assert.Equal(-533.33m, february.Amount("ZASAD-CH"));
+        // Przerwa krótsza niż miesiąc (art. 43): podstawa z okresu przed pierwszą chorobą (styczeń, 6 000 − składki),
+        // a nie ze stycznia i lutego (luty obniżony chorobą wymagałby uzupełnienia — art. 38 ust. 2 pkt 2).
+        Assert.Equal(5177.40m, march.Bases["CHOR"]);
+        Assert.Equal(276.12m, march.Amount("CHOR"));
+        Assert.Equal(-533.33m, march.Amount("ZASAD-CH"));
     }
 
     [Fact]

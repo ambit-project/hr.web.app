@@ -92,6 +92,8 @@ public sealed class DocumentsHttpTests(DatabaseFixture database)
         var october = await Payroll.MonthAsync(company, 10);
         await Payroll.MonthAsync(company, 10, "mandate");
         await Payroll.MonthAsync(company, 10, "specificWork");
+        // Wpłaty PPK października przekazane 10.11 bez listowej wypłaty po nich — przychód w PIT-11 (010 R6).
+        await Payroll.PpkPaidAsync(october, D(2026, 11, 10));
 
         var generated = await kadry.PostAsJsonAsync(
             $"/api/companies/{company}/pit11/2026",

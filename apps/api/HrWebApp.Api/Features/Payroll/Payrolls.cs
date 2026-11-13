@@ -72,8 +72,10 @@ public static class GetPayroll
     /// <summary>
     /// Lista z podsumowaniem. <c>Kind</c>: <c>employment</c>, <c>mandate</c>, <c>specificWork</c>,
     /// <c>correction</c>; <c>Status</c>: <c>open</c>, <c>calculated</c>, <c>closed</c>; <c>IsStale</c> —
-    /// nieaktualna (zamknięcie → 409 <c>stale</c>). Liczby: wypłaty, wypłaty z ostrzeżeniami, umowy w składzie
-    /// i wyłączone. Sumy: brutto, składki społeczne pracownika, zdrowotna, PIT, PPK pracownika, netto, potrącenia,
+    /// nieaktualna (zamknięcie → 409 <c>stale</c>). <c>PpkPaidOn</c> — data przekazania wpłat PPK do instytucji
+    /// finansowej (od niej wpłata pracodawcy jest przychodem pracownika). Liczby: wypłaty, wypłaty z ostrzeżeniami,
+    /// wypłaty z ostrzeżeniem blokującym zamknięcie (<c>BlockedCount</c> — przypadki, których system nie liczy), umowy
+    /// w składzie i wyłączone. Sumy: brutto, składki społeczne pracownika, zdrowotna, PIT, PPK pracownika, netto, potrącenia,
     /// do wypłaty, koszt pracodawcy (składki i PPK pracodawcy). <c>RowVersion</c> — do zapisu listy.
     /// </summary>
     public sealed record Response(
@@ -91,8 +93,10 @@ public static class GetPayroll
         bool IsStale,
         DateTimeOffset? CalculatedAt,
         DateTimeOffset? ClosedAt,
+        DateOnly? PpkPaidOn,
         int EntryCount,
         int WarningCount,
+        int BlockedCount,
         int MemberCount,
         int ExcludedCount,
         decimal Gross,
@@ -157,7 +161,8 @@ public static class CalculatePayroll
 public static class ClosePayroll
 {
     /// <summary>
-    /// Zamknięcie listy: tylko naliczona (409 <c>notCalculated</c>) i aktualna (409 <c>stale</c>). Po zamknięciu dane
+    /// Zamknięcie listy: tylko naliczona (409 <c>notCalculated</c>), aktualna (409 <c>stale</c>) i bez wypłat
+    /// z ostrzeżeniem blokującym (409 <c>unsupportedCases</c> — przypadki, których system nie liczy). Po zamknięciu dane
     /// okresu są zablokowane (zmiana → 409 <c>payrollClosed</c>), sumy roczne liczą tę listę, zajęcia ściągnięte
     /// w całości przechodzą w <c>paidOff</c>.
     /// </summary>
@@ -169,6 +174,30 @@ public static class ClosePayroll
     )
     {
         await handler.CloseAsync(id, request.RowVersion, cancellationToken);
+        return TypedResults.NoContent();
+    }
+}
+
+public static class SetPayrollPpkPaid
+{
+    /// <summary>Data przekazania wpłat PPK listy do instytucji finansowej; pusta usuwa datę.</summary>
+    public sealed record Request(long? RowVersion, DateOnly? PaidOn);
+
+    /// <summary>
+    /// Data przekazania wpłat PPK zamkniętej listy (009 R19): od niej wpłaty pracodawcy są przychodem pracownika —
+    /// liczy go lista z wypłatą w tym miesiącu nie wcześniej niż w tym dniu, a bez takiej listy PIT-11. Lista nie
+    /// zamknięta → 409 <c>payrollNotClosed</c>; data przed datą wypłaty listy → 400 <c>paidOn</c> <c>beforePayment</c>,
+    /// z przyszłości → <c>future</c>; zmiana po ujęciu wpłat jako przychodu na zamkniętej liście → 409
+    /// <c>ppkIncomeTaxed</c>. Naliczone listy, których to dotyczy, stają się nieaktualne.
+    /// </summary>
+    public static async Task<NoContent> Handle(
+        Guid id,
+        Request request,
+        PayrollsHandler handler,
+        CancellationToken cancellationToken
+    )
+    {
+        await handler.PpkPaidAsync(id, request.RowVersion, request.PaidOn, cancellationToken);
         return TypedResults.NoContent();
     }
 }
@@ -274,9 +303,10 @@ public sealed class PayrollsHandler(DbSession db)
             await db.QueryAsync(
                 """
                 SELECT id, company_id, number, kind, period_from, period_to, payment_date, payment_date_late,
-                       corrects_payroll_id, corrects_number, status, is_stale, calculated_at, closed_at, entry_count,
-                       warning_count, member_count, excluded_count, gross, employee_contributions, health, pit,
-                       ppk_employee, net, deductions, payout, employer_cost, row_version
+                       corrects_payroll_id, corrects_number, status, is_stale, calculated_at, closed_at, ppk_paid_on,
+                       entry_count, warning_count, blocked_count, member_count, excluded_count, gross,
+                       employee_contributions, health, pit, ppk_employee, net, deductions, payout, employer_cost,
+                       row_version
                 FROM payroll_app.payroll_get($1)
                 """,
                 [Db.Param(id)],
@@ -295,12 +325,12 @@ public sealed class PayrollsHandler(DbSession db)
                     reader.GetBoolean(11),
                     reader.IsDBNull(12) ? null : reader.GetFieldValue<DateTimeOffset>(12),
                     reader.IsDBNull(13) ? null : reader.GetFieldValue<DateTimeOffset>(13),
-                    reader.GetInt32(14),
+                    reader.IsDBNull(14) ? null : reader.GetFieldValue<DateOnly>(14),
                     reader.GetInt32(15),
                     reader.GetInt32(16),
                     reader.GetInt32(17),
-                    reader.GetDecimal(18),
-                    reader.GetDecimal(19),
+                    reader.GetInt32(18),
+                    reader.GetInt32(19),
                     reader.GetDecimal(20),
                     reader.GetDecimal(21),
                     reader.GetDecimal(22),
@@ -308,7 +338,9 @@ public sealed class PayrollsHandler(DbSession db)
                     reader.GetDecimal(24),
                     reader.GetDecimal(25),
                     reader.GetDecimal(26),
-                    reader.GetInt64(27)
+                    reader.GetDecimal(27),
+                    reader.GetDecimal(28),
+                    reader.GetInt64(29)
                 ),
                 cancellationToken
             )
@@ -336,6 +368,18 @@ public sealed class PayrollsHandler(DbSession db)
         await db.ScalarAsync<object>(
             "CALL payroll_app.payroll_close($1, $2)",
             [Db.Param(id), Db.Param(rowVersion)],
+            cancellationToken
+        );
+
+    public async Task PpkPaidAsync(
+        Guid id,
+        long? rowVersion,
+        DateOnly? paidOn,
+        CancellationToken cancellationToken
+    ) =>
+        await db.ScalarAsync<object>(
+            "CALL payroll_app.payroll_ppk_paid($1, $2, $3)",
+            [Db.Param(id), Db.Param(rowVersion), Db.Param(paidOn)],
             cancellationToken
         );
 

@@ -216,6 +216,7 @@ export * from "./setCompanyDatabaseRequest.ts";
 export * from "./setGarnishmentStatusRequest.ts";
 export * from "./setLeaveEntitlementRequest.ts";
 export * from "./setPayrollMembersRequest.ts";
+export * from "./setPayrollPpkPaidRequest.ts";
 export * from "./setUserPasswordRequest.ts";
 export * from "./terminateEmploymentRequest.ts";
 export * from "./updateAbsenceRequest.ts";

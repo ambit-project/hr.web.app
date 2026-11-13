@@ -3,7 +3,7 @@
 Model: [10-documents-and-pit.md](../../domain/10-documents-and-pit.md). Decyzje właściciela: PIT-11 jako PDF i XML
 zgodny ze schematem MF na dany rok (decyzja 6), pasek tylko w samoobsłudze (decyzja 7.3.3), dokument zgody na
 potrącenie do podpisu (wymaganie 10), bez wysyłki do MF (non-goal). Właściciel 2026-11-13: „rób bez pytania” —
-decyzje oznaczone **[D]**, niepotwierdzone **[?]**.
+decyzje oznaczone **[D]**; „czego nie wiemy, tego nie robimy” (009 R28).
 
 Podstawa (stan na 13.11.2026): ustawa o PIT — art. 39 ust. 1, 42g, 45b ust. 1 pkt 2, 45ba; wzór PIT-11(29)
 (bieżący według MF, schemat `http://crd.gov.pl/wzor/2024/10/15/13535/`, wersjaSchemy 4-0E, wariant 29); KP art. 85
@@ -22,7 +22,8 @@ Podstawa (stan na 13.11.2026): ustawa o PIT — art. 39 ust. 1, 42g, 45b ust. 1 
   niż pracownik zapisuje audyt odczytów (`payslip`).
 
 ### Karta wynagrodzeń
-- **R4.** Karta wynagrodzeń kartoteki za rok (§ 6 pkt 3 rozporządzenia; treść niezdefiniowana w przepisach **[?]**):
+- **R4.** Karta wynagrodzeń kartoteki za rok (§ 6 pkt 3 rozporządzenia wymaga karty, nie określa jej treści —
+  układ **[D]**):
   wiersz na każdą wypłatę zamkniętą w roku (data wypłaty, lista, przychód, podstawa ZUS, składki pracownika
   i pracodawcy, zdrowotna, koszty, zaliczka PIT, PPK, potrącenia, do wypłaty) i suma roczna; strona do wydruku. Kadry
   i Administrator; odczyt w audycie (`payslip`).
@@ -34,7 +35,10 @@ Podstawa (stan na 13.11.2026): ustawa o PIT — art. 39 ust. 1, 42g, 45b ust. 1 
   zaliczka, koszty 50%; wiersz 2 dla osoby do 26 lat z pobieraną zaliczką; wiersz 5: dzieło; wiersz 6–7: zlecenie;
   poz. 95–97 składki społeczne), G (poz. 109–117 przychody zwolnione z ulg; poz. 122 składka zdrowotna). Wiersz 3
   i 8 (wiek emerytalny) — poza zakresem **[D]**. Przychód z ryczałtu (≤ 200 zł) — nie wchodzi do PIT-11 (PIT-8AR).
-- **R6.** Wpłata pracodawcy na PPK jako przychód ze stosunku pracy (wiersz 1/2, przy uldze — poz. 109/110) **[?]**.
+- **R6.** Wpłata pracodawcy na PPK — przychód w dniu przekazania do instytucji finansowej (009 R19): w wierszu umowy,
+  na której liście została ujęta (`PPK-PRZ`), a przekazana w roku i nieujęta na żadnej liście — w wierszu umowy bez
+  zaliczki (`documents.pit11_untaxed_ppk`). Taka wpłata u osoby z ulgą (do 26 lat, 152–154) — zwolnienia system nie
+  liczy: `missing` `ppkIncomeRelief`, formularza nie można oznaczyć ani pobrać.
 - **R7.** Generowanie: Kadry generują PIT-11 dla spółki i roku (wszystkich osób z wypłatami) albo dla jednej osoby;
   ponowne generowanie zastępuje wersję, gdy nie została oznaczona jako wysłana; po oznaczeniu „wysłana do US” (data)
   korekta to nowa wersja z celem „korekta” (poz. 7) **[D]**. Brak PESEL albo adresu → `missingData` z listą pól.

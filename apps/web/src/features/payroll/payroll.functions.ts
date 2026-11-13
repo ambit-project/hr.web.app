@@ -13,6 +13,7 @@ import {
 	listPayrollSettings,
 	listPayrolls,
 	setPayrollMembers,
+	setPayrollPpkPaid,
 } from "#/api/endpoints/payroll/payroll";
 import type {
 	AddPayrollSettingsRequest,
@@ -22,6 +23,7 @@ import type {
 	ListPayrollEntriesItem,
 	PayrollWarning,
 	SetPayrollMembersRequest,
+	SetPayrollPpkPaidRequest,
 } from "#/api/models";
 import { toResult } from "#/lib/problem";
 import { apiOptions, callApi } from "#/server/api";
@@ -100,6 +102,12 @@ export const closePayrollFn = createServerFn({ method: "POST" })
 		toResult(() =>
 			callApi(() => closePayroll(data.id, { rowVersion: data.rowVersion }, apiOptions())),
 		),
+	);
+
+export const setPayrollPpkPaidFn = createServerFn({ method: "POST" })
+	.validator((input: { id: string; request: SetPayrollPpkPaidRequest }) => input)
+	.handler(({ data }) =>
+		toResult(() => callApi(() => setPayrollPpkPaid(data.id, data.request, apiOptions()))),
 	);
 
 export const listPayrollMembersFn = createServerFn({ method: "GET" })

@@ -27,23 +27,28 @@ public sealed class DocumentsRoutineTests(DatabaseFixture database)
         );
         await Payroll.Pit2Async(anna);
         await Payroll.PpkAsync(anna, D(2026, 4, 10));
+        var september = await Payroll.MonthAsync(company, 9);
+        // Wpłaty PPK września przekazane 10.10 — przychód na liście października (PPK-PRZ); października przekazane
+        // 10.11, a listopad nie ma listy — przychód tylko w PIT-11 (010 R6).
+        await Payroll.PpkPaidAsync(september, D(2026, 10, 10));
         var october = await Payroll.MonthAsync(company, 10);
-        var november = await Payroll.MonthAsync(company, 11);
+        await Payroll.PpkPaidAsync(october, D(2026, 11, 10));
         // Naliczona, niezamknięta lista nie wchodzi do PIT-11.
         await Payroll.MonthAsync(company, 12, close: false);
         var entries = new[]
         {
+            await Payroll.EntryAsync(september, employment),
             await Payroll.EntryAsync(october, employment),
-            await Payroll.EntryAsync(november, employment),
         };
 
         Assert.Equal(1, await _kit.GenerateAsync(company));
         var form = await _kit.FormAsync(anna);
         var p = DocumentsKit.Positions(form);
 
-        var income = entries.Sum(e => e.Gross + e.Amount("PPK-PR") + e.Amount("PPK-PRD"));
+        var income = entries.Sum(e => e.Gross + e.Amount("PPK-PRZ")) + entries[1].Amount("PPK-PR");
         var costs = entries.Sum(e => e.Amount("KUP"));
-        Assert.True(entries.All(e => e.Amount("PPK-PR") > 0));
+        Assert.Equal(entries[0].Amount("PPK-PR"), entries[1].Amount("PPK-PRZ"));
+        Assert.True(entries[1].Amount("PPK-PR") > 0);
         Assert.Equal(income, p["P_29"]);
         Assert.Equal(costs, p["P_30"]);
         Assert.Equal(income - costs, p["P_31"]);
