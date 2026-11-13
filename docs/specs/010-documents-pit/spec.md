@@ -44,6 +44,9 @@ Podstawa (stan na 13.11.2026): ustawa o PIT — art. 39 ust. 1, 42g, 45b ust. 1 
   korekta to nowa wersja z celem „korekta” (poz. 7) **[D]**. Brak PESEL albo adresu → `missingData` z listą pól.
 - **R8.** Wynik: XML zgodny ze schematem 13535 (test waliduje XML schematem zapisanym w repo) i strona do wydruku
   z układem pól jak wzór. Wysyłki do MF nie ma (non-goal) — plik pobiera się z ekranu.
+- **R8a.** Wzór PIT-11(29) (schemat 13535) dotyczy dochodów od 2024 r. (CRD, `wyroznik.xml`); MF podaje go jako
+  bieżący na podatki.gov.pl (stan 13.11.2026). Generowanie za rok po 2026 — U0003 `pit11FormUnknown`, dopóki nowy
+  rok nie zostanie sprawdzony ze wzorem MF (zasada: czego nie wiemy, tego nie liczymy).
 - **R9.** Terminy (informacja na ekranie): do urzędu do końca stycznia, do podatnika do końca lutego (art. 42g ust. 1).
   Projekt zmiany (UDER105 — PIT-11 do podatnika tylko na wniosek) nie jest prawem; system pozwala oznaczyć
   przekazanie podatnikowi (data, sposób) **[D]**.

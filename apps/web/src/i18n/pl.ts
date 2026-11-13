@@ -433,6 +433,8 @@ export const pl = {
 		closed:
 			"Lista płac jest zamknięta — nie można jej zmienić ani usunąć. Zmiany wprowadza lista korygująca.",
 		notCalculated: "Najpierw nalicz listę — zamknąć można tylko listę naliczoną.",
+		pit11FormUnknown:
+			"Wzór PIT-11 na ten rok nie jest potwierdzony — system generuje PIT-11(29) tylko za lata 2024–2026. Nowy rok wymaga sprawdzenia wzoru MF i zmiany w systemie.",
 		unsupportedCases:
 			"Lista ma wypłaty z przypadkami, których system nie liczy (ostrzeżenia blokujące). Usuń przyczynę albo wyłącz umowę z listy i rozlicz ją poza systemem.",
 		payrollNotClosed: "Datę przekazania wpłat PPK wpisuje się dla zamkniętej listy płac.",

@@ -29,8 +29,12 @@ BEGIN
     END IF;
     IF p_year IS NULL THEN
         PERFORM platform.fail_validation('{"year": ["required"]}');
-    ELSIF p_year NOT BETWEEN 2024 AND 2100 THEN
+    ELSIF p_year < 2024 OR p_year > 2100 THEN
         PERFORM platform.fail_validation('{"year": ["invalid"]}');
+    -- Wzór PIT-11(29) (schemat 13535) potwierdzony dla dochodów od 2024 r. do 2026 r. (CRD, podatki.gov.pl stan na
+    -- 13.11.2026). Na kolejny rok MF może wydać nowy wzór — dopóki nie jest sprawdzony, nie generujemy (R8a).
+    ELSIF p_year > 2026 THEN
+        RAISE EXCEPTION 'pit-11 form for year not verified' USING ERRCODE = 'U0003', HINT = 'pit11FormUnknown';
     END IF;
     IF p_employee_id IS NOT NULL THEN
         IF NOT EXISTS (SELECT FROM employees.employees e WHERE e.id = p_employee_id AND e.company_id = p_company_id)

@@ -251,6 +251,22 @@ public sealed class DocumentsRoutineTests(DatabaseFixture database)
     }
 
     [Fact]
+    public async Task Year_without_a_verified_form_is_not_generated()
+    {
+        var company = await Payroll.CompanyAsync();
+
+        var error = await Assert.ThrowsAsync<PostgresException>(() =>
+            Payroll.KadryAsync<object>(
+                "CALL documents_app.pit11_generate($1, 2027, NULL::uuid, NULL)",
+                company
+            )
+        );
+
+        Assert.Equal("U0003", error.SqlState);
+        Assert.Equal("pit11FormUnknown", error.Hint);
+    }
+
+    [Fact]
     public async Task Unsent_form_is_replaced_and_after_sending_a_change_makes_a_correction()
     {
         var company = await Payroll.CompanyAsync();

@@ -34,8 +34,10 @@ cd apps/web && yarn e2e:screenshots  # zapisuje docs/screenshots/*.png
 
 Reguły i stawki odwzorowują przepisy obowiązujące **w listopadzie 2026 r.** (teksty jednolite podane
 w specyfikacjach, np. ustawa o PIT Dz.U. 2026 poz. 592, Kodeks pracy Dz.U. 2026 poz. 1245, KPC Dz.U. 2026 poz. 468,
-płaca minimalna 2026 i 2027). Każda reguła ma w specyfikacji podstawę prawną, a sprawy, których przepisy nie
-rozstrzygają, są oznaczone jako „do potwierdzenia”. Prawo się zmienia — po tej dacie sprawdź przepisy sam albo
+płaca minimalna 2026 i 2027). Każda reguła ma w specyfikacji podstawę prawną. Zasada: **czego nie wiemy, tego nie
+liczymy** — przypadek bez potwierdzonej reguły (np. podstawa chorobowego z uzupełnieniem, limit 50% kosztów autorskich,
+PIT-11 za rok bez sprawdzonego wzoru) daje ostrzeżenie blokujące zamknięcie listy albo błąd z powodem, a nie kwotę
+zgadniętą z praktyki. Prawo się zmienia — po tej dacie sprawdź przepisy sam albo
 z doradcą podatkowym lub prawnikiem. Parametry z okresem obowiązywania (stawki, limity) zmienia się w aplikacji bez
 wydania nowej wersji.
 
