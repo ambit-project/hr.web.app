@@ -18,7 +18,8 @@
 		"check": "biome check .",
 		"format": "biome check --write .",
 		"test": "vitest run",
-		"api:gen": "orval && biome check --write src/api"
+		"api:gen": "orval && biome check --write src/api",
+		"e2e:screenshots": "playwright test e2e/screenshots.spec.ts"
 	},
 	"dependencies": {
 		"@fontsource-variable/inter": "5.2.8",
@@ -45,6 +46,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.14",
+		"@playwright/test": "1.63.0",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^26.6.2",
 		"@types/react": "^19.3.0",

@@ -1,12 +1,34 @@
 # hr.web.app
 
 Kadry i Płace zgodne z polskim prawem (kwoty w PLN): kartoteki pracowników, umowy, oświadczenia podatkowe, składniki
-płacowe, zgody na potrącenia i zajęcia wynagrodzenia — a docelowo listy płac, paski i PIT.
+płacowe, zgody na potrącenia i zajęcia wynagrodzenia, czas pracy i nieobecności, PPK, listy płac, paski wypłaty,
+karta wynagrodzeń i PIT-11 (XML zgodny ze schematem MF).
 
 > [!WARNING]
 > **Projekt nie jest gotowy do produkcji.** To otwarty projekt w budowie: listy płac (moduł 009) są nowe i nie zostały
 > porównane z innym systemem, a projekt nie przeszedł audytu prawnego ani bezpieczeństwa. Nie używaj go do rozliczania prawdziwych wynagrodzeń bez
 > własnej weryfikacji.
+
+## Zrzuty ekranu
+
+Ciemny motyw, fikcyjne dane deweloperskie. Zrzuty robi Playwright (`apps/web/e2e/screenshots.spec.ts`) na
+działającym stosie z Dockera:
+
+```bash
+scripts/dev-payrolls.sh            # przykładowe listy płac i PIT-11 spółki Demo
+cd apps/web && yarn e2e:screenshots  # zapisuje docs/screenshots/*.png
+```
+
+<table>
+<tr><td width="50%"><img src="docs/screenshots/01-login.png" alt="Logowanie (w wersji deweloperskiej — przyciski ról)"><br><sub>Logowanie (w wersji deweloperskiej — przyciski ról)</sub></td><td width="50%"><img src="docs/screenshots/02-employees.png" alt="Lista pracowników — filtry, zaznaczanie, kopiowanie do innej spółki"><br><sub>Lista pracowników — filtry, zaznaczanie, kopiowanie do innej spółki</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/03-employee-details.png" alt="Kartoteka pracownika z zakładkami"><br><sub>Kartoteka pracownika z zakładkami</sub></td><td width="50%"><img src="docs/screenshots/04-employee-wizard.png" alt="Nowa kartoteka — kreator w szerokim dialogu"><br><sub>Nowa kartoteka — kreator w szerokim dialogu</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/05-companies.png" alt="Spółki"><br><sub>Spółki</sub></td><td width="50%"><img src="docs/screenshots/06-pay-components.png" alt="Składniki płacowe"><br><sub>Składniki płacowe</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/07-calendar.png" alt="Kalendarz czasu pracy spółki"><br><sub>Kalendarz czasu pracy spółki</sub></td><td width="50%"><img src="docs/screenshots/08-ppk.png" alt="PPK — uczestnicy i wpłaty"><br><sub>PPK — uczestnicy i wpłaty</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/09-legal-parameters.png" alt="Parametry prawne z okresem obowiązywania"><br><sub>Parametry prawne z okresem obowiązywania</sub></td><td width="50%"><img src="docs/screenshots/10-payrolls.png" alt="Listy płac spółki za rok"><br><sub>Listy płac spółki za rok</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/11-payroll.png" alt="Lista płac z sumami i wypłatami"><br><sub>Lista płac z sumami i wypłatami</sub></td><td width="50%"><img src="docs/screenshots/12-payroll-entry.png" alt="Wypłata — pozycje i ślad źródeł"><br><sub>Wypłata — pozycje i ślad źródeł</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/13-payslip.png" alt="Pasek wypłaty (strona do wydruku)"><br><sub>Pasek wypłaty (strona do wydruku)</sub></td><td width="50%"><img src="docs/screenshots/14-pit11.png" alt="PIT-11 — generowanie i status wysłania"><br><sub>PIT-11 — generowanie i status wysłania</sub></td></tr>
+<tr><td width="50%"><img src="docs/screenshots/15-pit11-form.png" alt="PIT-11(29) — strona do wydruku"><br><sub>PIT-11(29) — strona do wydruku</sub></td><td width="50%"><img src="docs/screenshots/16-tax-summary.png" alt="Zestawienie do PIT-4R i PIT-8AR"><br><sub>Zestawienie do PIT-4R i PIT-8AR</sub></td></tr>
+</table>
 
 ## Stan prawny: listopad 2026
 
