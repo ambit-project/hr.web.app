@@ -1,9 +1,37 @@
 # hr.web.app
 
-Kadry i Płace zgodne z polskim prawem (kwoty w PLN): pracownicy, zatrudnienie, listy płac, paski, PIT.
-Gotowa jest platforma (moduł 001): logowanie i role, spółki, parametry prawne 2026, użytkownicy, audyt zmian oraz
-słownik stanowisk. Produkt: `PRODUCT.md`, model domeny: `docs/domain/`, specyfikacje: `docs/specs/`, decyzje:
-`docs/adr/`.
+Kadry i Płace zgodne z polskim prawem (kwoty w PLN): kartoteki pracowników, umowy, oświadczenia podatkowe, składniki
+płacowe, zgody na potrącenia i zajęcia wynagrodzenia — a docelowo listy płac, paski i PIT.
+
+> [!WARNING]
+> **Projekt nie jest gotowy do produkcji.** To otwarty projekt w budowie: nie liczy jeszcze list płac (moduł 009)
+> i nie przeszedł audytu prawnego ani bezpieczeństwa. Nie używaj go do rozliczania prawdziwych wynagrodzeń bez
+> własnej weryfikacji.
+
+## Stan prawny: listopad 2026
+
+Reguły i stawki odwzorowują przepisy obowiązujące **w listopadzie 2026 r.** (teksty jednolite podane
+w specyfikacjach, np. ustawa o PIT Dz.U. 2026 poz. 592, Kodeks pracy Dz.U. 2026 poz. 1245, KPC Dz.U. 2026 poz. 468,
+płaca minimalna 2026 i 2027). Każda reguła ma w specyfikacji podstawę prawną, a sprawy, których przepisy nie
+rozstrzygają, są oznaczone jako „do potwierdzenia”. Prawo się zmienia — po tej dacie sprawdź przepisy sam albo
+z doradcą podatkowym lub prawnikiem. Parametry z okresem obowiązywania (stawki, limity) zmienia się w aplikacji bez
+wydania nowej wersji.
+
+## Forkuj i utrzymuj własną wersję
+
+Projekt jest na licencji **MIT** (`LICENSE`): możesz go używać, zmieniać i rozpowszechniać, także komercyjnie,
+bez gwarancji. **Zachęcamy do forkowania** i prowadzenia własnej wersji — pod swoją firmę, biuro rachunkowe albo
+grupę spółek. Żeby było to łatwe:
+
+- logika jest w bazie i opisana specyfikacjami (`docs/specs/NNN-…/spec.md` — wymagania z podstawą prawną,
+  `plan.md`, `tasks.md` z mapą wymaganie → test), więc wiadomo, co i dlaczego zmienić, gdy zmieni się prawo;
+- decyzje architektoniczne są w `docs/adr/`, model domeny w `docs/domain/`, produkt w `PRODUCT.md`;
+- testy działają na prawdziwym PostgreSQL (Testcontainers) — po zmianie przepisu zmieniasz regułę i jej test.
+
+Gotowe moduły: 001 Platforma (logowanie, role, spółki, parametry prawne, użytkownicy, audyt), 002 Słowniki,
+003 Pracownicy (kartoteki, akronim, szyfrowany PESEL, kopiowanie między spółkami), 004 Zatrudnienie, 005 Oświadczenia
+podatkowe, 006 Składniki, zgody i zajęcia. Kolejne: 007 Czas pracy i nieobecności, 008 PPK, 009 Listy płac, 010
+Dokumenty i PIT (`PRODUCT.md`).
 
 ## Stack
 
@@ -89,4 +117,5 @@ cd apps/web && yarn api:gen
 
 ## Licencja
 
-MIT — `LICENSE`.
+MIT — `LICENSE`. Oprogramowanie jest dostarczane „tak jak jest”, bez gwarancji; za zgodność rozliczeń z prawem
+odpowiada ten, kto go używa.
