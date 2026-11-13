@@ -17,3 +17,4 @@ Model danych: [docs/domain](../domain/README.md). Wymaganie bez testu w `tasks.m
 | [003](003-employees/spec.md) | Pracownicy: kartoteka, adresy, rachunki, szyfrowanie, profile | zrobione (R1–R15) |
 | [004](004-employment/spec.md) | Zatrudnienie: umowy, wersje warunków, zbieg, okres przechowywania | zrobione (R1–R21) |
 | [005](005-tax-declarations/spec.md) | Oświadczenia podatkowe: PIT-2, ulgi, koszty, wnioski o zaliczki | zrobione (R1–R16) |
+| [006](006-pay-components/spec.md) | Składniki płacowe, zgody na potrącenia, zajęcia wynagrodzenia | specyfikacja do zatwierdzenia |

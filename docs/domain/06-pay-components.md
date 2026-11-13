@@ -96,7 +96,7 @@ Definicja składnika: dodatek (zwiększa przychód) albo potrącenie (zmniejsza 
 | `inHealthBase` | Wartość logiczna | tak | Dodatek wchodzi do podstawy składki zdrowotnej. |
 | `taxable` | Wartość logiczna | tak | Dodatek jest przychodem do PIT. |
 | `inSicknessBase` | Wartość logiczna | tak | Dodatek wchodzi do podstawy wynagrodzenia chorobowego. |
-| `deductionCategory` | Wyliczenie | warunkowo | Dla potrąceń, w kolejności z art. 87 KP: `alimenty`, `egzekucja inna`, `zaliczka pieniężna`, `kara porządkowa`, `dobrowolne za zgodą`. Składki, zaliczka PIT i PPK nie są tu kategoriami: liczy je silnik przed potrąceniami. |
+| `deductionCategory` | Wyliczenie | warunkowo | Dla potrąceń: `zaliczka pieniężna`, `kara porządkowa`, `dobrowolne na rzecz pracodawcy`, `dobrowolne na rzecz innych` (różne kwoty wolne, art. 91 §2 KP). Alimenty i inne egzekucje to składniki systemowe `ALIM` i `KOMOR` liczone z zajęć ([specyfikacja 006 R4](../specs/006-pay-components/spec.md)). Składki, zaliczka PIT i PPK nie są tu kategoriami: liczy je silnik przed potrąceniami. |
 | `requiresConsent` | Wartość logiczna | tak | *(wyliczany)* Tak dla `dobrowolne za zgodą`. |
 | `isSystem` | Wartość logiczna | tak | |
 
@@ -177,7 +177,7 @@ wygenerowana (signedAt puste) → podpisana → odwołana (validTo w przeszłoś
 |---|---|---|---|---|---|---|
 | `DC-001` | `EMP-BETA-001` | `PCT-KARTA` | 120,00 | 2026-09-25 | 2026-10-01 | `DOC-DC-001` |
 
-## Garnishment *(propozycja)*
+## Garnishment
 
 Tytuł egzekucyjny (zajęcie wynagrodzenia przez komornika) z kwotą do ściągnięcia. Wpisują go Kadry po doręczeniu
 zajęcia. Kwotę ściągniętą wylicza się z zamkniętych list płac.

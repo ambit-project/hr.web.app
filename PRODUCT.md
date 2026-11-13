@@ -63,7 +63,7 @@ Kolejność modułów wynika z zależności w [modelu domeny](docs/domain/README
 | 003 | Pracownicy: kartoteka, adresy, rachunki, szyfrowanie, profile | zrobione |
 | 004 | Zatrudnienie: umowy i wersje warunków, status i okres przechowywania | zrobione |
 | 005 | Oświadczenia podatkowe | zrobione |
-| 006 | Składniki, zgody na potrącenia, tytuły egzekucyjne | do napisania |
+| 006 | Składniki, zgody na potrącenia, tytuły egzekucyjne | specyfikacja do zatwierdzenia |
 | 007 | Czas pracy i nieobecności | do napisania |
 | 008 | PPK | do napisania |
 | 009 | Listy płac, liczenie, korekty | do napisania |
