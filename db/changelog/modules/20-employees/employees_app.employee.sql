@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset hr:employees_app.employee_list runOnChange:true splitStatements:false
---comment: Lista kartotek (Kadry, Administrator): filtr spółki, wyszukiwanie po nazwisku, imieniu, numerze, a po pełnym
+--comment: Lista kartotek (Kadry, Administrator): filtr spółki, wyszukiwanie po nazwisku, imieniu, numerze, akronimie, a po pełnym
 --comment: poprawnym PESEL dokładnie (HMAC), filtr statusu z umów (004 R16). Bez PESEL i rachunku w wyniku.
 DROP FUNCTION IF EXISTS employees_app.employee_list(uuid, text, integer, integer);
 DROP FUNCTION IF EXISTS employees_app.employee_list(uuid, text, integer, integer, text);
@@ -17,6 +17,7 @@ CREATE FUNCTION employees_app.employee_list(
         company_id uuid,
         company_short_name text,
         number text,
+        acronym text,
         first_name text,
         second_name text,
         last_name text,
@@ -42,8 +43,8 @@ BEGIN
     END IF;
 
     RETURN QUERY
-    SELECT e.id, e.company_id, c.short_name, e.number, e.first_name, e.second_name, e.last_name, e.birth_date,
-           a.city, u.login, s.status, count(*) OVER ()
+    SELECT e.id, e.company_id, c.short_name, e.number, e.acronym, e.first_name, e.second_name, e.last_name,
+           e.birth_date, a.city, u.login, s.status, count(*) OVER ()
     FROM employees.employees e
     CROSS JOIN LATERAL (SELECT employment.employee_status(e.id, current_date) AS status) s
     JOIN platform.companies c ON c.id = e.company_id
@@ -60,6 +61,7 @@ BEGIN
               e.last_name || ' ' || e.first_name ILIKE v_like
               OR e.first_name || ' ' || e.last_name ILIKE v_like
               OR e.number ILIKE v_like
+              OR e.acronym ILIKE v_like
           ))
       )
     ORDER BY e.last_name COLLATE "pl-x-icu", e.first_name COLLATE "pl-x-icu", c.short_name, e.id
@@ -79,6 +81,7 @@ CREATE FUNCTION employees_app.employee_get(p_id uuid)
         company_id uuid,
         company_short_name text,
         number text,
+        acronym text,
         first_name text,
         second_name text,
         last_name text,
@@ -109,7 +112,7 @@ BEGIN
     PERFORM platform.read_audit(p_id, 'employee', p_id::text);
 
     RETURN QUERY
-    SELECT e.id, e.company_id, c.short_name, e.number, e.first_name, e.second_name, e.last_name,
+    SELECT e.id, e.company_id, c.short_name, e.number, e.acronym, e.first_name, e.second_name, e.last_name,
            employees.decrypt(e.pesel_enc), employees.decrypt(e.identity_document_enc), e.birth_date,
            e.tax_office_id, t.code, t.name, e.email,
            (SELECT employees.decrypt(b.iban_enc) FROM employees.bank_accounts b
@@ -208,12 +211,14 @@ END;
 $$;
 
 --changeset hr:employees_app.employee_update runOnChange:true splitStatements:false
---comment: Edycja kartoteki (Kadry, Administrator) z wersją wiersza. Spółki nie zmienia się. PESEL w audycie tylko jako
+--comment: Edycja kartoteki (Kadry, Administrator) z wersją wiersza, w tym akronimu. Spółki nie zmienia się. PESEL w audycie tylko jako
 --comment: informacja o zmianie.
-CREATE OR REPLACE PROCEDURE employees_app.employee_update(
+DROP PROCEDURE IF EXISTS employees_app.employee_update(uuid, bigint, text, text, text, text, text, text, date, uuid, text);
+CREATE PROCEDURE employees_app.employee_update(
     IN p_id uuid,
     IN p_row_version bigint,
     IN p_number text,
+    IN p_acronym text,
     IN p_first_name text,
     IN p_second_name text,
     IN p_last_name text,
@@ -247,6 +252,7 @@ BEGIN
 
     v_after := v_before;
     v_after.number := nullif(btrim(p_number), '');
+    v_after.acronym := nullif(btrim(p_acronym), '');
     v_after.first_name := nullif(btrim(p_first_name), '');
     v_after.second_name := nullif(btrim(p_second_name), '');
     v_after.last_name := nullif(btrim(p_last_name), '');
@@ -256,6 +262,17 @@ BEGIN
 
     v_errors := employees.employee_validate(p_id, v_before.company_id, v_after.number, v_after.first_name,
         v_after.last_name, v_pesel, v_document, v_after.birth_date, v_after.tax_office_id, v_after.email);
+    -- Akronim: wymagany, litery, cyfry, kropka, myślnik i podkreślnik; unikalny w spółce bez względu na wielkość liter.
+    IF v_after.acronym IS NULL THEN
+        v_errors := v_errors || '{"acronym": ["required"]}';
+    ELSIF v_after.acronym !~ '^[A-Za-z0-9._-]{1,30}$' THEN
+        v_errors := v_errors || '{"acronym": ["invalid"]}';
+    ELSIF EXISTS (
+        SELECT FROM employees.employees e
+        WHERE e.company_id = v_before.company_id AND e.id <> p_id AND upper(e.acronym) = upper(v_after.acronym)
+    ) THEN
+        v_errors := v_errors || '{"acronym": ["duplicate"]}';
+    END IF;
     IF v_errors <> '{}' THEN
         PERFORM platform.fail_validation(v_errors);
     END IF;
@@ -271,7 +288,7 @@ BEGIN
     END IF;
 
     UPDATE employees.employees e
-    SET number = v_after.number, first_name = v_after.first_name, second_name = v_after.second_name,
+    SET number = v_after.number, acronym = v_after.acronym, first_name = v_after.first_name, second_name = v_after.second_name,
         last_name = v_after.last_name, pesel_enc = v_after.pesel_enc, pesel_hmac = v_after.pesel_hmac,
         identity_document_enc = v_after.identity_document_enc, birth_date = v_after.birth_date,
         tax_office_id = v_after.tax_office_id, email = v_after.email

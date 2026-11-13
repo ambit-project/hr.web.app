@@ -28,6 +28,7 @@ const schema = z
 	.object({
 		companyId: z.string().min(1, "required"),
 		number: text({ max: 20 }),
+		acronym: text({ max: 30 }),
 		firstName: text({ required: true, max: 100 }),
 		secondName: text({ max: 100 }),
 		lastName: text({ required: true, max: 100 }),
@@ -67,6 +68,7 @@ const schema = z
 const FIELDS = [
 	"companyId",
 	"number",
+	"acronym",
 	"firstName",
 	"secondName",
 	"lastName",
@@ -131,6 +133,7 @@ function EmployeeForm({ target, onDone }: { target: Target; onDone: () => void }
 		defaultValues: {
 			companyId: employee?.companyId ?? (target.mode === "create" ? target.companyId : ""),
 			number: employee?.number ?? "",
+			acronym: employee?.acronym ?? "",
 			firstName: employee?.firstName ?? "",
 			secondName: employee?.secondName ?? "",
 			lastName: employee?.lastName ?? "",
@@ -162,7 +165,12 @@ function EmployeeForm({ target, onDone }: { target: Target; onDone: () => void }
 				if (employee) {
 					await update.mutateAsync({
 						id: employee.id,
-						request: { ...person, number: value.number, rowVersion: employee.rowVersion },
+						request: {
+							...person,
+							number: value.number,
+							acronym: value.acronym,
+							rowVersion: employee.rowVersion,
+						},
 					});
 					toast.success(t("employees.edit.saved"));
 					onDone();
@@ -284,16 +292,27 @@ function EmployeeForm({ target, onDone }: { target: Target; onDone: () => void }
 								</form.AppField>
 							</div>
 							<div className="grid gap-4 sm:grid-cols-2">
-								<form.AppField name="identityDocument">
-									{(field) => (
-										<field.TextInput
-											label={t("employees.fields.identityDocument")}
-											description={t("employees.fields.identityDocumentHint")}
-										/>
-									)}
-								</form.AppField>
 								{textField("number")}
+								{employee ? (
+									<form.AppField name="acronym">
+										{(field) => (
+											<field.TextInput
+												label={t("employees.fields.acronym")}
+												description={t("employees.fields.acronymHint")}
+												isRequired
+											/>
+										)}
+									</form.AppField>
+								) : null}
 							</div>
+							<form.AppField name="identityDocument">
+								{(field) => (
+									<field.TextInput
+										label={t("employees.fields.identityDocument")}
+										description={t("employees.fields.identityDocumentHint")}
+									/>
+								)}
+							</form.AppField>
 							<form.Field name="taxOfficeId">
 								{(field) => {
 									const code = errorCode(field.state.meta.errors);

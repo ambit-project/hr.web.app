@@ -77,3 +77,32 @@ body {
 .table__body .table__row:hover > .table__cell {
 	background-color: var(--color-surface-hover);
 }
+
+/* Przejście do szczegółów w tabeli: sam ">" , a pod kursorem albo przy fokusie czarne koło (biały w ciemnym motywie).
+   Jedyny wyjątek od braku zaokrągleń — decyzja właściciela. */
+.open-link {
+	display: inline-flex;
+	width: 2rem;
+	height: 2rem;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-text);
+	transition:
+		background-color var(--transition-fast, 120ms ease),
+		color var(--transition-fast, 120ms ease);
+}
+
+.open-link,
+.open-link:hover,
+.open-link:focus-visible {
+	/* biome-ignore lint/complexity/noImportantStyles: wygrywa z globalnym zerowaniem zaokrągleń */
+	border-radius: 9999px !important;
+}
+
+.open-link:hover,
+.open-link:focus-visible,
+.table__row:hover .open-link {
+	background: var(--color-action);
+	color: var(--color-action-foreground);
+	outline: none;
+}

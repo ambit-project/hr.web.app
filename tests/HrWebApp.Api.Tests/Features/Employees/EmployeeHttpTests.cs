@@ -51,11 +51,17 @@ public sealed class EmployeeHttpTests(DatabaseFixture database)
         Assert.Equal(pesel, details.GetProperty("pesel").GetString());
         Assert.Equal(iban, details.GetProperty("iban").GetString());
         Assert.Equal("1", details.GetProperty("number").GetString());
+        // Akronim nadany przy założeniu: RRRRMM dnia dodania + 4 znaki bez mylących (0/O, 1/I/L).
+        Assert.Matches(
+            $"^{DateTime.Today:yyyyMM}[A-HJKMNP-Z2-9]{{4}}$",
+            details.GetProperty("acronym").GetString()
+        );
 
         var update = new
         {
             rowVersion = details.GetProperty("rowVersion").GetInt64(),
             number = "P/1",
+            acronym = "KOWALSKI-P",
             firstName = "Piotr",
             lastName = "Testowy-Nowy",
             pesel,
@@ -75,6 +81,13 @@ public sealed class EmployeeHttpTests(DatabaseFixture database)
             $"/api/employees?companyId={company}&search=nowy"
         );
         Assert.Equal("P/1", list.GetProperty("items")[0].GetProperty("number").GetString());
+        var byAcronym = await kadry.GetFromJsonAsync<JsonElement>(
+            $"/api/employees?companyId={company}&search=kowalski-p"
+        );
+        Assert.Equal(
+            "KOWALSKI-P",
+            byAcronym.GetProperty("items")[0].GetProperty("acronym").GetString()
+        );
 
         Assert.Equal(
             HttpStatusCode.NoContent,

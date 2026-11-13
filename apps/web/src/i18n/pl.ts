@@ -209,7 +209,7 @@ export const pl = {
 	},
 	employees: {
 		title: "Pracownicy",
-		searchPlaceholder: "Nazwisko, imię, numer albo PESEL",
+		searchPlaceholder: "Nazwisko, imię, numer, akronim albo PESEL",
 		allCompanies: "Wszystkie spółki",
 		empty: "Brak kartotek.",
 		total_one: "{{count}} kartoteka",
@@ -221,6 +221,8 @@ export const pl = {
 			name: "Nazwisko i imię",
 			number: "Numer ewidencyjny",
 			numberHint: "Puste = kolejny wolny numer w spółce.",
+			acronym: "Akronim",
+			acronymHint: "Nadany przy dodaniu (rok, miesiąc, kod) — można zmienić; unikalny w spółce.",
 			firstName: "Imię",
 			secondName: "Drugie imię",
 			lastName: "Nazwisko",

@@ -231,6 +231,7 @@ AS $$
     SELECT jsonb_build_object(
         'companyId', p_row.company_id,
         'number', p_row.number,
+        'acronym', p_row.acronym,
         'firstName', p_row.first_name,
         'secondName', p_row.second_name,
         'lastName', p_row.last_name,

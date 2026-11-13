@@ -3302,7 +3302,8 @@
           "status",
           "retentionUntil",
           "retentionOpen",
-          "rowVersion"
+          "rowVersion",
+          "acronym"
         ],
         "type": "object",
         "properties": {
@@ -3401,6 +3402,9 @@
           "rowVersion": {
             "type": "integer",
             "format": "int64"
+          },
+          "acronym": {
+            "type": "string"
           }
         }
       },
@@ -3883,7 +3887,8 @@
           "birthDate",
           "city",
           "accountLogin",
-          "status"
+          "status",
+          "acronym"
         ],
         "type": "object",
         "properties": {
@@ -3930,6 +3935,9 @@
             ]
           },
           "status": {
+            "type": "string"
+          },
+          "acronym": {
             "type": "string"
           }
         }
@@ -4691,6 +4699,7 @@
         "required": [
           "rowVersion",
           "number",
+          "acronym",
           "firstName",
           "secondName",
           "lastName",
@@ -4708,6 +4717,10 @@
           },
           "number": {
             "maxLength": 20,
+            "type": "string"
+          },
+          "acronym": {
+            "maxLength": 30,
             "type": "string"
           },
           "firstName": {

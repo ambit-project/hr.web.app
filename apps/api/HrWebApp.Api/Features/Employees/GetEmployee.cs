@@ -30,7 +30,8 @@ public static class GetEmployee
         string Status,
         DateOnly? RetentionUntil,
         bool RetentionOpen,
-        long RowVersion
+        long RowVersion,
+        string Acronym
     );
 
     public static async Task<Ok<Response>> Handle(
@@ -52,7 +53,7 @@ public sealed class GetEmployeeHandler(DbSession db)
             """
             SELECT id, company_id, company_short_name, number, first_name, second_name, last_name, pesel,
                    identity_document, birth_date, tax_office_id, tax_office_code, tax_office_name, email, iban,
-                   account_login, status, retention_until, retention_open, row_version
+                   account_login, status, retention_until, retention_open, row_version, acronym
             FROM employees_app.employee_get($1)
             """,
             [Db.Param(id)],
@@ -76,7 +77,8 @@ public sealed class GetEmployeeHandler(DbSession db)
                 reader.GetString(16),
                 reader.IsDBNull(17) ? null : reader.GetFieldValue<DateOnly>(17),
                 reader.GetBoolean(18),
-                reader.GetInt64(19)
+                reader.GetInt64(19),
+                reader.GetString(20)
             ),
             cancellationToken
         );

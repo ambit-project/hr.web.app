@@ -9,6 +9,8 @@ export interface UpdateEmployeeRequest {
 	rowVersion: number;
 	/** @maxLength 20 */
 	number: string;
+	/** @maxLength 30 */
+	acronym: string;
 	/** @maxLength 100 */
 	firstName: string;
 	/**

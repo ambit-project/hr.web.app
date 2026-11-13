@@ -20,4 +20,5 @@ export interface ListEmployeesItem {
 	/** @nullable */
 	accountLogin: string | null;
 	status: string;
+	acronym: string;
 }

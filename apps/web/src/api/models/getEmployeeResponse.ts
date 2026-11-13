@@ -36,4 +36,5 @@ export interface GetEmployeeResponse {
 	retentionUntil: string | null;
 	retentionOpen: boolean;
 	rowVersion: number;
+	acronym: string;
 }

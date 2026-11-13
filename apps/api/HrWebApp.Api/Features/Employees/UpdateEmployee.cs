@@ -10,6 +10,7 @@ public static class UpdateEmployee
     public sealed record Request(
         long RowVersion,
         [property: MaxLength(20)] string Number,
+        [property: MaxLength(30)] string Acronym,
         [property: MaxLength(100)] string FirstName,
         [property: MaxLength(100)] string? SecondName,
         [property: MaxLength(100)] string LastName,
@@ -40,11 +41,12 @@ public sealed class UpdateEmployeeHandler(DbSession db)
         CancellationToken cancellationToken
     ) =>
         await db.ScalarAsync<object>(
-            "CALL employees_app.employee_update($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+            "CALL employees_app.employee_update($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
             [
                 Db.Param(id),
                 Db.Param(request.RowVersion),
                 Db.Param(request.Number),
+                Db.Param(request.Acronym),
                 Db.Param(request.FirstName),
                 Db.Param(request.SecondName),
                 Db.Param(request.LastName),

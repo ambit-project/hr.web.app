@@ -103,6 +103,7 @@ export function EmployeesPage() {
 								<Table.Column isRowHeader>{t("employees.fields.name")}</Table.Column>
 								<Table.Column>{t("employees.fields.company")}</Table.Column>
 								<Table.Column>{t("employees.fields.number")}</Table.Column>
+								<Table.Column>{t("employees.fields.acronym")}</Table.Column>
 								<Table.Column>{t("employees.fields.birthDate")}</Table.Column>
 								<Table.Column>{t("employees.fields.city")}</Table.Column>
 								<Table.Column>{t("employees.fields.account")}</Table.Column>
@@ -133,6 +134,9 @@ export function EmployeesPage() {
 										<Table.Cell>{employee.companyShortName}</Table.Cell>
 										<Table.Cell>
 											<code>{employee.number}</code>
+										</Table.Cell>
+										<Table.Cell>
+											<code>{employee.acronym}</code>
 										</Table.Cell>
 										<Table.Cell>{employee.birthDate}</Table.Cell>
 										<Table.Cell>{employee.city ?? "—"}</Table.Cell>

@@ -49,7 +49,8 @@ export function EmployeeDetailsPage() {
 				</h1>
 				<p className="text-sm text-muted">
 					{employee.companyShortName} · {t("employees.fields.number")}{" "}
-					<code>{employee.number}</code>
+					<code>{employee.number}</code> · {t("employees.fields.acronym")}{" "}
+					<code>{employee.acronym}</code>
 				</p>
 			</header>
 
