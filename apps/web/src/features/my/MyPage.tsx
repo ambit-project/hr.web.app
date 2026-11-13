@@ -4,6 +4,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { ConsentsTable } from "#/features/pay-components/ConsentsTable";
 import { consentsQuery } from "#/features/pay-components/payComponentsQueries";
+import { MyPpk } from "#/features/ppk/MyPpk";
 import { TaxDeclarationsTable } from "#/features/tax-declarations/TaxDeclarationsTable";
 import { taxDeclarationsQuery } from "#/features/tax-declarations/taxDeclarationsQueries";
 import { MyAbsences, MyLeaveBalance } from "#/features/time-absence/MyTimeAbsence";
@@ -42,6 +43,8 @@ export function MyPage() {
 									<MyLeaveBalance employeeId={profile.employeeId} year={year} />
 									<h2 className="pt-2 text-sm font-semibold">{t("my.absences", { year })}</h2>
 									<MyAbsences employeeId={profile.employeeId} year={year} />
+									<h2 className="pt-2 text-sm font-semibold">{t("my.ppk")}</h2>
+									<MyPpk employeeId={profile.employeeId} />
 									<p className="text-sm text-muted">{t("my.empty")}</p>
 								</Card.Content>
 							</Card>

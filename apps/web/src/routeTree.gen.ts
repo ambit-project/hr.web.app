@@ -23,6 +23,7 @@ import { Route as LegalParametersIndexRouteImport } from './routes/legal-paramet
 import { Route as MyIndexRouteImport } from './routes/my/index'
 import { Route as PayComponentsIndexRouteImport } from './routes/pay-components/index'
 import { Route as PositionsIndexRouteImport } from './routes/positions/index'
+import { Route as PpkIndexRouteImport } from './routes/ppk/index'
 import { Route as TaxOfficesIndexRouteImport } from './routes/tax-offices/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as ZusCodesIndexRouteImport } from './routes/zus-codes/index'
@@ -97,6 +98,11 @@ const PositionsIndexRoute = PositionsIndexRouteImport.update({
   path: '/positions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PpkIndexRoute = PpkIndexRouteImport.update({
+  id: '/ppk/',
+  path: '/ppk/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaxOfficesIndexRoute = TaxOfficesIndexRouteImport.update({
   id: '/tax-offices/',
   path: '/tax-offices/',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/my/': typeof MyIndexRoute
   '/pay-components/': typeof PayComponentsIndexRoute
   '/positions/': typeof PositionsIndexRoute
+  '/ppk/': typeof PpkIndexRoute
   '/tax-offices/': typeof TaxOfficesIndexRoute
   '/users/': typeof UsersIndexRoute
   '/zus-codes/': typeof ZusCodesIndexRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/my': typeof MyIndexRoute
   '/pay-components': typeof PayComponentsIndexRoute
   '/positions': typeof PositionsIndexRoute
+  '/ppk': typeof PpkIndexRoute
   '/tax-offices': typeof TaxOfficesIndexRoute
   '/users': typeof UsersIndexRoute
   '/zus-codes': typeof ZusCodesIndexRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/my/': typeof MyIndexRoute
   '/pay-components/': typeof PayComponentsIndexRoute
   '/positions/': typeof PositionsIndexRoute
+  '/ppk/': typeof PpkIndexRoute
   '/tax-offices/': typeof TaxOfficesIndexRoute
   '/users/': typeof UsersIndexRoute
   '/zus-codes/': typeof ZusCodesIndexRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/my/'
     | '/pay-components/'
     | '/positions/'
+    | '/ppk/'
     | '/tax-offices/'
     | '/users/'
     | '/zus-codes/'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/my'
     | '/pay-components'
     | '/positions'
+    | '/ppk'
     | '/tax-offices'
     | '/users'
     | '/zus-codes'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/my/'
     | '/pay-components/'
     | '/positions/'
+    | '/ppk/'
     | '/tax-offices/'
     | '/users/'
     | '/zus-codes/'
@@ -246,6 +258,7 @@ export interface RootRouteChildren {
   MyIndexRoute: typeof MyIndexRoute
   PayComponentsIndexRoute: typeof PayComponentsIndexRoute
   PositionsIndexRoute: typeof PositionsIndexRoute
+  PpkIndexRoute: typeof PpkIndexRoute
   TaxOfficesIndexRoute: typeof TaxOfficesIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   ZusCodesIndexRoute: typeof ZusCodesIndexRoute
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PositionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ppk/': {
+      id: '/ppk/'
+      path: '/ppk'
+      fullPath: '/ppk/'
+      preLoaderRoute: typeof PpkIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tax-offices/': {
       id: '/tax-offices/'
       path: '/tax-offices'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyIndexRoute: MyIndexRoute,
   PayComponentsIndexRoute: PayComponentsIndexRoute,
   PositionsIndexRoute: PositionsIndexRoute,
+  PpkIndexRoute: PpkIndexRoute,
   TaxOfficesIndexRoute: TaxOfficesIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   ZusCodesIndexRoute: ZusCodesIndexRoute,

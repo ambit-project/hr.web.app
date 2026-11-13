@@ -11,6 +11,7 @@ import { ThemeToggle } from "#/features/theme/ThemeToggle";
 type NavItem = {
 	to:
 		| "/employees"
+		| "/ppk"
 		| "/calendar"
 		| "/holidays"
 		| "/positions"
@@ -24,6 +25,7 @@ type NavItem = {
 		| "/my";
 	label:
 		| "app.nav.employees"
+		| "app.nav.ppk"
 		| "app.nav.calendar"
 		| "app.nav.holidays"
 		| "app.nav.positions"
@@ -50,7 +52,10 @@ const NAV: NavSection[] = [
 	{ items: [{ to: "/my", label: "app.nav.my", roles: ["pracownik"] }] },
 	{
 		label: "app.nav.staff",
-		items: [{ to: "/employees", label: "app.nav.employees", roles: STAFF }],
+		items: [
+			{ to: "/employees", label: "app.nav.employees", roles: STAFF },
+			{ to: "/ppk", label: "app.nav.ppk", roles: STAFF },
+		],
 	},
 	{
 		label: "app.nav.workTime",

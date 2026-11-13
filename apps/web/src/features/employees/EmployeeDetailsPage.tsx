@@ -8,6 +8,7 @@ import { EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { DeductionsSection } from "#/features/pay-components/DeductionsSection";
+import { EmployeePpkSection } from "#/features/ppk/EmployeePpkSection";
 import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
 import { birthDateWithAge } from "#/lib/age";
 import { ProblemError, serverErrorText } from "#/lib/problem";
@@ -86,6 +87,12 @@ export function EmployeeDetailsPage() {
 				</Tabs.Panel>
 				<Tabs.Panel id="deductions" className="pt-4">
 					<DeductionsSection employeeId={employee.id} />
+				</Tabs.Panel>
+				<Tabs.Panel id="ppk" className="pt-4">
+					<EmployeePpkSection
+						employeeId={employee.id}
+						name={`${employee.lastName} ${employee.firstName}`}
+					/>
 				</Tabs.Panel>
 				<Tabs.Panel id="addresses" className="pt-4">
 					<AddressesSection employeeId={employee.id} />

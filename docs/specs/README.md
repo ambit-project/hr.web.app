@@ -20,4 +20,4 @@ Model danych: [docs/domain](../domain/README.md). Wymaganie bez testu w `tasks.m
 | [006](006-pay-components/spec.md) | Składniki płacowe, zgody na potrącenia, zajęcia wynagrodzenia | zrobione (R1–R25) |
 | [007](007-time-and-absence/spec.md) | Czas pracy i nieobecności: kalendarz, nieobecności, limit urlopu, ewidencja godzin | zrobione (R1–R20) |
 | [011](011-optima-integration/spec.md) | Integracja z Comarch ERP Optima przez agenta | API zrobione (R1–R22); front osobno |
-| [008](008-ppk/spec.md) | PPK: ustawienia spółki, zapis, stawki, deklaracje, ponowny zapis co 4 lata | w realizacji |
+| [008](008-ppk/spec.md) | PPK: ustawienia spółki, zapis, stawki, deklaracje, ponowny zapis co 4 lata | zrobione (R1–R16, R6a) |

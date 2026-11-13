@@ -26,6 +26,10 @@ export const AUDIT_ENTITIES = [
 	"leave_entitlement",
 	"overtime",
 	"mandate_hours",
+	"ppk_company_settings",
+	"ppk_participation",
+	"ppk_declaration",
+	"ppk_reenrollment_cycle",
 ] as const;
 export type AuditEntity = (typeof AUDIT_ENTITIES)[number];
 

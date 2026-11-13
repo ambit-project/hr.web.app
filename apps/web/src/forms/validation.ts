@@ -28,7 +28,13 @@ export type ValidationCode =
 	| "aboveConsent"
 	| "afterStatus"
 	| "limitExceeded"
-	| "leaveLimitExceeded";
+	| "leaveLimitExceeded"
+	| "notEmployed"
+	| "tooEarly"
+	| "tooYoung"
+	| "tooOld"
+	| "requestMissing"
+	| "notCycleYear";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {

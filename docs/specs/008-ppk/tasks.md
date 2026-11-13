@@ -9,10 +9,10 @@
       `rebuild_rates`, `cycle_get`, `reenrollment_rows`), rutyny kontraktu, uprawnienia. Testy rutyn.
 - [x] T2. API: ustawienia PPK spółki, lista „do zapisu”, PPK kartoteki (odczyt, zapis, usunięcie pomyłki, deklaracje),
       ponowny zapis (odczyt, informacja, wznowienie), „moje” PPK; migawka OpenAPI. Testy HTTP.
-- [ ] T3. Front: menu „Kadry → PPK” (Ustawienia, Do zapisu, Ponowny zapis), zakładka PPK kartoteki, „Moje dokumenty”,
+- [x] T3. Front: menu „Kadry → PPK” (Ustawienia, Do zapisu, Ponowny zapis), zakładka PPK kartoteki, „Moje dokumenty”,
       etykiety audytu (`ppk_company_settings`, `ppk_participation`, `ppk_declaration`, `ppk_reenrollment_cycle`)
       i kody błędów z `db/README.md`.
-- [ ] T4. Dokumentacja: PRODUCT, sprawdzenie w przeglądarce.
+- [x] T4. Dokumentacja: PRODUCT, sprawdzenie w przeglądarce.
 
 ## Odstępstwa od planu
 
@@ -78,3 +78,9 @@ Testy rutyn: `tests/HrWebApp.Api.Tests/Database/PpkRoutineTests.cs`; HTTP:
 | R14 | `Pracownik_reads_own_ppk_only_and_dev_data_matches_r16`, HTTP `Pracownik_reads_own_ppk_and_gets_403_elsewhere` |
 | R15 | audyt: `Reduced_and_additional_…` (utworzenie i usunięcie deklaracji); role: `Pracownik_reads_own_…` (zapis i ustawienia → U0004), HTTP 403 |
 | R16 | `Pracownik_reads_own_ppk_only_…` (Anna Testowa: od 2026-04-10, 2% / 0%, pracodawca 1,5% / 0%; Piotr Kowalski — `resigned`), HTTP `Pracownik_reads_own_ppk_…` |
+
+Sprawdzone w przeglądarce (Kadry, Demo): ustawienia PPK spółki, lista „Do zapisu” na 2026-11-13 (zaległe, tylko na
+wniosek 55–69, czekające na 3 miesiące; zapis osoby 58 lat bez wniosku odrzucony `requestMissing`), ponowny zapis
+2027 (Piotr Kowalski w grupie wznowienia od 1.04), zakładka PPK Anny Testowej, PPK w „Moich dokumentach”.
+Nie sprawdzone w przeglądarce: zapis daty informacji i wznowienie dla cyklu 2027 (data z przyszłości) — pokryte
+testami rutyn na cyklu 2023.

@@ -5,6 +5,7 @@ export { employmentsKeys } from "./employmentsKeys";
 export { legalParametersKeys } from "./legalParametersKeys";
 export { payComponentsKeys } from "./payComponentsKeys";
 export { positionsKeys } from "./positionsKeys";
+export { ppkKeys } from "./ppkKeys";
 export { taxDeclarationsKeys } from "./taxDeclarationsKeys";
 export { taxOfficesKeys } from "./taxOfficesKeys";
 export { timeAbsenceKeys } from "./timeAbsenceKeys";

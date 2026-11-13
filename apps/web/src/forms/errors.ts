@@ -29,6 +29,12 @@ const KNOWN: readonly ValidationCode[] = [
 	"afterStatus",
 	"limitExceeded",
 	"leaveLimitExceeded",
+	"notEmployed",
+	"tooEarly",
+	"tooYoung",
+	"tooOld",
+	"requestMissing",
+	"notCycleYear",
 ];
 
 /**
