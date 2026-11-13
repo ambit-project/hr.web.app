@@ -3,7 +3,6 @@ using System.Text.Json;
 using HrWebApp.Api.Common.Errors;
 using HrWebApp.Api.Tests.Infrastructure;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 
