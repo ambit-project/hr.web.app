@@ -49,7 +49,7 @@ export const pl = {
 		},
 	},
 	roles: { kadry: "Kadry", administrator: "Administrator", pracownik: "Pracownik" },
-	theme: { label: "Motyw", light: "Jasny", dark: "Ciemny", system: "Systemowy" },
+	theme: { toDark: "Włącz ciemny motyw", toLight: "Włącz jasny motyw" },
 	my: {
 		title: "Moje dokumenty",
 		empty: "Paski wypłat, PIT-y i zgody tej spółki pojawią się tutaj.",

@@ -1,11 +1,12 @@
 import { Button } from "@heroui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink, useRouter } from "@tanstack/react-router";
+import { LogOut } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { logoutFn, type Role } from "#/features/auth/auth.functions";
 import { hasRole, type Me } from "#/features/auth/session";
-import { ThemeSwitch } from "#/features/theme/ThemeSwitch";
+import { ThemeToggle } from "#/features/theme/ThemeToggle";
 
 type NavItem = {
 	to:
@@ -106,22 +107,23 @@ export function AppLayout({ me, children }: { me: Me; children: ReactNode }) {
 						);
 					})}
 				</nav>
-				<div className="mt-4 md:mt-auto">
-					<ThemeSwitch />
-				</div>
-				<div className="mt-4 flex items-center justify-between gap-2 border-t border-border pt-4">
-					<div className="min-w-0">
+			</aside>
+			<div className="flex min-w-0 flex-1 flex-col">
+				<header className="flex h-14 items-center justify-end gap-3 border-b border-border bg-surface px-4 md:px-8">
+					<div className="min-w-0 text-right">
 						<div className="truncate text-sm font-medium">{me.displayName}</div>
 						<div className="truncate text-xs text-muted">
 							{me.roles.map((role) => t(`roles.${role as Role}`)).join(", ")}
 						</div>
 					</div>
+					<ThemeToggle />
 					<Button size="sm" variant="ghost" onPress={() => void signOut()}>
+						<LogOut className="size-4" />
 						{t("auth.logout")}
 					</Button>
-				</div>
-			</aside>
-			<main className="flex-1 p-4 md:p-8">{children}</main>
+				</header>
+				<main className="flex-1 p-4 md:p-8">{children}</main>
+			</div>
 		</div>
 	);
 }
