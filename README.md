@@ -111,6 +111,14 @@ UPDATE_OPENAPI_SNAPSHOT=1 dotnet test --filter OpenApiSnapshotTests
 cd apps/web && yarn api:gen
 ```
 
+## Integracja z Comarch ERP Optima
+
+Z Optimą u klienta rozmawia osobna usługa Windows (Ambit Optima Integrator), która pyta API o pracę co 500 ms —
+u klienta nic nie nasłuchuje ([ADR-0010](docs/adr/0010-optima-agent-integration.md), specyfikacja
+[011](docs/specs/011-optima-integration/spec.md)). Administrator zakłada klucz agenta (`POST /api/optima/agent-keys`,
+token pokazany raz) i wpisuje go w instalatorze integratora. Endpointy agenta są pod `/api/optima/agent/…`
+i przyjmują tylko nagłówek `X-Optima-Agent-Key`.
+
 ## Git hooks (Husky.Net)
 
 `dotnet restore` instaluje hooki. pre-commit: `csharpier check`, `dotnet build`; pre-push: build i
