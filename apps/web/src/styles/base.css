@@ -189,6 +189,7 @@ a.text-link,
 
 .app-sidebar__link:hover {
 	background: var(--color-sidebar-hover);
+	border-left-color: var(--color-sidebar-marker);
 	color: #ffffff;
 }
 
@@ -197,4 +198,22 @@ a.text-link,
 	border-left-color: var(--color-sidebar-marker);
 	color: #ffffff;
 	font-weight: 500;
+}
+
+/* Górny pasek: ciemny jak boczny, ale jaśniejszy; jasne napisy i ikony. */
+.app-topbar {
+	background: var(--color-topbar);
+	color: #ffffff;
+	border-bottom: 1px solid var(--color-topbar-border);
+}
+
+.app-topbar__muted {
+	color: var(--color-sidebar-text);
+}
+
+/* HeroUI czyta kolory przycisku ze zmiennych. */
+.app-topbar .button {
+	--button-fg: #ffffff;
+	--button-bg-hover: var(--color-topbar-hover);
+	--button-bg-pressed: var(--color-topbar-hover);
 }

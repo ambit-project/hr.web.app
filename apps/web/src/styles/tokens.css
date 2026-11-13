@@ -48,7 +48,11 @@
 	--color-sidebar-muted: oklch(0.66 0.015 254.9);
 	--color-sidebar-hover: oklch(0.29 0.02 254.9);
 	--color-sidebar-active: oklch(0.33 0.035 256.5);
-	--color-sidebar-marker: #6f8cff;
+	--color-sidebar-marker: #e5484d;
+	/* Górny pasek: ciemny, o odcień jaśniejszy niż boczny. */
+	--color-topbar: oklch(0.31 0.022 254.9);
+	--color-topbar-border: oklch(0.37 0.02 254.9);
+	--color-topbar-hover: oklch(0.36 0.025 254.9);
 
 	--color-success: #217346;
 	--color-success-soft: #e9f5ed;
@@ -116,7 +120,10 @@
 	--color-sidebar-muted: oklch(0.62 0.015 254.9);
 	--color-sidebar-hover: oklch(0.22 0.014 248.6);
 	--color-sidebar-active: oklch(0.27 0.03 256.5);
-	--color-sidebar-marker: #7f9bff;
+	--color-sidebar-marker: #f2555a;
+	--color-topbar: oklch(0.23 0.015 248.6);
+	--color-topbar-border: oklch(0.28 0.015 248.6);
+	--color-topbar-hover: oklch(0.28 0.02 254.9);
 
 	--color-success: #4cc283;
 	--color-success-soft: #12301f;

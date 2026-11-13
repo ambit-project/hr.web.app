@@ -107,10 +107,10 @@ export function AppLayout({ me, children }: { me: Me; children: ReactNode }) {
 				</nav>
 			</aside>
 			<div className="flex min-w-0 flex-1 flex-col">
-				<header className="flex h-14 items-center justify-end gap-3 border-b border-border bg-surface px-4 md:px-8">
+				<header className="app-topbar flex h-14 items-center justify-end gap-3 px-4 md:px-8">
 					<div className="min-w-0 text-right">
 						<div className="truncate text-sm font-medium">{me.displayName}</div>
-						<div className="truncate text-xs text-muted">
+						<div className="app-topbar__muted truncate text-xs">
 							{me.roles.map((role) => t(`roles.${role as Role}`)).join(", ")}
 						</div>
 					</div>
