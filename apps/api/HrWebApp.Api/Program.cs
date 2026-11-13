@@ -7,6 +7,7 @@ using HrWebApp.Api.Features.Companies;
 using HrWebApp.Api.Features.Employees;
 using HrWebApp.Api.Features.Employments;
 using HrWebApp.Api.Features.LegalParameters;
+using HrWebApp.Api.Features.Optima;
 using HrWebApp.Api.Features.PayComponents;
 using HrWebApp.Api.Features.Positions;
 using HrWebApp.Api.Features.TaxDeclarations;
@@ -47,6 +48,7 @@ builder.Services.AddTaxDeclarations();
 builder.Services.AddPayComponents();
 builder.Services.AddLegalParameters();
 builder.Services.AddUsers();
+builder.Services.AddOptima();
 builder.Services.AddScoped<ListAuditHandler>();
 
 var app = builder.Build();
@@ -79,5 +81,9 @@ api.MapPayComponents();
 api.MapLegalParameters();
 api.MapUsers();
 api.MapAudit();
+api.MapOptima();
+
+// Agent integracji z Optimą: osobna grupa z kluczem agenta zamiast sesji (ADR-0010).
+app.MapOptimaAgent();
 
 app.Run();
