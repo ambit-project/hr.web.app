@@ -40,6 +40,16 @@
 	--color-dialog-header-text: #ffffff;
 	--color-dialog-footer: #f5f7fa;
 
+	/* Pasek boczny: ciemny w obu motywach. */
+	/* Tonacja jak w Halyconie (grafitowy granat, oklch ok. 0.25 0.02 255). */
+	--color-sidebar: oklch(0.249 0.02 254.9);
+	--color-sidebar-border: oklch(0.33 0.02 254.9);
+	--color-sidebar-text: oklch(0.85 0.012 254.9);
+	--color-sidebar-muted: oklch(0.66 0.015 254.9);
+	--color-sidebar-hover: oklch(0.29 0.02 254.9);
+	--color-sidebar-active: oklch(0.33 0.035 256.5);
+	--color-sidebar-marker: #6f8cff;
+
 	--color-success: #217346;
 	--color-success-soft: #e9f5ed;
 	--color-warning: #a56800;
@@ -99,6 +109,14 @@
 	--color-dialog-header: #1e2940;
 	--color-dialog-header-text: #e6ebf3;
 	--color-dialog-footer: #111827;
+
+	--color-sidebar: oklch(0.179 0.013 248.6);
+	--color-sidebar-border: oklch(0.26 0.014 248.6);
+	--color-sidebar-text: oklch(0.85 0.012 254.9);
+	--color-sidebar-muted: oklch(0.62 0.015 254.9);
+	--color-sidebar-hover: oklch(0.22 0.014 248.6);
+	--color-sidebar-active: oklch(0.27 0.03 256.5);
+	--color-sidebar-marker: #7f9bff;
 
 	--color-success: #4cc283;
 	--color-success-soft: #12301f;

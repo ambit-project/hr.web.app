@@ -148,3 +148,53 @@ a.text-link,
 	color: var(--color-action-foreground);
 	outline: none;
 }
+
+/* Pasek boczny: ciemne tło, wybrana pozycja z paskiem po lewej (decyzja właściciela). */
+.app-sidebar {
+	background: var(--color-sidebar);
+	color: var(--color-sidebar-text);
+	border-right: 1px solid var(--color-sidebar-border);
+}
+
+.app-sidebar__brand {
+	display: flex;
+	align-items: center;
+	height: 3.5rem;
+	padding: 0 1rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	color: #ffffff;
+	border-bottom: 1px solid var(--color-sidebar-border);
+}
+
+.app-sidebar__section {
+	padding: 0 1rem 0.25rem;
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-sidebar-muted);
+}
+
+.app-sidebar__link {
+	display: block;
+	padding: 0.4375rem 1rem 0.4375rem calc(1rem - 3px);
+	font-size: 13px;
+	color: var(--color-sidebar-text);
+	border-left: 3px solid transparent;
+	transition:
+		background-color 120ms ease,
+		color 120ms ease;
+}
+
+.app-sidebar__link:hover {
+	background: var(--color-sidebar-hover);
+	color: #ffffff;
+}
+
+.app-sidebar__link.is-active {
+	background: var(--color-sidebar-active);
+	border-left-color: var(--color-sidebar-marker);
+	color: #ffffff;
+	font-weight: 500;
+}

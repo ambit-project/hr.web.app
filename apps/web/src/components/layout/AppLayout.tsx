@@ -80,27 +80,23 @@ export function AppLayout({ me, children }: { me: Me; children: ReactNode }) {
 
 	return (
 		<div className="flex min-h-screen flex-col md:flex-row">
-			<aside className="flex flex-col border-b border-border bg-surface p-4 md:w-60 md:border-r md:border-b-0">
-				<div className="mb-4 text-lg font-semibold">{t("app.name")}</div>
-				<nav className="flex flex-col gap-4">
+			<aside className="app-sidebar flex flex-col md:w-[248px] md:shrink-0">
+				<div className="app-sidebar__brand">{t("app.name")}</div>
+				<nav className="flex flex-col gap-5 py-3">
 					{NAV.map((section) => {
 						const items = section.items.filter((item) => hasRole(me, ...item.roles));
 						if (items.length === 0) return null;
 						return (
 							<div key={section.label ?? "main"} className="flex flex-col gap-1">
 								{section.label ? (
-									<div className="px-3 text-xs font-medium uppercase text-muted">
-										{t(section.label)}
-									</div>
+									<div className="app-sidebar__section">{t(section.label)}</div>
 								) : null}
 								{items.map((item) => (
 									<RouterLink
 										key={item.to}
 										to={item.to}
-										className="rounded-md px-3 py-2 text-sm hover:bg-default"
-										activeProps={{
-											className: "bg-accent-soft font-medium text-accent-soft-foreground",
-										}}
+										className="app-sidebar__link"
+										activeProps={{ className: "is-active" }}
 									>
 										{t(item.label)}
 									</RouterLink>
