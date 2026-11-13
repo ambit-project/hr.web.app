@@ -1,15 +1,18 @@
-import { Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Checkbox, Chip, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi, Link as RouterLink } from "@tanstack/react-router";
-import { useCallback, useRef } from "react";
+import { Copy } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import type { Selection } from "react-aria-components";
 import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
-import { AddButton } from "#/components/ui/AddButton";
+import { AddButton, IconButton } from "#/components/ui/AddButton";
 import { OpenIcon, openLinkClass } from "#/components/ui/OpenLink";
 import { OptionSelect } from "#/components/ui/OptionSelect";
 import { CompanySelect } from "#/features/companies/CompanySelect";
 import { birthDateWithAge } from "#/lib/age";
+import { CopyEmployeesDialog, type CopyEmployeesDialogHandle } from "./CopyEmployeesDialog";
 import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
 import { EMPLOYEES_PAGE_SIZE, employeesQuery } from "./employeesQueries";
 import { EMPLOYEE_STATUSES, type EmployeeStatus } from "./types";
@@ -29,6 +32,18 @@ export function EmployeesPage() {
 	const navigate = route.useNavigate();
 	const dialog = useRef<EmployeeDialogHandle>(null);
 	const { data, isPending } = useQuery(employeesQuery(search));
+	const copyDialog = useRef<CopyEmployeesDialogHandle>(null);
+	const [selection, setSelection] = useState<Selection>(new Set());
+	// Selection belongs to the rows on screen: a new filter or page starts with nothing selected (reset during render,
+	// React's pattern for state derived from props).
+	const searchKey = JSON.stringify(search);
+	const [selectionFor, setSelectionFor] = useState(searchKey);
+	if (selectionFor !== searchKey) {
+		setSelectionFor(searchKey);
+		setSelection(new Set());
+	}
+	const selectedIds =
+		selection === "all" ? (data?.items ?? []).map((item) => item.id) : [...selection].map(String);
 
 	const onSearch = useCallback(
 		(term: string | undefined) =>
@@ -48,10 +63,27 @@ export function EmployeesPage() {
 						<p className="text-sm text-muted">{t("employees.total", { count: data.total })}</p>
 					) : null}
 				</div>
-				<AddButton
-					label={t("employees.create.title")}
-					onPress={() => dialog.current?.create(search.companyId)}
-				/>
+				<div className="flex gap-2">
+					<IconButton
+						icon={Copy}
+						label={t("employees.copy.action")}
+						onPress={() =>
+							copyDialog.current?.open({
+								selectedIds,
+								filter: {
+									companyId: search.companyId,
+									search: search.search,
+									status: search.status,
+								},
+								filterTotal: data?.total ?? 0,
+							})
+						}
+					/>
+					<AddButton
+						label={t("employees.create.title")}
+						onPress={() => dialog.current?.create(search.companyId)}
+					/>
+				</div>
 			</header>
 
 			<div className="flex flex-wrap items-end gap-4">
@@ -99,8 +131,24 @@ export function EmployeesPage() {
 			) : (
 				<Table>
 					<Table.ScrollContainer>
-						<Table.Content aria-label={t("employees.title")} className="min-w-[760px]">
+						<Table.Content
+							aria-label={t("employees.title")}
+							className="min-w-[760px]"
+							selectionMode="multiple"
+							selectionBehavior="toggle"
+							selectedKeys={selection}
+							onSelectionChange={setSelection}
+						>
 							<Table.Header>
+								<Table.Column className="w-8">
+									<Checkbox aria-label={t("employees.selectAll")} slot="selection">
+										<Checkbox.Content>
+											<Checkbox.Control>
+												<Checkbox.Indicator />
+											</Checkbox.Control>
+										</Checkbox.Content>
+									</Checkbox>
+								</Table.Column>
 								<Table.Column isRowHeader>{t("employees.fields.name")}</Table.Column>
 								<Table.Column>{t("employees.fields.company")}</Table.Column>
 								<Table.Column className="w-16">
@@ -127,6 +175,18 @@ export function EmployeesPage() {
 							>
 								{(data?.items ?? []).map((employee) => (
 									<Table.Row key={employee.id} id={employee.id}>
+										<Table.Cell>
+											<Checkbox
+												aria-label={`${employee.lastName} ${employee.firstName}`}
+												slot="selection"
+											>
+												<Checkbox.Content>
+													<Checkbox.Control>
+														<Checkbox.Indicator />
+													</Checkbox.Control>
+												</Checkbox.Content>
+											</Checkbox>
+										</Table.Cell>
 										<Table.Cell>
 											<RouterLink
 												to="/employees/$id"
@@ -189,6 +249,7 @@ export function EmployeesPage() {
 			) : null}
 
 			<EmployeeDialog ref={dialog} />
+			<CopyEmployeesDialog ref={copyDialog} />
 		</section>
 	);
 }

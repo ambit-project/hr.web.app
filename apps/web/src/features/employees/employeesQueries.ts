@@ -3,6 +3,7 @@ import type {
 	AddEmployeeAddressRequest,
 	AddEmployeeBankAccountRequest,
 	CloseEmployeeBankAccountRequest,
+	CopyEmployeesRequest,
 	CreateEmployeeRequest,
 	UpdateEmployeeRequest,
 } from "#/api/models";
@@ -12,6 +13,7 @@ import {
 	addEmployeeAddressFn,
 	addEmployeeBankAccountFn,
 	closeEmployeeBankAccountFn,
+	copyEmployeesFn,
 	createEmployeeFn,
 	deleteEmployeeFn,
 	getEmployeeFn,
@@ -87,6 +89,12 @@ function useEmployeeMutation<TVariables, TResult>(
 		// Also after a failure: a 409 means the data on screen is stale and must be read again.
 		onSettled: () => queryClient.invalidateQueries({ queryKey: employeesKeys.all }),
 	});
+}
+
+export function useCopyEmployees() {
+	return useEmployeeMutation(async (request: CopyEmployeesRequest) =>
+		unwrap(await copyEmployeesFn({ data: request })),
+	);
 }
 
 export function useCreateEmployee() {

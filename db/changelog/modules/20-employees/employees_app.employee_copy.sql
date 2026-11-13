@@ -41,7 +41,8 @@ $$;
 --comment: filtra listy. Kopia: dane osobowe, bieżący adres zamieszkania i rachunek od dziś, nowy numer i akronim;
 --comment: powiązanie z kontem, gdy konto nie ma jeszcze profilu w spółce docelowej. Pominięte z powodem:
 --comment: sameCompany, peselExists, personExists. Najwyżej 500 naraz (tooMany).
-CREATE OR REPLACE FUNCTION employees_app.employee_copy(
+DROP FUNCTION IF EXISTS employees_app.employee_copy(uuid, uuid[], uuid, text, text);
+CREATE FUNCTION employees_app.employee_copy(
     p_target_company_id uuid,
     p_ids uuid[],
     p_company_id uuid DEFAULT NULL,

@@ -3,6 +3,7 @@ import {
 	addEmployeeAddress,
 	addEmployeeBankAccount,
 	closeEmployeeBankAccount,
+	copyEmployees,
 	createEmployee,
 	deleteEmployee,
 	getEmployee,
@@ -18,6 +19,7 @@ import type {
 	AddEmployeeAddressRequest,
 	AddEmployeeBankAccountRequest,
 	CloseEmployeeBankAccountRequest,
+	CopyEmployeesRequest,
 	CreateEmployeeRequest,
 	LinkEmployeeAccountRequest,
 	ListEmployeeReadAuditParams,
@@ -38,6 +40,10 @@ export const getEmployeeFn = createServerFn({ method: "GET" })
 export const createEmployeeFn = createServerFn({ method: "POST" })
 	.validator((input: CreateEmployeeRequest) => input)
 	.handler(({ data }) => toResult(() => callApi(() => createEmployee(data, apiOptions()))));
+
+export const copyEmployeesFn = createServerFn({ method: "POST" })
+	.validator((input: CopyEmployeesRequest) => input)
+	.handler(({ data }) => toResult(() => callApi(() => copyEmployees(data, apiOptions()))));
 
 export const updateEmployeeFn = createServerFn({ method: "POST" })
 	.validator((input: { id: string; request: UpdateEmployeeRequest }) => input)

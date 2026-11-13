@@ -23,6 +23,7 @@ export type ValidationCode =
 	| "future"
 	| "outsideAllowed"
 	| "beforeSubmission"
+	| "tooMany"
 	| "consentMissing"
 	| "aboveConsent"
 	| "afterStatus";

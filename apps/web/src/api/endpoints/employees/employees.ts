@@ -10,6 +10,8 @@ import type {
 	AddEmployeeBankAccountRequest,
 	AddEmployeeBankAccountResponse,
 	CloseEmployeeBankAccountRequest,
+	CopyEmployeesRequest,
+	CopyEmployeesResponse,
 	CreateEmployeeRequest,
 	CreateEmployeeResponse,
 	GetEmployeeResponse,
@@ -46,6 +48,20 @@ export const createEmployee = (
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			data: createEmployeeRequest,
+		},
+		options,
+	);
+};
+export const copyEmployees = (
+	copyEmployeesRequest: BodyType<CopyEmployeesRequest>,
+	options?: SecondParameter<typeof customInstance<CopyEmployeesResponse>>,
+) => {
+	return customInstance<CopyEmployeesResponse>(
+		{
+			url: `/api/employees/copy`,
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			data: copyEmployeesRequest,
 		},
 		options,
 	);
@@ -176,6 +192,7 @@ export const listEmployeeReadAudit = (
 };
 export type ListEmployeesResult = NonNullable<Awaited<ReturnType<typeof listEmployees>>>;
 export type CreateEmployeeResult = NonNullable<Awaited<ReturnType<typeof createEmployee>>>;
+export type CopyEmployeesResult = NonNullable<Awaited<ReturnType<typeof copyEmployees>>>;
 export type GetEmployeeResult = NonNullable<Awaited<ReturnType<typeof getEmployee>>>;
 export type UpdateEmployeeResult = NonNullable<Awaited<ReturnType<typeof updateEmployee>>>;
 export type DeleteEmployeeResult = NonNullable<Awaited<ReturnType<typeof deleteEmployee>>>;
