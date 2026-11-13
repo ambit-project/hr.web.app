@@ -62,6 +62,24 @@ kartotekę z kontem, a Pracownik po zalogowaniu widzi swoje profile, po jednym n
 - **R17.** (dodane 2026-11-13, decyzja właściciela) Lista kartotek pokazuje PESEL **maskowany** — pierwsze 5 cyfr
   i `******` — bez wpisu w audycie odczytów. Pełny PESEL tylko w szczegółach kartoteki (audyt odczytu, R9).
 
+### Kopiowanie kartotek do innej spółki (dodane 2026-11-13, do zatwierdzenia)
+Osoba zatrudniona w kilku spółkach grupy ma w każdej osobną kartotekę (każda spółka jest osobnym płatnikiem).
+Kopiowanie zakłada je hurtowo zamiast przepisywać dane.
+- **R18.** Kadry i Administrator kopiują kartoteki do wskazanej aktywnej spółki docelowej na dwa sposoby: (a)
+  **zaznaczone** na liście (pola wyboru w wierszach, zaznacz wszystkie na stronie), (b) **wszystkie pasujące do
+  bieżącego filtra** listy (spółka, status, wyszukiwanie) — dialog pokazuje liczbę kartotek przed kopiowaniem.
+- **R19.** Kopia to nowa kartoteka w spółce docelowej z danymi osobowymi: imiona, nazwisko, PESEL, dokument, data
+  urodzenia, urząd skarbowy, e-mail, bieżący adres zamieszkania i bieżący rachunek (od dnia kopiowania). Numer
+  ewidencyjny — kolejny wolny w spółce docelowej; akronim — nowy (RRRRMM dnia kopiowania + kod). **Nie** kopiuje się
+  umów, oświadczeń, zgód, zajęć ani historii — należą do płatnika.
+- **R20.** Powiązanie z kontem Pracownika przechodzi na kopię, jeśli to konto nie ma jeszcze profilu w spółce
+  docelowej — ta sama osoba widzi wtedy obie spółki w „Moich dokumentach”.
+- **R21.** Kartoteka jest pomijana (z powodem w podsumowaniu), gdy: jest już w spółce docelowej (`sameCompany`),
+  w spółce docelowej jest kartoteka z tym samym PESEL (`peselExists`), albo — bez PESEL — z tym samym imieniem,
+  nazwiskiem i datą urodzenia (`personExists`). Kopiowanie jednej kartoteki nie przerywa pozostałych.
+- **R22.** Wynik: liczba skopiowanych i lista pominiętych z powodem; każda kopia ma wpis w audycie zmian ze wskazaniem
+  kartoteki źródłowej. Jednorazowo najwyżej 500 kartotek (`tooMany`).
+
 ## Przypadki brzegowe
 - PESEL wpisany ze spacjami lub kreskami → zostają same cyfry.
 - Osoba urodzona w 2000+ (miesiąc w PESEL + 20) — poprawna data z PESEL.
