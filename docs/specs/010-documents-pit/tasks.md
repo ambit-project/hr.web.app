@@ -35,14 +35,15 @@
 | `GET /api/companies/{id}/tax-summary/{year}` | `company_tax_summary` | Kadry, Admin |
 | `GET /api/deduction-consents/{id}/document` | `consent_document` | Kadry, Admin; Pracownik — swoja |
 
-## Decyzje ([D] — wykonawca, [?] — do potwierdzenia)
+## Decyzje ([D] — wykonawca)
 
 - **Pozycje PIT-11 [D]:** `data.positions` pod nazwami elementów XSD (`P_29` …), nie `poz29` jak w planie — XML mapuje
   się 1:1. Pozycje puste nie są zapisywane (pole puste na formularzu i brak elementu w XML).
 - **PESEL [D]:** nie trafia do `data` (ADR-0009 — zaszyfrowany w kartotece); `tax_form_get` odszyfrowuje go przy
   odczycie. Imię, nazwisko, data urodzenia, adres i urząd są migawką z dnia generowania.
 - **Wiersze części E:** umowa o pracę 1 / do 26 lat w dniu wypłaty — 2; zlecenie 6 / 7; dzieło 5. Przychód w E =
-  przychód opodatkowany (z wpłatą pracodawcy PPK, R6 [?]) minus zwolniony (objaśnienie 13). Koszty — faktycznie
+  przychód opodatkowany (z wpłatą pracodawcy PPK ujętą na liście i nieujętą przekazaną w roku, R6) minus zwolniony
+  (objaśnienie 13). Koszty — faktycznie
   uwzględnione (KUP, KUP50). Dochód = przychód − koszty, nie mniej niż 0. Kolumna e (dochód zwolniony z umów
   międzynarodowych) nie jest wypełniana. Poz. 34/35 (koszty 50% przy umowie o pracę) — silnik 009 ich nie liczy.
 - **Składki:** poz. 95 — część odliczona od dochodu (`PODST-PIT.trace.socialDeductible`) w wierszach 1, 5, 6; poz. 96
@@ -100,7 +101,8 @@
 
 ## Sprawy otwarte
 
-- R6 [?] wpłata pracodawcy PPK jako przychód ze stosunku pracy — jak w 009 R19.
+- R6 rozstrzygnięte (2026-11-13): przychód w dniu przekazania (009 R19); nieujęta wpłata u osoby z ulgą —
+  `missing` `ppkIncomeRelief`.
 - Wiersze 3, 8, 9–15, poz. 34/35, 98–108, 123 nie są wyliczane (poza zakresem albo silnik 009 ich nie zna).
 - Wzór PIT-11 na rok 2026 nie jest opublikowany — używany jest PIT-11(29); zmiana schematu = nowy `Pit11Xml`
   i nowe pliki w `Fixtures`.

@@ -68,7 +68,8 @@ ważnych w miesiącu wypłaty.
 
 ### Ponowny zapis co 4 lata
 - **R12.** Cykl z art. 23 ust. 5–6: informacja do ostatniego dnia lutego, wznowienie wpłat od 1 kwietnia; pierwszy
-  cykl 2023, następny **2027** (rachunek „co 4 lata”, komunikat PFR niepotwierdzony). Daty cyklu jako parametry prawne
+  cykl 2023, następny **2027** (art. 23 ust. 5 „co 4 lata”; mojeppk.pl: informacja do końca lutego 2027, wpłaty od
+  1.04.2027). Daty cyklu jako parametry prawne
   (`ppk.ponowny.zapis.informacja`, `ppk.ponowny.zapis.wznowienie`).
 - **R13.** Lista „ponowny zapis” spółki na rok cyklu: osoby z rezygnacją, bez wznowienia, z podziałem: wznowienie
   od 1.04 (do 55 lat), tylko na wniosek do końca lutego (55–69, ust. 9), bez wznowienia (70+, ust. 8). Kadry
