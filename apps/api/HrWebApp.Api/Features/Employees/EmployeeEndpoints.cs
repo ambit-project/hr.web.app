@@ -9,6 +9,7 @@ public static class EmployeeEndpoints
         services.AddScoped<CreateEmployeeHandler>();
         services.AddScoped<UpdateEmployeeHandler>();
         services.AddScoped<DeleteEmployeeHandler>();
+        services.AddScoped<CopyEmployeesHandler>();
         services.AddScoped<EmployeeAddressesHandler>();
         services.AddScoped<EmployeeBankAccountsHandler>();
         services.AddScoped<EmployeeAccountHandler>();
@@ -22,6 +23,10 @@ public static class EmployeeEndpoints
         group
             .MapPost("/", CreateEmployee.Handle)
             .WithName("CreateEmployee")
+            .ProducesValidationProblem();
+        group
+            .MapPost("/copy", CopyEmployees.Handle)
+            .WithName("CopyEmployees")
             .ProducesValidationProblem();
         group
             .MapGet("/{id:guid}", GetEmployee.Handle)

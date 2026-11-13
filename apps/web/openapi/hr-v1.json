@@ -843,6 +843,46 @@
         }
       }
     },
+    "/api/employees/copy": {
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "CopyEmployees",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyEmployeesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopyEmployeesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/employees/{id}": {
       "get": {
         "tags": [
@@ -3692,6 +3732,93 @@
               "string"
             ],
             "format": "date"
+          }
+        }
+      },
+      "CopyEmployeesRequest": {
+        "required": [
+          "targetCompanyId",
+          "employeeIds",
+          "companyId",
+          "search",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "targetCompanyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "employeeIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "search": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CopyEmployeesResponse": {
+        "required": [
+          "copied",
+          "skipped"
+        ],
+        "type": "object",
+        "properties": {
+          "copied": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CopyEmployeesSkipped"
+            }
+          }
+        }
+      },
+      "CopyEmployeesSkipped": {
+        "required": [
+          "employeeId",
+          "name",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
           }
         }
       },

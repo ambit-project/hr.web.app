@@ -150,4 +150,42 @@ public sealed class EmployeeHttpTests(DatabaseFixture database)
 
         Assert.Contains("EncryptionKey", error.ToString());
     }
+
+    [Fact]
+    public async Task Kadry_copy_employees_to_another_company_and_get_a_summary()
+    {
+        using var kadry = await database.Api.ClientAsAsync("kadry");
+        var source = await TestDb.CompanyAsync(database);
+        var target = await TestDb.CompanyAsync(database);
+        foreach (var name in new[] { "Adam", "Beata" })
+        {
+            await TestDb.AdminScalarAsync<object>(
+                database,
+                """
+                INSERT INTO employees.employees (company_id, number, first_name, last_name, birth_date)
+                VALUES ($1, left(md5(random()::text), 10), $2, 'Kopiowany', DATE '1990-01-01')
+                """,
+                new NpgsqlParameter<Guid> { TypedValue = source },
+                new NpgsqlParameter<string> { TypedValue = name }
+            );
+        }
+
+        var first = await kadry.PostAsJsonAsync(
+            "/api/employees/copy",
+            new { targetCompanyId = target, companyId = source }
+        );
+        var again = await kadry.PostAsJsonAsync(
+            "/api/employees/copy",
+            new { targetCompanyId = target, companyId = source }
+        );
+
+        var firstBody = await first.Content.ReadFromJsonAsync<JsonElement>();
+        var againBody = await again.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(2, firstBody.GetProperty("copied").GetInt32());
+        Assert.Equal(0, againBody.GetProperty("copied").GetInt32());
+        Assert.Equal(
+            "personExists",
+            againBody.GetProperty("skipped")[0].GetProperty("reason").GetString()
+        );
+    }
 }
