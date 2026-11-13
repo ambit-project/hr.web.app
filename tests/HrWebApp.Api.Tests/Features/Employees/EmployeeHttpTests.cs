@@ -51,9 +51,9 @@ public sealed class EmployeeHttpTests(DatabaseFixture database)
         Assert.Equal(pesel, details.GetProperty("pesel").GetString());
         Assert.Equal(iban, details.GetProperty("iban").GetString());
         Assert.Equal("1", details.GetProperty("number").GetString());
-        // Akronim nadany przy założeniu: RRRRMM dnia dodania + 4 znaki bez mylących (0/O, 1/I/L).
+        // Akronim nadany przy założeniu: RRRRMM dnia dodania + 8 znaków bez mylących (0/O, 1/I/L).
         Assert.Matches(
-            $"^{DateTime.Today:yyyyMM}[A-HJKMNP-Z2-9]{{4}}$",
+            $"^{DateTime.Today:yyyyMM}[A-HJKMNP-Z2-9]{{8}}$",
             details.GetProperty("acronym").GetString()
         );
 

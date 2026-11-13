@@ -56,8 +56,8 @@ kartotekę z kontem, a Pracownik po zalogowaniu widzi swoje profile, po jednym n
 - **R15.** W kontekście `dev` jest spółka „Demo”, kartoteka powiązana z kontem `pracownik` (bez PESEL — szyfrowanie
   wymaga klucza, którego Liquibase nie zna), żeby logowanie deweloperskie Pracownika pokazywało profil.
 - **R16.** (dodane 2026-11-13, decyzja właściciela) Kartoteka ma **akronim**, który odróżnia osoby o tym samym imieniu
-  i nazwisku. Przy założeniu baza nadaje go jako RRRRMM dnia dodania + 4 znaki z alfabetu bez mylących znaków (bez
-  0/O, 1/I/L), np. `202611K7Q2`; Kadry mogą go zmienić (litery, cyfry, `.`, `-`, `_`, do 30 znaków). Unikalny w spółce
+  i nazwisku. Przy założeniu baza nadaje go jako RRRRMM dnia dodania + kod z alfabetu bez mylących znaków (bez
+  0/O, 1/I/L) — od 2026-11-13 8 znaków, np. `202611K7Q2MX4P`; Kadry mogą go zmienić (litery, cyfry, `.`, `-`, `_`, do 30 znaków). Unikalny w spółce
   bez względu na wielkość liter (`duplicate`). Lista pokazuje akronim i wyszukuje po nim.
 
 ## Przypadki brzegowe
