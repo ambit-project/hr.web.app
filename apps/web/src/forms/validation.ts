@@ -7,6 +7,7 @@ export type ValidationCode =
 	| "invalid"
 	| "beforeCurrent"
 	| "tooShort"
+	| "noDigit"
 	| "beforeFrom"
 	| "notFound"
 	| "inactive"

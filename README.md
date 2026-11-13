@@ -103,7 +103,7 @@ migracja tego nie robi, bo nie zna klucza): `scripts/dev-pesel.sh`.
 | `ConnectionStrings__Hr` | — | połączenie jako rola `hr_api` (wymagane) |
 | `Auth__SessionHours` | 12 | ważność sesji |
 | `Auth__MaxFailedAttempts` / `Auth__LockoutMinutes` | 5 / 15 | blokada po nieudanych próbach logowania |
-| `Auth__MinPasswordLength` | 12 | minimalna długość hasła nadawanego przez Administratora |
+| `Auth__MinPasswordLength` | 6 | minimalna długość hasła nadawanego przez Administratora (hasło musi też mieć cyfrę) |
 | `Auth__DevLogin` | false | logowanie jednym kliknięciem; działa tylko w `Development` |
 | `Auth__BootstrapAdmin__Login`, `__Email`, `__Password`, `__DisplayName` | — | pierwszy Administrator przy starcie, gdy żadnego nie ma |
 | `Data__EncryptionKey` | — (wymagany) | klucz szyfrowania PESEL i rachunku, co najmniej 32 znaki ([ADR-0009](docs/adr/0009-personal-data-encryption.md)); utrata = utrata tych danych. Compose: `HR_DATA_KEY` w `infrastructure/.env`, przy `dotnet run` ustaw zmienną sam |

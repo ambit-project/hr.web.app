@@ -41,7 +41,7 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 | `U0005` | logowanie nieudane (zły login lub hasło, blokada, konto wyłączone) | 401 | zwraca API, nie baza; zawsze ten sam |
 | `U0006` | brak parametru prawnego w dniu | 409 | `HINT` = `{"code": …, "on": …}` |
 
-Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`, `beforeFrom`
+Kody pól w `U0001`: `required`, `maxLength`, `duplicate`, `invalid`, `beforeCurrent`, `tooShort`, `noDigit`, `beforeFrom`
 (data „do” przed „od”), `notFound` (wskazana pozycja słownika nie istnieje), `inactive` (pozycja nieaktywna),
 `mismatch` (data urodzenia inna niż w PESEL), `afterStart` (zawarcie po początku umowy), `overlap` (nakładanie się
 umów o pracę albo oświadczeń podatkowych tego samego rodzaju), `beforeTermination`, `termsOutsidePeriod` (wersja warunków poza okresem umowy), `outsidePeriod`,

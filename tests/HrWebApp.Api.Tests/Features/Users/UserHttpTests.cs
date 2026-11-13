@@ -51,7 +51,7 @@ public sealed class UserHttpTests(DatabaseFixture database)
                 email = "nie-email",
                 displayName = "X",
                 roles = Array.Empty<string>(),
-                password = "krotkie",
+                password = "krot1",
             }
         );
         var errors = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty(
@@ -63,6 +63,39 @@ public sealed class UserHttpTests(DatabaseFixture database)
         Assert.Equal("invalid", errors.GetProperty("email")[0].GetString());
         Assert.Equal("required", errors.GetProperty("roles")[0].GetString());
         Assert.Equal("tooShort", errors.GetProperty("password")[0].GetString());
+    }
+
+    [Fact]
+    public async Task Password_needs_a_digit_and_six_lowercase_characters_with_one_are_enough()
+    {
+        var login = Unique.Login();
+        var id = await TestDb.CreateUserAsync(database, login, Password, "pracownik");
+        using var admin = await database.Api.ClientAsAsync("administrator");
+
+        var noDigit = await admin.PutAsJsonAsync(
+            $"/api/users/{id}/password",
+            new { password = "bezcyfry" }
+        );
+        var simple = await admin.PutAsJsonAsync(
+            $"/api/users/{id}/password",
+            new { password = "abcde1" }
+        );
+        using var client = database.Api.CreateClient();
+        var loggedIn = await client.PostAsJsonAsync(
+            "/api/auth/login",
+            new { login, password = "abcde1" }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, noDigit.StatusCode);
+        Assert.Equal(
+            "noDigit",
+            (await noDigit.Content.ReadFromJsonAsync<JsonElement>())
+                .GetProperty("errors")
+                .GetProperty("password")[0]
+                .GetString()
+        );
+        Assert.Equal(HttpStatusCode.NoContent, simple.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, loggedIn.StatusCode);
     }
 
     [Fact]

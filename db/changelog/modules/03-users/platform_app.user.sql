@@ -91,6 +91,22 @@ BEGIN
 END;
 $$;
 
+--changeset hr:platform.password_validate runOnChange:true splitStatements:false
+--comment: Reguła hasła nadawanego przez Administratora (R14): co najmniej p_min_length znaków (Auth__MinPasswordLength,
+--comment: domyślnie 6) i co najmniej jedna cyfra; wielkie litery i znaki specjalne niewymagane (decyzja właściciela).
+CREATE OR REPLACE FUNCTION platform.password_validate(p_password text, p_min_length integer)
+    RETURNS jsonb
+    LANGUAGE sql
+    IMMUTABLE
+    SET search_path = pg_catalog, pg_temp
+AS $$
+    SELECT CASE
+        WHEN coalesce(char_length(p_password), 0) < p_min_length THEN '{"password": ["tooShort"]}'::jsonb
+        WHEN p_password !~ '[0-9]' THEN '{"password": ["noDigit"]}'::jsonb
+        ELSE '{}'::jsonb
+    END;
+$$;
+
 --changeset hr:platform_app.user_create runOnChange:true splitStatements:false
 --comment: Nowe konto z hasłem początkowym (Administrator), R14.
 CREATE OR REPLACE PROCEDURE platform_app.user_create(
@@ -116,9 +132,7 @@ BEGIN
     PERFORM platform.require_role('administrator');
 
     v_errors := platform.user_validate(NULL, v_login, v_email, v_display_name, v_roles);
-    IF coalesce(char_length(p_password), 0) < p_min_password_length THEN
-        v_errors := v_errors || '{"password": ["tooShort"]}';
-    END IF;
+    v_errors := v_errors || platform.password_validate(p_password, p_min_password_length);
     IF v_errors <> '{}' THEN
         PERFORM platform.fail_validation(v_errors);
     END IF;
@@ -207,8 +221,8 @@ CREATE OR REPLACE PROCEDURE platform_app.user_set_password(
 AS $$
 BEGIN
     PERFORM platform.require_role('administrator');
-    IF coalesce(char_length(p_password), 0) < p_min_password_length THEN
-        PERFORM platform.fail_validation('{"password": ["tooShort"]}');
+    IF platform.password_validate(p_password, p_min_password_length) <> '{}' THEN
+        PERFORM platform.fail_validation(platform.password_validate(p_password, p_min_password_length));
     END IF;
 
     UPDATE platform.users u

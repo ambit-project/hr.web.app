@@ -1,4 +1,15 @@
-import { Description, FieldError, Input, Label, TextArea, TextField } from "@heroui/react";
+import {
+	Button,
+	Description,
+	FieldError,
+	Input,
+	InputGroup,
+	Label,
+	TextArea,
+	TextField,
+} from "@heroui/react";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFieldContext } from "./context";
 import { errorCode } from "./errors";
@@ -36,9 +47,40 @@ export function TextInput({
 			validationBehavior="aria"
 		>
 			<Label>{label}</Label>
-			{multiline ? <TextArea rows={3} /> : <Input type={type} autoComplete={autoComplete} />}
+			{multiline ? (
+				<TextArea rows={3} />
+			) : type === "password" ? (
+				<PasswordInput autoComplete={autoComplete} />
+			) : (
+				<Input type={type} autoComplete={autoComplete} />
+			)}
 			{description ? <Description>{description}</Description> : null}
 			<FieldError>{showError && code ? t(`validation.${code}`) : null}</FieldError>
 		</TextField>
+	);
+}
+
+/** A password with a show/hide toggle, so the Administrator can check what they typed before saving. */
+function PasswordInput({ autoComplete }: { autoComplete?: string }) {
+	const { t } = useTranslation();
+	const [visible, setVisible] = useState(false);
+	const label = visible ? t("common.hidePassword") : t("common.showPassword");
+
+	return (
+		<InputGroup>
+			<InputGroup.Input type={visible ? "text" : "password"} autoComplete={autoComplete} />
+			<InputGroup.Suffix className="pr-1">
+				<Button
+					isIconOnly
+					size="sm"
+					variant="ghost"
+					aria-label={label}
+					aria-pressed={visible}
+					onPress={() => setVisible((value) => !value)}
+				>
+					{visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+				</Button>
+			</InputGroup.Suffix>
+		</InputGroup>
 	);
 }

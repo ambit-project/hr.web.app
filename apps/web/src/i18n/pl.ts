@@ -29,6 +29,8 @@ export const pl = {
 	},
 	common: {
 		add: "Dodaj",
+		showPassword: "Pokaż hasło",
+		hidePassword: "Ukryj hasło",
 		cancel: "Anuluj",
 		save: "Zapisz",
 		search: "Szukaj",
@@ -91,6 +93,7 @@ export const pl = {
 		duplicate: "Taka wartość już istnieje.",
 		invalid: "Nieprawidłowa wartość.",
 		tooShort: "Wartość jest za krótka.",
+		noDigit: "Hasło musi zawierać co najmniej jedną cyfrę.",
 		beforeCurrent: "Data jest wcześniejsza niż początek obowiązującej wartości.",
 		beforeFrom: "Data „do” nie może być wcześniejsza niż data „od”.",
 		notFound: "Wybrana pozycja nie istnieje.",
@@ -228,7 +231,7 @@ export const pl = {
 		password: {
 			action: "Hasło",
 			title: "Nowe hasło dla {{login}}",
-			hint: "Konto zostanie odblokowane, a jego sesje zakończone.",
+			hint: "Co najmniej 6 znaków, w tym cyfra. Konto zostanie odblokowane, a jego sesje zakończone.",
 			saved: "Ustawiono nowe hasło.",
 		},
 	},

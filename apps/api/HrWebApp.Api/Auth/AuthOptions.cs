@@ -21,9 +21,12 @@ public sealed class AuthOptions
     [Range(1, 1440)]
     public int LockoutMinutes { get; init; } = 15;
 
-    /// <summary>Auth__MinPasswordLength: minimalna długość hasła nadawanego przez Administratora.</summary>
-    [Range(8, 128)]
-    public int MinPasswordLength { get; init; } = 12;
+    /// <summary>
+    /// Auth__MinPasswordLength: minimalna długość hasła nadawanego przez Administratora. Hasło musi też mieć cyfrę
+    /// (reguła w bazie, <c>platform.password_validate</c>).
+    /// </summary>
+    [Range(6, 128)]
+    public int MinPasswordLength { get; init; } = 6;
 
     /// <summary>Auth__DevLogin: logowanie jednym kliknięciem na rolę; działa tylko w Development.</summary>
     public bool DevLogin { get; init; }
