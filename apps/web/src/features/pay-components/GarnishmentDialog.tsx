@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { ListGarnishmentsItem } from "#/api/models";
 import { text, useAppForm } from "#/forms";
+import { onSaveError } from "#/forms/feedback";
 import { applyFieldErrors } from "#/forms/serverErrors";
 import { AMOUNT_PATTERN, amountText } from "#/lib/money";
-import { onSaveError } from "./feedback";
 import {
 	useCreateGarnishment,
 	useSetGarnishmentStatus,

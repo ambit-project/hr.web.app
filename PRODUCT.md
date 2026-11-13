@@ -64,7 +64,7 @@ Kolejność modułów wynika z zależności w [modelu domeny](docs/domain/README
 | 004 | Zatrudnienie: umowy i wersje warunków, status i okres przechowywania | zrobione |
 | 005 | Oświadczenia podatkowe | zrobione |
 | 006 | Składniki, zgody na potrącenia, tytuły egzekucyjne | zrobione |
-| 007 | Czas pracy i nieobecności | specyfikacja do zatwierdzenia |
+| 007 | Czas pracy i nieobecności | zrobione |
 | 008 | PPK | do napisania |
 | 009 | Listy płac, liczenie, korekty | do napisania |
 | 010 | Paski, dokumenty zgód, PIT | do napisania |

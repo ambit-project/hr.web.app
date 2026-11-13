@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { ListConsentsItem } from "#/api/models";
 import { useAppForm } from "#/forms";
+import { onSaveError } from "#/forms/feedback";
 import { applyFieldErrors } from "#/forms/serverErrors";
 import { AMOUNT_PATTERN, amountText, parseAmount } from "#/lib/money";
-import { onSaveError } from "./feedback";
 import { componentTypesQuery, useCreateConsent, useUpdateConsent } from "./payComponentsQueries";
 
 export type ConsentDialogHandle = {

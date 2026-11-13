@@ -6,6 +6,8 @@ import { ConsentsTable } from "#/features/pay-components/ConsentsTable";
 import { consentsQuery } from "#/features/pay-components/payComponentsQueries";
 import { TaxDeclarationsTable } from "#/features/tax-declarations/TaxDeclarationsTable";
 import { taxDeclarationsQuery } from "#/features/tax-declarations/taxDeclarationsQueries";
+import { MyAbsences, MyLeaveBalance } from "#/features/time-absence/MyTimeAbsence";
+import { currentYear } from "#/features/time-absence/types";
 
 const route = getRouteApi("/my/");
 
@@ -13,6 +15,7 @@ export function MyPage() {
 	const { t } = useTranslation();
 	const { me } = route.useRouteContext();
 	const profiles = me?.profiles ?? [];
+	const year = currentYear();
 
 	return (
 		<section className="flex flex-col gap-4">
@@ -35,6 +38,10 @@ export function MyPage() {
 									<ProfileDeclarations employeeId={profile.employeeId} />
 									<h2 className="pt-2 text-sm font-semibold">{t("my.deductionConsents")}</h2>
 									<ProfileConsents employeeId={profile.employeeId} />
+									<h2 className="pt-2 text-sm font-semibold">{t("my.leave", { year })}</h2>
+									<MyLeaveBalance employeeId={profile.employeeId} year={year} />
+									<h2 className="pt-2 text-sm font-semibold">{t("my.absences", { year })}</h2>
+									<MyAbsences employeeId={profile.employeeId} year={year} />
 									<p className="text-sm text-muted">{t("my.empty")}</p>
 								</Card.Content>
 							</Card>

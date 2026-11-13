@@ -11,6 +11,8 @@ import { ThemeToggle } from "#/features/theme/ThemeToggle";
 type NavItem = {
 	to:
 		| "/employees"
+		| "/calendar"
+		| "/holidays"
 		| "/positions"
 		| "/pay-components"
 		| "/zus-codes"
@@ -22,6 +24,8 @@ type NavItem = {
 		| "/my";
 	label:
 		| "app.nav.employees"
+		| "app.nav.calendar"
+		| "app.nav.holidays"
 		| "app.nav.positions"
 		| "app.nav.payComponents"
 		| "app.nav.zusCodes"
@@ -35,7 +39,7 @@ type NavItem = {
 };
 
 type NavSection = {
-	label?: "app.nav.staff" | "app.nav.dictionaries" | "app.nav.administration";
+	label?: "app.nav.staff" | "app.nav.workTime" | "app.nav.dictionaries" | "app.nav.administration";
 	items: NavItem[];
 };
 
@@ -47,6 +51,13 @@ const NAV: NavSection[] = [
 	{
 		label: "app.nav.staff",
 		items: [{ to: "/employees", label: "app.nav.employees", roles: STAFF }],
+	},
+	{
+		label: "app.nav.workTime",
+		items: [
+			{ to: "/calendar", label: "app.nav.calendar", roles: STAFF },
+			{ to: "/holidays", label: "app.nav.holidays", roles: STAFF },
+		],
 	},
 	{
 		label: "app.nav.dictionaries",

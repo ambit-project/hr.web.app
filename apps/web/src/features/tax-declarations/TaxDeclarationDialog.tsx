@@ -1,4 +1,5 @@
 import { Button, Modal, toast } from "@heroui/react";
+import type { TFunction } from "i18next";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -59,7 +60,7 @@ export const TaxDeclarationDialog = forwardRef<TaxDeclarationDialogHandle>(
 );
 
 function onSaveError(
-	t: ReturnType<typeof useTranslation>["t"],
+	t: TFunction<"translation">,
 	error: unknown,
 	applyErrors: (errors: Record<string, string[]> | undefined) => boolean,
 	onDone: () => void,

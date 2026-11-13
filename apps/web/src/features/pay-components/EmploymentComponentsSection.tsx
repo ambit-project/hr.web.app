@@ -4,14 +4,14 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { ListEmploymentComponentsItem } from "#/api/models";
 import { AddButton } from "#/components/ui/AddButton";
-import { ConfirmDelete } from "./ConfirmDelete";
+import { ConfirmDelete } from "#/components/ui/ConfirmDelete";
+import { onActionError } from "#/forms/feedback";
 import {
 	type ComponentContract,
 	EmploymentComponentDialog,
 	type EmploymentComponentDialogHandle,
 } from "./EmploymentComponentDialog";
 import { EndDateDialog, type EndDateDialogHandle } from "./EndDateDialog";
-import { onActionError } from "./feedback";
 import {
 	employmentComponentsQuery,
 	useDeleteEmploymentComponent,

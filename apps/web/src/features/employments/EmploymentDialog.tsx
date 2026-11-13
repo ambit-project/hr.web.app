@@ -1,6 +1,7 @@
 import { Button, Checkbox, CheckboxGroup, Description, Label, Modal, toast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import type { TFunction } from "i18next";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -608,7 +609,7 @@ function EmploymentForm({ target, onDone }: { target: FormTarget; onDone: () => 
 	);
 }
 
-type TranslateFn = ReturnType<typeof useTranslation>["t"];
+type TranslateFn = TFunction<"translation">;
 
 function fieldError(
 	t: TranslateFn,

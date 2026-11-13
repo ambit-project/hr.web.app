@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { ListComponentTypesItem } from "#/api/models";
 import { text, useAppForm } from "#/forms";
+import { onSaveError } from "#/forms/feedback";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { onSaveError } from "./feedback";
 import { useCreateComponentType, useUpdateComponentType } from "./payComponentsQueries";
 import {
 	ADDITION_FLAGS,

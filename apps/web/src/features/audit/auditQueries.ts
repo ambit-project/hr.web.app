@@ -19,6 +19,13 @@ export const AUDIT_ENTITIES = [
 	"employment_component",
 	"deduction_consent",
 	"garnishment",
+	"holiday",
+	"calendar",
+	"calendar_day",
+	"absence",
+	"leave_entitlement",
+	"overtime",
+	"mandate_hours",
 ] as const;
 export type AuditEntity = (typeof AUDIT_ENTITIES)[number];
 

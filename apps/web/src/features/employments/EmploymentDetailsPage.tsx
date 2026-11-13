@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import type { GetEmploymentResponse } from "#/api/models";
 import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { EmploymentComponentsSection } from "#/features/pay-components/EmploymentComponentsSection";
+import { TimeSections } from "#/features/time-absence/TimeSections";
+import { currentYear, defaultYear, timeContract } from "#/features/time-absence/types";
 import { ProblemError, serverErrorText } from "#/lib/problem";
 import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
@@ -30,6 +32,8 @@ const route = getRouteApi("/employments/$id");
 export function EmploymentDetailsPage() {
 	const { t } = useTranslation();
 	const { id } = route.useParams();
+	const search = route.useSearch();
+	const navigate = route.useNavigate();
 	const { data: employment, isPending } = useQuery(employmentQuery(id));
 	const dialog = useRef<EmploymentDialogHandle>(null);
 
@@ -156,6 +160,13 @@ export function EmploymentDetailsPage() {
 			</Table>
 			<EmploymentComponentsSection
 				contract={{ id: employment.id, kind: employment.kind, employeeId: employment.employeeId }}
+			/>
+			<TimeSections
+				contract={timeContract(employment)}
+				year={search.year ?? defaultYear(employment, currentYear())}
+				onYearChange={(year) =>
+					void navigate({ search: (prev) => ({ ...prev, year }), replace: true })
+				}
 			/>
 			<EmploymentDialog ref={dialog} />
 		</section>

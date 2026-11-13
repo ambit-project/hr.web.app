@@ -9,9 +9,9 @@
       nieobecności), rutyny kontraktu, uprawnienia. Testy rutyn.
 - [x] T2. API: endpointy świąt, kalendarza, wymiaru, nieobecności, limitu urlopu, nadgodzin, godzin zlecenia
       i „moich” danych; migawka OpenAPI. Testy HTTP.
-- [ ] T3. Front: menu „Czas pracy” (Kalendarz, Święta), sekcje umowy (Nieobecności, Urlop, Nadgodziny / Godziny
+- [x] T3. Front: menu „Czas pracy” (Kalendarz, Święta), sekcje umowy (Nieobecności, Urlop, Nadgodziny / Godziny
       zlecenia, Wymiar), „Moje dokumenty” (saldo, nieobecności), etykiety audytu i kody błędów.
-- [ ] T4. Dokumentacja: PRODUCT, sprawdzenie w przeglądarce.
+- [x] T4. Dokumentacja: PRODUCT, sprawdzenie w przeglądarce.
 
 ## Decyzje przy implementacji (różnice względem planu)
 
@@ -63,3 +63,10 @@ Testy rutyn: `tests/HrWebApp.Api.Tests/Database/TimeAbsenceRoutineTests.cs`; HTT
 | R18 | `ON DELETE CASCADE` z umowy (kartoteka znika z ewidencją; okres przechowywania z 004 R17) — bez osobnego testu |
 | R19 | audyt: `Designated_day_off_…`, `Leave_cannot_exceed_…`; role: `Roles_admin_writes_holidays_…`, HTTP `Pracownik_reads_own_leave_and_absences_and_gets_403_elsewhere` |
 | R20 | `Roles_admin_writes_holidays_…` i HTTP `Pracownik_reads_own_…` (Anna Testowa: 26 dni, urlop 3 dni, choroba 5 dni) |
+
+Sprawdzone w przeglądarce: kalendarz 2026 spółki Demo (251 dni roboczych, 2008 h; XI 20 dni / 160 h; XII 20 dni / 160 h
+z dniem wolnym 31.12 za 26.12), karta generowania dla spółki bez kalendarza, zmiana godzin dnia (12.11 na 7,5 h
+i z powrotem), święta (Administrator: dodawanie, Kadry: odczyt), umowa Anny: limit 26 dni, wykorzystane 3, saldo
+23 dni, komunikat przekroczenia limitu z liczbą pozostałą, nadgodziny (dodanie i usunięcie), „Moje dokumenty”
+Pracownika (saldo i nieobecności). Nie sprawdzone w przeglądarce: godziny zlecenia (brak zlecenia godzinowego
+w danych dev).

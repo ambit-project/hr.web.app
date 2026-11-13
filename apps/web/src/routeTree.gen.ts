@@ -13,10 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as HealthRouteImport } from './routes/health'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuditIndexRouteImport } from './routes/audit/index'
+import { Route as CalendarIndexRouteImport } from './routes/calendar/index'
 import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as EmployeesIndexRouteImport } from './routes/employees/index'
 import { Route as EmployeesIdRouteImport } from './routes/employees/$id'
 import { Route as EmploymentsIdRouteImport } from './routes/employments/$id'
+import { Route as HolidaysIndexRouteImport } from './routes/holidays/index'
 import { Route as LegalParametersIndexRouteImport } from './routes/legal-parameters/index'
 import { Route as MyIndexRouteImport } from './routes/my/index'
 import { Route as PayComponentsIndexRouteImport } from './routes/pay-components/index'
@@ -45,6 +47,11 @@ const AuditIndexRoute = AuditIndexRouteImport.update({
   path: '/audit/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarIndexRoute = CalendarIndexRouteImport.update({
+  id: '/calendar/',
+  path: '/calendar/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
   id: '/companies/',
   path: '/companies/',
@@ -63,6 +70,11 @@ const EmployeesIdRoute = EmployeesIdRouteImport.update({
 const EmploymentsIdRoute = EmploymentsIdRouteImport.update({
   id: '/employments/$id',
   path: '/employments/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HolidaysIndexRoute = HolidaysIndexRouteImport.update({
+  id: '/holidays/',
+  path: '/holidays/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegalParametersIndexRoute = LegalParametersIndexRouteImport.update({
@@ -108,8 +120,10 @@ export interface FileRoutesByFullPath {
   '/employees/$id': typeof EmployeesIdRoute
   '/employments/$id': typeof EmploymentsIdRoute
   '/audit/': typeof AuditIndexRoute
+  '/calendar/': typeof CalendarIndexRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employees/': typeof EmployeesIndexRoute
+  '/holidays/': typeof HolidaysIndexRoute
   '/legal-parameters/': typeof LegalParametersIndexRoute
   '/my/': typeof MyIndexRoute
   '/pay-components/': typeof PayComponentsIndexRoute
@@ -125,8 +139,10 @@ export interface FileRoutesByTo {
   '/employees/$id': typeof EmployeesIdRoute
   '/employments/$id': typeof EmploymentsIdRoute
   '/audit': typeof AuditIndexRoute
+  '/calendar': typeof CalendarIndexRoute
   '/companies': typeof CompaniesIndexRoute
   '/employees': typeof EmployeesIndexRoute
+  '/holidays': typeof HolidaysIndexRoute
   '/legal-parameters': typeof LegalParametersIndexRoute
   '/my': typeof MyIndexRoute
   '/pay-components': typeof PayComponentsIndexRoute
@@ -143,8 +159,10 @@ export interface FileRoutesById {
   '/employees/$id': typeof EmployeesIdRoute
   '/employments/$id': typeof EmploymentsIdRoute
   '/audit/': typeof AuditIndexRoute
+  '/calendar/': typeof CalendarIndexRoute
   '/companies/': typeof CompaniesIndexRoute
   '/employees/': typeof EmployeesIndexRoute
+  '/holidays/': typeof HolidaysIndexRoute
   '/legal-parameters/': typeof LegalParametersIndexRoute
   '/my/': typeof MyIndexRoute
   '/pay-components/': typeof PayComponentsIndexRoute
@@ -162,8 +180,10 @@ export interface FileRouteTypes {
     | '/employees/$id'
     | '/employments/$id'
     | '/audit/'
+    | '/calendar/'
     | '/companies/'
     | '/employees/'
+    | '/holidays/'
     | '/legal-parameters/'
     | '/my/'
     | '/pay-components/'
@@ -179,8 +199,10 @@ export interface FileRouteTypes {
     | '/employees/$id'
     | '/employments/$id'
     | '/audit'
+    | '/calendar'
     | '/companies'
     | '/employees'
+    | '/holidays'
     | '/legal-parameters'
     | '/my'
     | '/pay-components'
@@ -196,8 +218,10 @@ export interface FileRouteTypes {
     | '/employees/$id'
     | '/employments/$id'
     | '/audit/'
+    | '/calendar/'
     | '/companies/'
     | '/employees/'
+    | '/holidays/'
     | '/legal-parameters/'
     | '/my/'
     | '/pay-components/'
@@ -214,8 +238,10 @@ export interface RootRouteChildren {
   EmployeesIdRoute: typeof EmployeesIdRoute
   EmploymentsIdRoute: typeof EmploymentsIdRoute
   AuditIndexRoute: typeof AuditIndexRoute
+  CalendarIndexRoute: typeof CalendarIndexRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   EmployeesIndexRoute: typeof EmployeesIndexRoute
+  HolidaysIndexRoute: typeof HolidaysIndexRoute
   LegalParametersIndexRoute: typeof LegalParametersIndexRoute
   MyIndexRoute: typeof MyIndexRoute
   PayComponentsIndexRoute: typeof PayComponentsIndexRoute
@@ -255,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuditIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendar/': {
+      id: '/calendar/'
+      path: '/calendar'
+      fullPath: '/calendar/'
+      preLoaderRoute: typeof CalendarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/companies/': {
       id: '/companies/'
       path: '/companies'
@@ -281,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/employments/$id'
       fullPath: '/employments/$id'
       preLoaderRoute: typeof EmploymentsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/holidays/': {
+      id: '/holidays/'
+      path: '/holidays'
+      fullPath: '/holidays/'
+      preLoaderRoute: typeof HolidaysIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal-parameters/': {
@@ -342,8 +382,10 @@ const rootRouteChildren: RootRouteChildren = {
   EmployeesIdRoute: EmployeesIdRoute,
   EmploymentsIdRoute: EmploymentsIdRoute,
   AuditIndexRoute: AuditIndexRoute,
+  CalendarIndexRoute: CalendarIndexRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   EmployeesIndexRoute: EmployeesIndexRoute,
+  HolidaysIndexRoute: HolidaysIndexRoute,
   LegalParametersIndexRoute: LegalParametersIndexRoute,
   MyIndexRoute: MyIndexRoute,
   PayComponentsIndexRoute: PayComponentsIndexRoute,

@@ -7,5 +7,6 @@ export { payComponentsKeys } from "./payComponentsKeys";
 export { positionsKeys } from "./positionsKeys";
 export { taxDeclarationsKeys } from "./taxDeclarationsKeys";
 export { taxOfficesKeys } from "./taxOfficesKeys";
+export { timeAbsenceKeys } from "./timeAbsenceKeys";
 export { usersKeys } from "./usersKeys";
 export { zusCodesKeys } from "./zusCodesKeys";

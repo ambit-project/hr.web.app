@@ -3,8 +3,8 @@ import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useAppForm } from "#/forms";
+import { onSaveError } from "#/forms/feedback";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { onSaveError } from "./feedback";
 
 /** What to end: the dialog asks for the last day; an empty day undoes the end. */
 export type EndTarget = {

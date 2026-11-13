@@ -1,4 +1,5 @@
 import { Chip, EmptyState, Table } from "@heroui/react";
+import type { TFunction } from "i18next";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { ListTaxDeclarationsItem } from "#/api/models";
@@ -75,7 +76,7 @@ export function TaxDeclarationsTable({
 	);
 }
 
-type TranslateFn = ReturnType<typeof useTranslation>["t"];
+type TranslateFn = TFunction<"translation">;
 
 function details(t: TranslateFn, item: ListTaxDeclarationsItem): string {
 	if (item.share) return t("taxDeclarations.shareValue", { share: item.share });

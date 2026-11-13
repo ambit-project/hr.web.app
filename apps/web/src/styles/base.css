@@ -17,6 +17,11 @@ body {
 	max-width: min(48rem, calc(100vw - 2rem));
 }
 
+/* Small form (one or two fields, e.g. a calendar day): still the form dialog, just narrower. */
+.modal__dialog.form-dialog.form-dialog--narrow {
+	max-width: min(30rem, calc(100vw - 2rem));
+}
+
 /* Bez zaokrągleń w całej aplikacji (decyzja właściciela). Część kontrolek HeroUI ma promień wpisany na sztywno
    (rounded-full), więc reguła jest globalna i z !important. */
 *,

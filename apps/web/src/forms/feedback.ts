@@ -1,10 +1,10 @@
 import { toast } from "@heroui/react";
-import type { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { ValidationCode } from "#/forms/validation";
 import type { pl } from "#/i18n/pl";
 import { ProblemError, serverErrorText } from "#/lib/problem";
 
-type TranslateFn = ReturnType<typeof useTranslation>["t"];
+type TranslateFn = TFunction<"translation">;
 type Reason = keyof typeof pl.reasons;
 
 /** Message for a 409 with a reason; an unknown reason reads as a plain conflict. */
@@ -57,4 +57,12 @@ export function onActionError(t: TranslateFn, error: unknown) {
 	} else {
 		toast.danger(serverErrorText(t));
 	}
+}
+
+/** Text for a read that failed: the reason of a 409 (no calendar, wrong contract kind) or the general server error. */
+export function problemMessage(t: TranslateFn, error: unknown): string {
+	if (error instanceof ProblemError && error.problem.reason) {
+		return reasonMessage(t, error.problem.reason);
+	}
+	return serverErrorText(t);
 }

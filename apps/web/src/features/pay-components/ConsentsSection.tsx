@@ -4,11 +4,11 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { ListConsentsItem } from "#/api/models";
 import { AddButton, EditButton } from "#/components/ui/AddButton";
-import { ConfirmDelete } from "./ConfirmDelete";
+import { ConfirmDelete } from "#/components/ui/ConfirmDelete";
+import { onActionError } from "#/forms/feedback";
 import { ConsentDialog, type ConsentDialogHandle } from "./ConsentDialog";
 import { ConsentsTable } from "./ConsentsTable";
 import { EndDateDialog, type EndDateDialogHandle } from "./EndDateDialog";
-import { onActionError } from "./feedback";
 import { consentsQuery, useDeleteConsent, useEndConsent } from "./payComponentsQueries";
 
 /** "Zgody na potrącenia" on the employee page (Kadry, Administrator). */

@@ -27,6 +27,8 @@ const KNOWN: readonly ValidationCode[] = [
 	"consentMissing",
 	"aboveConsent",
 	"afterStatus",
+	"limitExceeded",
+	"leaveLimitExceeded",
 ];
 
 /**
