@@ -32,7 +32,12 @@ export const UserDialog = forwardRef<UserDialogHandle>(function UserDialog(_prop
 
 	return (
 		<Modal>
-			<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
+			<Modal.Backdrop
+				isDismissable={false}
+				isKeyboardDismissDisabled
+				isOpen={target !== null}
+				onOpenChange={(open) => !open && close()}
+			>
 				<Modal.Container scroll="inside">
 					{target?.mode === "password" ? (
 						<PasswordForm user={target.user} onDone={close} />

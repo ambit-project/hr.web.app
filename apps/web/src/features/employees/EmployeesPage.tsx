@@ -117,7 +117,7 @@ export function EmployeesPage() {
 												to="/employees/$id"
 												params={{ id: employee.id }}
 												search={{ tab: undefined }}
-												className="font-medium text-accent hover:underline"
+												className="font-medium text-link hover:underline"
 											>
 												{employee.lastName} {employee.firstName}
 											</RouterLink>

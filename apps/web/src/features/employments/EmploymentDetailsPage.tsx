@@ -171,7 +171,7 @@ function ConfirmButton({
 	return (
 		<AlertDialog>
 			<Button variant="danger-soft">{label}</Button>
-			<AlertDialog.Backdrop>
+			<AlertDialog.Backdrop isDismissable={false} isKeyboardDismissDisabled>
 				<AlertDialog.Container>
 					<AlertDialog.Dialog className="sm:max-w-[420px]">
 						<AlertDialog.Header>

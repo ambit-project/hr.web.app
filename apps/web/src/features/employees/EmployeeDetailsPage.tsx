@@ -156,7 +156,7 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 				<Button onPress={() => dialog.current?.edit(employee)}>{t("common.edit")}</Button>
 				<AlertDialog>
 					<Button variant="danger-soft">{t("employees.delete.action")}</Button>
-					<AlertDialog.Backdrop>
+					<AlertDialog.Backdrop isDismissable={false} isKeyboardDismissDisabled>
 						<AlertDialog.Container>
 							<AlertDialog.Dialog className="sm:max-w-[420px]">
 								<AlertDialog.Header>

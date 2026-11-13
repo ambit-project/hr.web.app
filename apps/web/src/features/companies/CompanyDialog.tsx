@@ -58,7 +58,12 @@ export const CompanyDialog = forwardRef<CompanyDialogHandle>(function CompanyDia
 
 	return (
 		<Modal>
-			<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+			<Modal.Backdrop
+				isDismissable={false}
+				isKeyboardDismissDisabled
+				isOpen={target !== null}
+				onOpenChange={(open) => !open && setTarget(null)}
+			>
 				<Modal.Container scroll="inside">
 					{target ? <CompanyForm target={target} onDone={() => setTarget(null)} /> : null}
 				</Modal.Container>

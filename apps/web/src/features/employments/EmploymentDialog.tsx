@@ -66,7 +66,12 @@ export const EmploymentDialog = forwardRef<EmploymentDialogHandle>(
 
 		return (
 			<Modal>
-				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
+				<Modal.Backdrop
+					isDismissable={false}
+					isKeyboardDismissDisabled
+					isOpen={target !== null}
+					onOpenChange={(open) => !open && close()}
+				>
 					<Modal.Container scroll="inside">
 						{target?.mode === "terminate" ? (
 							<TerminateForm employment={target.employment} onDone={close} />

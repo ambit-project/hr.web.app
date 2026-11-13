@@ -27,7 +27,12 @@ export const AddressDialog = forwardRef<AddressDialogHandle, { employeeId: strin
 
 		return (
 			<Modal>
-				<Modal.Backdrop isOpen={kind !== null} onOpenChange={(open) => !open && setKind(null)}>
+				<Modal.Backdrop
+					isDismissable={false}
+					isKeyboardDismissDisabled
+					isOpen={kind !== null}
+					onOpenChange={(open) => !open && setKind(null)}
+				>
 					<Modal.Container scroll="inside">
 						{kind ? (
 							<AddressForm employeeId={employeeId} kind={kind} onDone={() => setKind(null)} />

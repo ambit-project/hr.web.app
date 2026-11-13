@@ -3,6 +3,8 @@
    ========================================================= */
 
 /*
+ * Akcent HeroUI (przycisk główny, zaznaczenia) to czerń — --color-action; kobalt zostaje w --link i w miękkim
+ * akcencie (aktywna pozycja menu, wybrany krok).
  * HeroUI czyta własne zmienne (--accent, --surface, --border, ...) i deklaruje je w @layer base; reguła poza
  * warstwą wygrywa, więc kontrolki HeroUI wyglądają jak reszta panelu. Zmienne wskazują tokeny, a tokeny zmieniają
  * się z motywem — dlatego jedno mapowanie obsługuje jasny i ciemny. Selektory .dark i [data-theme] muszą tu być,
@@ -30,9 +32,9 @@
 	--default-foreground: var(--color-text);
 	--default-hover: var(--color-surface-selected);
 
-	--accent: var(--color-primary);
-	--accent-foreground: var(--color-primary-foreground);
-	--accent-hover: var(--color-primary-hover);
+	--accent: var(--color-action);
+	--accent-foreground: var(--color-action-foreground);
+	--accent-hover: var(--color-action-hover);
 	--accent-soft: var(--color-primary-soft);
 	--accent-soft-foreground: var(--color-primary-soft-text);
 
@@ -58,7 +60,7 @@
 
 	--border: var(--color-border);
 	--separator: var(--color-border-subtle);
-	--focus: var(--color-primary);
+	--focus: var(--color-text);
 	--link: var(--color-primary);
 
 	--radius: var(--radius-lg);

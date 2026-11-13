@@ -22,7 +22,12 @@ export const BankAccountDialog = forwardRef<BankAccountDialogHandle, { employeeI
 
 		return (
 			<Modal>
-				<Modal.Backdrop isOpen={mode !== null} onOpenChange={(open) => !open && setMode(null)}>
+				<Modal.Backdrop
+					isDismissable={false}
+					isKeyboardDismissDisabled
+					isOpen={mode !== null}
+					onOpenChange={(open) => !open && setMode(null)}
+				>
 					<Modal.Container scroll="inside">
 						{mode ? (
 							<BankAccountForm employeeId={employeeId} mode={mode} onDone={() => setMode(null)} />

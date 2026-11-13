@@ -9,7 +9,7 @@ export function WizardSteps({
 	onSelect: (index: number) => void;
 }) {
 	return (
-		<ol className="mb-4 flex flex-wrap items-center gap-2 text-sm">
+		<ol className="wizard-steps flex flex-wrap items-center gap-2 text-sm">
 			{steps.map((label, index) => {
 				const state = index < current ? "done" : index === current ? "current" : "next";
 				return (

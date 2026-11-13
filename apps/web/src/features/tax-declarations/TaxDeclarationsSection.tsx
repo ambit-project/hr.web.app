@@ -71,7 +71,7 @@ function DeleteButton({ item }: { item: ListTaxDeclarationsItem }) {
 			<Button size="sm" variant="danger-soft">
 				{t("taxDeclarations.delete.action")}
 			</Button>
-			<AlertDialog.Backdrop>
+			<AlertDialog.Backdrop isDismissable={false} isKeyboardDismissDisabled>
 				<AlertDialog.Container>
 					<AlertDialog.Dialog className="sm:max-w-[420px]">
 						<AlertDialog.Header>

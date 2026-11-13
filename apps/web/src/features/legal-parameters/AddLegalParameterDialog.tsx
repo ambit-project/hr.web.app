@@ -25,7 +25,12 @@ export const AddLegalParameterDialog = forwardRef<AddLegalParameterDialogHandle>
 
 		return (
 			<Modal>
-				<Modal.Backdrop isOpen={code !== null} onOpenChange={(open) => !open && setCode(null)}>
+				<Modal.Backdrop
+					isDismissable={false}
+					isKeyboardDismissDisabled
+					isOpen={code !== null}
+					onOpenChange={(open) => !open && setCode(null)}
+				>
 					<Modal.Container scroll="inside">
 						{code !== null ? <AddForm code={code} onDone={() => setCode(null)} /> : null}
 					</Modal.Container>

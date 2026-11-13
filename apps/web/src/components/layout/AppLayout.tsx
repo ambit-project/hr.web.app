@@ -98,7 +98,9 @@ export function AppLayout({ me, children }: { me: Me; children: ReactNode }) {
 										key={item.to}
 										to={item.to}
 										className="rounded-md px-3 py-2 text-sm hover:bg-default"
-										activeProps={{ className: "bg-accent-soft text-accent" }}
+										activeProps={{
+											className: "bg-accent-soft font-medium text-accent-soft-foreground",
+										}}
 									>
 										{t(item.label)}
 									</RouterLink>

@@ -103,7 +103,12 @@ export const EmployeeDialog = forwardRef<EmployeeDialogHandle>(
 
 		return (
 			<Modal>
-				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+				<Modal.Backdrop
+					isDismissable={false}
+					isKeyboardDismissDisabled
+					isOpen={target !== null}
+					onOpenChange={(open) => !open && setTarget(null)}
+				>
 					<Modal.Container scroll="inside">
 						{target ? <EmployeeForm target={target} onDone={() => setTarget(null)} /> : null}
 					</Modal.Container>

@@ -39,7 +39,12 @@ export const TaxDeclarationDialog = forwardRef<TaxDeclarationDialogHandle>(
 
 		return (
 			<Modal>
-				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
+				<Modal.Backdrop
+					isDismissable={false}
+					isKeyboardDismissDisabled
+					isOpen={target !== null}
+					onOpenChange={(open) => !open && close()}
+				>
 					<Modal.Container scroll="inside">
 						{target?.mode === "create" ? (
 							<CreateForm employeeId={target.employeeId} onDone={close} />

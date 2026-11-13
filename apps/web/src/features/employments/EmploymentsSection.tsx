@@ -48,7 +48,7 @@ export function EmploymentsSection({ employeeId }: { employeeId: string }) {
 											<RouterLink
 												to="/employments/$id"
 												params={{ id: item.id }}
-												className="text-accent hover:underline"
+												className="text-link hover:underline"
 											>
 												{item.number}
 											</RouterLink>
