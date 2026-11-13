@@ -60,7 +60,7 @@ potrącenia i zajęcia wynagrodzenia (alimenty, inne egzekucje). **Liczenie** po
 - **R7.** Kadry przypisują do umowy składnik (aktywny, niesystemowy) z wartością i okresem: `validFrom`, `validTo`
   (puste = bez końca). Wartość > 0: dla `fixed` kwota w zł (2 miejsca), dla `percentOfBase` procent (do 1000, 2
   miejsca), dla `rateTimesHours` stawka za godzinę w zł.
-- **R8.** Okres mieści się w okresie umowy (`outsidePeriod`); koniec nie przed początkiem (`beforeFrom`). Ten sam
+- **R8.** Okres mieści się w okresie umowy (`outsidePeriod`); pusty koniec składnika oznacza „do końca umowy”; koniec nie przed początkiem (`beforeFrom`). Ten sam
   składnik na tej samej umowie nie nakłada się okresami (`overlap`).
 - **R9.** Kara porządkowa tylko na umowie o pracę (art. 108 dotyczy pracowników) → `invalid` na `componentTypeId`.
 - **R10.** Potrącenie dobrowolne wymaga wskazania zgody (`consentId`) tej samej kartoteki i tego samego składnika,
