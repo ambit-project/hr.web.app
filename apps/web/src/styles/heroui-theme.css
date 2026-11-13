@@ -1,0 +1,96 @@
+/* =========================================================
+   HeroUI na tokenach z tokens.css (wzór: ambit.es)
+   ========================================================= */
+
+/*
+ * HeroUI czyta własne zmienne (--accent, --surface, --border, ...) i deklaruje je w @layer base; reguła poza
+ * warstwą wygrywa, więc kontrolki HeroUI wyglądają jak reszta panelu. Zmienne wskazują tokeny, a tokeny zmieniają
+ * się z motywem — dlatego jedno mapowanie obsługuje jasny i ciemny. Selektory .dark i [data-theme] muszą tu być,
+ * bo HeroUI ustawia w nich swoje wartości z wyższą specyficznością niż samo :root.
+ */
+:root,
+:root.dark,
+:root[data-theme="dark"] {
+	--background: var(--color-bg);
+	--foreground: var(--color-text);
+
+	--surface: var(--color-surface);
+	--surface-foreground: var(--color-text);
+	--surface-secondary: var(--color-surface-subtle);
+	--surface-secondary-foreground: var(--color-text);
+	--surface-tertiary: var(--color-surface-selected);
+	--surface-tertiary-foreground: var(--color-text);
+
+	--overlay: var(--color-surface);
+	--overlay-foreground: var(--color-text);
+
+	--muted: var(--color-text-secondary);
+
+	--default: var(--color-surface-hover);
+	--default-foreground: var(--color-text);
+	--default-hover: var(--color-surface-selected);
+
+	--accent: var(--color-primary);
+	--accent-foreground: var(--color-primary-foreground);
+	--accent-hover: var(--color-primary-hover);
+	--accent-soft: var(--color-primary-soft);
+	--accent-soft-foreground: var(--color-primary-soft-text);
+
+	--success: var(--color-success);
+	--success-foreground: var(--color-on-status);
+	--success-soft: var(--color-success-soft);
+	--success-soft-foreground: var(--color-success);
+	--warning: var(--color-warning);
+	--warning-foreground: var(--color-on-status);
+	--warning-soft: var(--color-warning-soft);
+	--warning-soft-foreground: var(--color-warning);
+	--danger: var(--color-danger);
+	--danger-foreground: var(--color-on-status);
+	--danger-soft: var(--color-danger-soft);
+	--danger-soft-foreground: var(--color-danger);
+
+	--field-background: var(--color-surface);
+	--field-foreground: var(--color-text);
+	--field-placeholder: var(--color-text-muted);
+	--field-border: var(--color-border-strong);
+	--field-border-width: 1px;
+	--field-shadow: none;
+
+	--border: var(--color-border);
+	--separator: var(--color-border-subtle);
+	--focus: var(--color-primary);
+	--link: var(--color-primary);
+
+	--radius: var(--radius-lg);
+	--field-radius: var(--radius-md);
+
+	/* Pozostałe zmienne, które HeroUI ustawia osobno dla ciemnego motywu — bez nich zostałyby jego szarości. */
+	--background-secondary: var(--color-surface-subtle);
+	--background-tertiary: var(--color-surface-hover);
+	--surface-hover: var(--color-surface-hover);
+	--segment: var(--color-segment);
+	--segment-foreground: var(--color-text);
+	--default-soft: var(--color-surface-hover);
+	--default-soft-foreground: var(--color-text);
+	--default-soft-hover: var(--color-surface-selected);
+	--accent-soft-hover: color-mix(in oklab, var(--color-primary-soft) 85%, var(--color-primary));
+	--success-hover: color-mix(in oklab, var(--color-success) 88%, var(--color-text));
+	--success-soft-hover: color-mix(in oklab, var(--color-success-soft) 85%, var(--color-success));
+	--warning-hover: color-mix(in oklab, var(--color-warning) 88%, var(--color-text));
+	--warning-soft-hover: color-mix(in oklab, var(--color-warning-soft) 85%, var(--color-warning));
+	--danger-hover: color-mix(in oklab, var(--color-danger) 88%, var(--color-text));
+	--danger-soft-hover: color-mix(in oklab, var(--color-danger-soft) 85%, var(--color-danger));
+	--border-secondary: var(--color-border-strong);
+	--border-tertiary: var(--color-border-strong);
+	--separator-secondary: var(--color-border);
+	--separator-tertiary: var(--color-border-strong);
+	--field-hover: var(--color-surface);
+	--field-focus: var(--color-surface);
+	--field-border-hover: var(--color-text-muted);
+	--field-border-focus: var(--color-primary);
+	--switch-control-bg: var(--color-border-strong);
+	--backdrop: var(--color-backdrop);
+
+	--surface-shadow: var(--shadow-subtle);
+	--overlay-shadow: var(--shadow-overlay);
+}

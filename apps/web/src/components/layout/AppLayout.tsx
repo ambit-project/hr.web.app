@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { logoutFn, type Role } from "#/features/auth/auth.functions";
 import { hasRole, type Me } from "#/features/auth/session";
+import { ThemeSwitch } from "#/features/theme/ThemeSwitch";
 
 type NavItem = {
 	to:
@@ -105,7 +106,10 @@ export function AppLayout({ me, children }: { me: Me; children: ReactNode }) {
 						);
 					})}
 				</nav>
-				<div className="mt-4 flex items-center justify-between gap-2 border-t border-border pt-4 md:mt-auto">
+				<div className="mt-4 md:mt-auto">
+					<ThemeSwitch />
+				</div>
+				<div className="mt-4 flex items-center justify-between gap-2 border-t border-border pt-4">
 					<div className="min-w-0">
 						<div className="truncate text-sm font-medium">{me.displayName}</div>
 						<div className="truncate text-xs text-muted">

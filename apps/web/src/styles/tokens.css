@@ -1,0 +1,94 @@
+/* =========================================================
+   Wygląd Ambit (jak ambit.es): kobalt #2448d8 na chłodnej bieli, granatowy tekst, Inter, małe zaokrąglenia.
+   Jasny motyw to paleta ambit.es; ciemny jest jej odpowiednikiem w tej samej rodzinie barw (ambit.es ma tylko
+   jasny). Komponenty czytają wyłącznie te tokeny — heroui-theme.css przekazuje je HeroUI.
+   Kontrast (WCAG AA ≥ 4.5): tekst i kolor główny na tle i na powierzchni w obu motywach.
+   ========================================================= */
+
+:root {
+	color-scheme: light;
+
+	--color-bg: #f5f7fa;
+	--color-surface: #ffffff;
+	--color-surface-subtle: #f9fafc;
+	--color-surface-hover: #f0f3f8;
+	--color-surface-selected: #e3e9fd;
+
+	--color-text: #17202a;
+	--color-text-secondary: #5f6b78;
+	--color-text-muted: #87919d;
+
+	--color-border: #dfe3e8;
+	--color-border-subtle: #e9edf1;
+	--color-border-strong: #c9cfd6;
+
+	--color-primary: #2448d8;
+	--color-primary-hover: #1d3bb4;
+	--color-primary-foreground: #ffffff;
+	--color-primary-soft: #ebf0fe;
+	--color-primary-soft-text: #2448d8;
+
+	--color-success: #217346;
+	--color-success-soft: #e9f5ed;
+	--color-warning: #a56800;
+	--color-warning-soft: #fff5df;
+	--color-danger: #b42318;
+	--color-danger-soft: #fdeceb;
+
+	--color-on-status: #ffffff;
+
+	--color-segment: #ffffff;
+	--color-backdrop: rgba(16, 24, 40, 0.4);
+
+	--font-family:
+		"Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+		"Segoe UI", sans-serif;
+
+	--radius-md: 3px;
+	--radius-lg: 4px;
+
+	--shadow-subtle: 0 1px 2px rgba(16, 24, 40, 0.04);
+	--shadow-overlay: -4px 0 16px rgba(16, 24, 40, 0.12);
+}
+
+/* Ciemny: granatowe tło zamiast czerni, kobalt rozjaśniony do czytelnego na ciemnym (#7f9bff, kontrast ≥ 6 na
+   #121a2b), statusy w jaśniejszych odcieniach, a ich „miękkie” tła jako przyciemnione wersje. */
+:root.dark,
+:root[data-theme="dark"] {
+	color-scheme: dark;
+
+	--color-bg: #0d1320;
+	--color-surface: #141c2c;
+	--color-surface-subtle: #182134;
+	--color-surface-hover: #1e2940;
+	--color-surface-selected: #213064;
+
+	--color-text: #e6ebf3;
+	--color-text-secondary: #a9b4c4;
+	--color-text-muted: #7f8a9c;
+
+	--color-border: #263149;
+	--color-border-subtle: #1e2739;
+	--color-border-strong: #39465f;
+
+	--color-primary: #7f9bff;
+	--color-primary-hover: #9cb2ff;
+	--color-primary-foreground: #0b1430;
+	--color-primary-soft: #1b2a5c;
+	--color-primary-soft-text: #b4c4ff;
+
+	--color-success: #4cc283;
+	--color-success-soft: #12301f;
+	--color-warning: #e8b04a;
+	--color-warning-soft: #352710;
+	--color-danger: #f2766b;
+	--color-danger-soft: #3a1714;
+
+	--color-on-status: #0d1320;
+
+	--color-segment: #263457;
+	--color-backdrop: rgba(0, 0, 0, 0.6);
+
+	--shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.35);
+	--shadow-overlay: -4px 0 20px rgba(0, 0, 0, 0.5);
+}

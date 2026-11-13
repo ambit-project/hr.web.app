@@ -21,6 +21,7 @@
 		"api:gen": "orval && biome check --write src/api"
 	},
 	"dependencies": {
+		"@fontsource-variable/inter": "5.2.8",
 		"@heroui/react": "^3.2.6",
 		"@heroui/styles": "^3.2.6",
 		"@internationalized/date": "^3.12.4",

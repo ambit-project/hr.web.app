@@ -1,0 +1,11 @@
+/* Typografia i tło całej strony (wzór: ambit.es — Inter 14 px na chłodnym tle). Rozmiar rem zostaje domyślny,
+   żeby odstępy Tailwinda się nie zmieniły. */
+html {
+	font-family: var(--font-family);
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-size: 14px;
+}

@@ -16,6 +16,7 @@ import { RouterProvider } from "react-aria-components";
 import { AppLayout } from "#/components/layout/AppLayout";
 import { getMeFn } from "#/features/auth/auth.functions";
 import type { Me } from "#/features/auth/session";
+import { THEME_INIT_SCRIPT } from "#/features/theme/theme";
 import { DEFAULT_LANGUAGE, i18next } from "#/i18n";
 import appCss from "#/styles/app.css?url";
 
@@ -50,8 +51,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient; me?:
 
 function RootDocument({ children }: { children: ReactNode }) {
 	return (
-		<html lang={DEFAULT_LANGUAGE}>
+		// The theme script changes <html> before React hydrates, so its class and data-theme differ on purpose.
+		<html lang={DEFAULT_LANGUAGE} suppressHydrationWarning>
 			<head>
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant script that sets the theme before the first paint */}
+				<script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
 				<HeadContent />
 			</head>
 			<body className="bg-background text-foreground antialiased">
