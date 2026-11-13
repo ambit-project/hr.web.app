@@ -41,6 +41,8 @@ ważnych w miesiącu wypłaty.
   (opcjonalnie), stawki z okresem: podstawowa pracownika 2% albo obniżona 0,5–2% (art. 27 ust. 2), dodatkowa
   pracownika 0–2% (art. 27 ust. 3); stawki pracodawcy z ustawień spółki (1,5% + dodatkowa — R1). Okresy stawek się
   nie nakładają; nowy okres zamyka poprzedni dzień wcześniej.
+- **R6a.** Uczestnictwo wpisane przez pomyłkę Kadry usuwają (z wersją wiersza) razem z okresami stawek; deklaracje
+  kartoteki zostają (od 009 — nie, gdy uczestnictwo użyto na liście płac).
 - **R7.** Zapis osoby 55–69 lat wymaga wniosku (deklaracja `enrollmentRequest`) z datą wcześniejszą albo równą
   dacie zapisu (`requestMissing`). 70+ → `tooOld`.
 - **R8.** Wpłaty są należne od wynagrodzenia wypłaconego po zawarciu umowy (art. 28 ust. 1) — 009 bierze stawki

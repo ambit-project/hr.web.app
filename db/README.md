@@ -36,7 +36,7 @@ odczyt tylko funkcją ze schematu `<moduł>_app`.
 |---|---|---|---|
 | `U0001` | walidacja | 400 | `HINT` = JSON `{"pole": ["kod", …]}`; kody pól: `required`, `maxLength`, `duplicate` |
 | `U0002` | nie znaleziono (albo brak dostępu do rekordu) | 404 | |
-| `U0003` | konflikt stanu | 409 | opcjonalny `HINT` = powód (API: rozszerzenie `reason`): `retention` (okres przechowywania), `concurrentTitleUnsupported` (zlecenie/dzieło z własnym pracownikiem), `onlyVersion` (jedyna wersja warunków), `taxNumberMismatch` (NIP bazy Optimy inny niż spółki), `pending` / `succeeded` (ponowna próba operacji agenta, która czeka albo się udała), `calendarExists` (rok ma już kalendarz spółki), `holidaysMissing` (brak świąt roku w słowniku), `calendarMissing` (spółka nie ma kalendarza roku), `kindNotAllowed` (operacja nie dla tego rodzaju umowy, np. limit urlopu i nadgodziny tylko umowa o pracę, godziny tylko zlecenie); bez powodu = nieaktualna wersja wiersza |
+| `U0003` | konflikt stanu | 409 | opcjonalny `HINT` = powód (API: rozszerzenie `reason`): `retention` (okres przechowywania), `concurrentTitleUnsupported` (zlecenie/dzieło z własnym pracownikiem), `onlyVersion` (jedyna wersja warunków), `taxNumberMismatch` (NIP bazy Optimy inny niż spółki), `pending` / `succeeded` (ponowna próba operacji agenta, która czeka albo się udała), `calendarExists` (rok ma już kalendarz spółki), `holidaysMissing` (brak świąt roku w słowniku), `calendarMissing` (spółka nie ma kalendarza roku), `kindNotAllowed` (operacja nie dla tego rodzaju umowy, np. limit urlopu i nadgodziny tylko umowa o pracę, godziny tylko zlecenie), PPK (008): `alreadyEnrolled` (kartoteka ma już uczestnictwo), `alreadyResigned` (ostatnia deklaracja to rezygnacja, a nie ma informacji o ponownym zapisie w roku złożenia), `notResigned` (wniosek o wznowienie bez rezygnacji), `notEnrolled` (deklaracja stawki bez uczestnictwa), `notInformed` (wznowienie z cyklu bez daty informacji), `applied` (cykl już wykonany); bez powodu = nieaktualna wersja wiersza |
 | `U0004` | brak uprawnień | 403 | |
 | `U0005` | logowanie nieudane (zły login lub hasło, blokada, konto wyłączone) | 401 | zwraca API, nie baza; zawsze ten sam |
 | `U0006` | brak parametru prawnego w dniu | 409 | `HINT` = `{"code": …, "on": …}` |
@@ -51,7 +51,10 @@ dozwolonych: oświadczenie działa od miesiąca złożenia albo następnego), `b
 (rodzaj płacy Optimy i składnik różnego rodzaju), `taxNumberMismatch` (baza Optimy zgłoszona z innym NIP), `mismatch`
 (wynik agenta dla innej bazy lub miesiąca niż operacja), `payload` (`invalid` — zły kształt wyniku agenta). Czas pracy (007): `limitExceeded` (przy `dateTo`: limit dni
 nieobecności w roku albo na zdarzenie; dodatkowy klucz `remainingDays` = `["<dni>"]`), `leaveLimitExceeded` (przy
-`dateTo`: urlop ponad saldo; dodatkowy klucz `remainingHours` = `["<godziny>"]`).
+`dateTo`: urlop ponad saldo; dodatkowy klucz `remainingHours` = `["<godziny>"]`). PPK (008): `notEmployed` (w dniu nie jest osobą
+zatrudnioną w rozumieniu ustawy o PPK), `tooEarly` (zapis przed upływem 14 dni zatrudnienia), `tooYoung` (poniżej 18 lat),
+`tooOld` (70 lat i więcej), `requestMissing` (55–69 lat bez wniosku o zawarcie umowy złożonego najpóźniej w dniu
+zapisu), `notCycleYear` (rok bez dat ponownego zapisu w parametrach `ppk.ponowny.zapis.*`).
 
 Tłumaczenie na HTTP: `apps/api/HrWebApp.Api/Database/DbErrors.cs`. Front tłumaczy kody pól na teksty
 (`apps/web/src/i18n/pl.ts`, sekcja `validation`).
