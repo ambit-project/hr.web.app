@@ -8,6 +8,7 @@ import { EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
+import { birthDateWithAge } from "#/lib/age";
 import { ProblemError } from "#/lib/problem";
 import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
 import { employeeQuery, useDeleteEmployee } from "./employeesQueries";
@@ -113,7 +114,7 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 		[t("employees.fields.lastName"), employee.lastName],
 		[t("employees.fields.pesel"), employee.pesel],
 		[t("employees.fields.identityDocument"), employee.identityDocument],
-		[t("employees.fields.birthDate"), employee.birthDate],
+		[t("employees.fields.birthDate"), birthDateWithAge(employee.birthDate)],
 		[
 			t("employees.fields.taxOffice"),
 			employee.taxOfficeCode ? `${employee.taxOfficeCode} ${employee.taxOfficeName ?? ""}` : null,

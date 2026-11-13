@@ -9,6 +9,7 @@ import { AddButton } from "#/components/ui/AddButton";
 import { OpenIcon, openLinkClass } from "#/components/ui/OpenLink";
 import { OptionSelect } from "#/components/ui/OptionSelect";
 import { CompanySelect } from "#/features/companies/CompanySelect";
+import { birthDateWithAge } from "#/lib/age";
 import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
 import { EMPLOYEES_PAGE_SIZE, employeesQuery } from "./employeesQueries";
 import { EMPLOYEE_STATUSES, type EmployeeStatus } from "./types";
@@ -142,7 +143,7 @@ export function EmployeesPage() {
 										<Table.Cell>
 											<code>{employee.acronym}</code>
 										</Table.Cell>
-										<Table.Cell>{employee.birthDate}</Table.Cell>
+										<Table.Cell>{birthDateWithAge(employee.birthDate)}</Table.Cell>
 										<Table.Cell>{employee.city ?? "—"}</Table.Cell>
 										<Table.Cell>{employee.accountLogin ?? "—"}</Table.Cell>
 										<Table.Cell>
