@@ -3,6 +3,7 @@ import type {
 	AddPayrollSettingsRequest,
 	CreatePayrollRequest,
 	SetPayrollMembersRequest,
+	SetPayrollPpkPaidRequest,
 } from "#/api/models";
 import { payComponentsKeys, payrollKeys } from "#/api/query-keys";
 import { ProblemError, unwrap } from "#/lib/problem";
@@ -20,6 +21,7 @@ import {
 	listPayrollSettingsFn,
 	listPayrollsFn,
 	setPayrollMembersFn,
+	setPayrollPpkPaidFn,
 	type WireWarning,
 } from "./payroll.functions";
 
@@ -138,6 +140,12 @@ export function useCalculatePayroll() {
 export function useClosePayroll() {
 	return usePayrollMutation(async (variables: Versioned) =>
 		unwrap(await closePayrollFn({ data: variables })),
+	);
+}
+
+export function useSetPayrollPpkPaid() {
+	return usePayrollMutation(async (variables: { id: string; request: SetPayrollPpkPaidRequest }) =>
+		unwrap(await setPayrollPpkPaidFn({ data: variables })),
 	);
 }
 

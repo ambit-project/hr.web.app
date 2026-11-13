@@ -20,6 +20,7 @@ import type {
 	ListPayrollsParams,
 	PayrollVersion,
 	SetPayrollMembersRequest,
+	SetPayrollPpkPaidRequest,
 } from "../../models";
 import type { BodyType } from "../../mutator.ts";
 import { customInstance } from "../../mutator.ts";
@@ -118,6 +119,21 @@ export const closePayroll = (
 		options,
 	);
 };
+export const setPayrollPpkPaid = (
+	id: string,
+	setPayrollPpkPaidRequest: BodyType<SetPayrollPpkPaidRequest>,
+	options?: SecondParameter<typeof customInstance<void>>,
+) => {
+	return customInstance<void>(
+		{
+			url: `/api/payrolls/${id}/ppk-paid`,
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			data: setPayrollPpkPaidRequest,
+		},
+		options,
+	);
+};
 export const listPayrollMembers = (
 	id: string,
 	options?: SecondParameter<typeof customInstance<ListPayrollMembersItem[]>>,
@@ -180,6 +196,7 @@ export type GetPayrollResult = NonNullable<Awaited<ReturnType<typeof getPayroll>
 export type DeletePayrollResult = NonNullable<Awaited<ReturnType<typeof deletePayroll>>>;
 export type CalculatePayrollResult = NonNullable<Awaited<ReturnType<typeof calculatePayroll>>>;
 export type ClosePayrollResult = NonNullable<Awaited<ReturnType<typeof closePayroll>>>;
+export type SetPayrollPpkPaidResult = NonNullable<Awaited<ReturnType<typeof setPayrollPpkPaid>>>;
 export type ListPayrollMembersResult = NonNullable<Awaited<ReturnType<typeof listPayrollMembers>>>;
 export type SetPayrollMembersResult = NonNullable<Awaited<ReturnType<typeof setPayrollMembers>>>;
 export type ListPayrollEntriesResult = NonNullable<Awaited<ReturnType<typeof listPayrollEntries>>>;

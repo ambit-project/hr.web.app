@@ -109,6 +109,7 @@ export const pl = {
 		beforeStart: "Data nie może być wcześniejsza niż początek umowy.",
 		afterEnd: "Data nie może być późniejsza niż koniec umowy.",
 		future: "Data nie może być z przyszłości.",
+		beforePayment: "Data przekazania nie może być wcześniejsza niż data wypłaty listy.",
 		outsideAllowed:
 			"Niedozwolony miesiąc: oświadczenie działa od miesiąca złożenia albo następnego (dla wniosku o niepobieranie zaliczek — tylko w roku złożenia, dla ulgi na powrót — w latach ulgi).",
 		tooMany: "Naraz można skopiować najwyżej 500 kartotek — zawęź filtr.",
@@ -432,6 +433,11 @@ export const pl = {
 		closed:
 			"Lista płac jest zamknięta — nie można jej zmienić ani usunąć. Zmiany wprowadza lista korygująca.",
 		notCalculated: "Najpierw nalicz listę — zamknąć można tylko listę naliczoną.",
+		unsupportedCases:
+			"Lista ma wypłaty z przypadkami, których system nie liczy (ostrzeżenia blokujące). Usuń przyczynę albo wyłącz umowę z listy i rozlicz ją poza systemem.",
+		payrollNotClosed: "Datę przekazania wpłat PPK wpisuje się dla zamkniętej listy płac.",
+		ppkIncomeTaxed:
+			"Wpłaty PPK tej listy są już przychodem na zamkniętej liście — daty przekazania nie można zmienić.",
 		stale: "Dane źródłowe zmieniły się po naliczeniu — przelicz listę przed zamknięciem.",
 		notClosed: "Pasek wypłaty powstaje dopiero z zamkniętej listy płac.",
 		missingData:
@@ -1278,7 +1284,13 @@ export const pl = {
 				given: "przekazany",
 				sent: "wysłany do US",
 			},
-			missing: { pesel: "PESEL", address: "adres zamieszkania", taxOffice: "urząd skarbowy" },
+			missing: {
+				pesel: "PESEL",
+				address: "adres zamieszkania",
+				taxOffice: "urząd skarbowy",
+				ppkIncomeRelief:
+					"wpłata PPK bez listy po przekazaniu u osoby z ulgą — zwolnienia system nie liczy",
+			},
 			missingList: "Brakuje: {{fields}}",
 			outdated: "Listy płac zmieniły się po wygenerowaniu — wygeneruj ponownie.",
 			downloadXml: "Pobierz XML",
@@ -1557,6 +1569,22 @@ export const pl = {
 			warningsNotice_few: "{{count}} wypłaty mają ostrzeżenia — sprawdź je przed zamknięciem.",
 			warningsNotice_many: "{{count}} wypłat ma ostrzeżenia — sprawdź je przed zamknięciem.",
 			warningsNotice_other: "{{count}} wypłaty mają ostrzeżenia — sprawdź je przed zamknięciem.",
+			blockedNotice_one:
+				"{{count}} wypłata ma przypadek, którego system nie liczy — listy nie można zamknąć.",
+			blockedNotice_few:
+				"{{count}} wypłaty mają przypadki, których system nie liczy — listy nie można zamknąć.",
+			blockedNotice_many:
+				"{{count}} wypłat ma przypadki, których system nie liczy — listy nie można zamknąć.",
+			blockedNotice_other:
+				"{{count}} wypłaty mają przypadki, których system nie liczy — listy nie można zamknąć.",
+			ppkPaidOn: "Wpłaty PPK przekazane",
+			ppkPaid: {
+				action: "Przekazanie wpłat PPK",
+				title: "Przekazanie wpłat PPK — lista {{number}}",
+				hint: "Wpłata pracodawcy na PPK jest przychodem pracownika w dniu przekazania do instytucji finansowej. Podatek od niej policzy lista z wypłatą w tym miesiącu nie wcześniej niż w tym dniu; bez takiej listy przychód trafi do PIT-11. Pusta data usuwa wpis.",
+				paidOn: "Data przekazania",
+				saved: "Zapisano datę przekazania wpłat PPK.",
+			},
 			totals: "Razem",
 			entries: "Wypłaty",
 			entriesEmpty: "Brak wypłat — nalicz listę.",
@@ -1650,6 +1678,7 @@ export const pl = {
 			"PPK-PD": "PPK — wpłata dodatkowa pracownika",
 			"PPK-PR": "PPK — wpłata podstawowa pracodawcy",
 			"PPK-PRD": "PPK — wpłata dodatkowa pracodawcy",
+			"PPK-PRZ": "Przychód z wpłat pracodawcy PPK (przekazanych w miesiącu wypłaty)",
 			ZDROW: "Składka zdrowotna",
 			"ZWOL-MLODZI": "Przychód zwolniony z PIT (ulga)",
 			KUP: "Koszty uzyskania przychodu",
@@ -1664,7 +1693,26 @@ export const pl = {
 		warnings: {
 			pensionLimitReached: "Osiągnięty roczny limit podstawy emerytalno-rentowej (30-krotność).",
 			peselMissing: "Brak PESEL — FP i FGŚP naliczone bez sprawdzenia wieku.",
-			sicknessBaseMissing: "Zlecenie godzinowe bez historii wypłat — podstawa zasiłku 0.",
+			sicknessBaseMissing:
+				"Nie liczone: zlecenie godzinowe przed pełnym miesiącem ubezpieczenia — przepisy o podstawie tego przypadku nie zostały sprawdzone.",
+			sicknessBaseUnknown:
+				"Nie liczone: brak zamkniętych list za miesiące okresu podstawy chorobowego (historia poza systemem) albo zmienne wynagrodzenie przed pełnym miesiącem ubezpieczenia.",
+			sicknessBaseSupplement:
+				"Nie liczone: podstawa chorobowego wymaga uzupełnienia wynagrodzenia za miesiące z nieobecnością (ustawa zasiłkowa art. 38 ust. 2–3).",
+			sicknessBaseFteChange:
+				"Nie liczone: zmiana etatu w okresie podstawy chorobowego (ustawa zasiłkowa art. 40).",
+			sicknessWaitingPeriod:
+				"Nie liczone: choroba w okresie wyczekiwania (30 dni, zlecenie 90 dni od początku ubezpieczenia) — wcześniejsze ubezpieczenie i wyjątki z art. 4 są poza systemem.",
+			overtimeNormalPayUnknown:
+				"Nie liczone: nadgodziny przy innych składnikach umowy — czy wchodzą do normalnego wynagrodzenia, nie zostało sprawdzone.",
+			equivalentComponentsUnknown:
+				"Nie liczone: ekwiwalent za urlop przy składnikach umowy — zasady ich ujęcia nie zostały sprawdzone.",
+			healthCapUnknown:
+				"Nie liczone: składka zdrowotna może podlegać obniżeniu do zaliczki według przepisów z 2021 r., a ten przypadek (PIT-2 1/24 lub 1/36, kilka wypłat w miesiącu, korekta, koszty 50%) nie jest ustalony.",
+			authorCostsLimitReached:
+				"Nie liczone: koszty 50% osiągnęły roczny limit — sposób liczenia ponad limit nie został sprawdzony.",
+			noAdvancesThresholdCrossed:
+				"Nie liczone: w tym miesiącu dochód przekracza 30 000 zł przy wniosku o niepobieranie zaliczek — sposób liczenia zaliczki w miesiącu przekroczenia nie jest ustalony.",
 			unconfirmedHours: "Niepotwierdzone godziny zlecenia nie są płatne.",
 			rateTimesHoursNotSupported: "Składnik „stawka × godziny” na umowie o pracę nie jest liczony.",
 			leaveEntitlementMissing: "Koniec umowy bez limitu urlopu — ekwiwalent nie został naliczony.",

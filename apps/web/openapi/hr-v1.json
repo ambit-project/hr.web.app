@@ -5697,6 +5697,80 @@
         }
       }
     },
+    "/api/payrolls/{id}/ppk-paid": {
+      "put": {
+        "tags": [
+          "Payroll"
+        ],
+        "operationId": "SetPayrollPpkPaid",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPayrollPpkPaidRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/payrolls/{id}/members": {
       "get": {
         "tags": [
@@ -11639,8 +11713,10 @@
           "isStale",
           "calculatedAt",
           "closedAt",
+          "ppkPaidOn",
           "entryCount",
           "warningCount",
+          "blockedCount",
           "memberCount",
           "excludedCount",
           "gross",
@@ -11718,11 +11794,22 @@
             ],
             "format": "date-time"
           },
+          "ppkPaidOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
           "entryCount": {
             "type": "integer",
             "format": "int32"
           },
           "warningCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockedCount": {
             "type": "integer",
             "format": "int32"
           },
@@ -15291,6 +15378,29 @@
               "null",
               "boolean"
             ]
+          }
+        }
+      },
+      "SetPayrollPpkPaidRequest": {
+        "required": [
+          "rowVersion",
+          "paidOn"
+        ],
+        "type": "object",
+        "properties": {
+          "rowVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "paidOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },

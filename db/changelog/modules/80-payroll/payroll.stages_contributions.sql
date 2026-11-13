@@ -163,7 +163,7 @@ $$;
 --changeset hr:payroll.stage_health runOnChange:true splitStatements:false
 --comment: Etap 7 — składka zdrowotna 9% (R15; ustawa o świadczeniach art. 81 ust. 1 i 6): podstawa = przychody z cechą
 --comment: zdrowotnej (zasadnicze, składniki, wynagrodzenie chorobowe; bez zasiłku) − składki społeczne pracownika.
---comment: Ograniczenie do zaliczki liczonej po zasadach z 2021 r. (art. 83) — nie liczone [?].
+--comment: Obniżenie do zaliczki liczonej po zasadach z 2021 r. (art. 83) — po etapie podatku, payroll.health_cap.
 CREATE OR REPLACE FUNCTION payroll.stage_health(p_ctx payroll.ctx_t, p_lines payroll.line_t[])
     RETURNS payroll.line_t[]
     LANGUAGE plpgsql

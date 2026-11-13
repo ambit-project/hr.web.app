@@ -58,10 +58,34 @@ BEGIN
 END;
 $$;
 
+--changeset hr:documents.pit11_untaxed_ppk runOnChange:true splitStatements:false
+--comment: Wpłaty pracodawcy PPK kartoteki przekazane do instytucji finansowej w roku (data przekazania listy), których
+--comment: żadna zamknięta lista nie ujęła jako przychodu (brak wypłaty po przekazaniu w tym miesiącu) — przychód roku
+--comment: przekazania wykazywany w PIT-11 bez zaliczki (R6; stanowisko MF z 2019 r.).
+CREATE OR REPLACE FUNCTION documents.pit11_untaxed_ppk(p_employee_id uuid, p_year integer)
+    RETURNS TABLE (entry_id uuid, payroll_id uuid, employment_id uuid, contract_kind text, paid_on date, amount numeric)
+    LANGUAGE sql
+    STABLE
+    SET search_path = pg_catalog, pg_temp
+AS $$
+    SELECT n.id, p.id, n.employment_id, m.kind, p.ppk_paid_on, sum(l.amount)
+    FROM payroll.entries n
+    JOIN employees.employees e ON e.id = n.employee_id
+    JOIN payroll.payrolls p ON p.id = n.payroll_id AND p.status = 'closed' AND p.company_id = e.company_id
+    JOIN employment.employments m ON m.id = n.employment_id
+    JOIN payroll.lines l ON l.entry_id = n.id AND l.code IN ('PPK-PR', 'PPK-PRD')
+    WHERE n.employee_id = p_employee_id
+      AND p.ppk_paid_on >= make_date(p_year, 1, 1) AND p.ppk_paid_on < make_date(p_year + 1, 1, 1)
+      AND NOT n.id IN (SELECT t.entry_id FROM payroll.ppk_taxed_entries(ARRAY['closed']) t)
+    GROUP BY n.id, p.id, m.kind
+    HAVING sum(l.amount) <> 0;
+$$;
+
 --changeset hr:documents.pit11_entries runOnChange:true splitStatements:false
 --comment: Wypłaty kartoteki z zamkniętych list spółki z datą wypłaty w roku (R5) z kwotami do PIT-11: przychód
---comment: opodatkowany z wpłatą pracodawcy PPK (R6 [?]), przychód zwolniony (ZWOL-MLODZI), koszty (faktycznie
---comment: uwzględnione: KUP, KUP50), zaliczka (PIT), składki społeczne pracownika i część odliczona od dochodu (ślad
+--comment: opodatkowany z wpłatą pracodawcy PPK ujętą na liście (PPK-PRZ, R6), wpłaty PPK nieujęte na żadnej liście
+--comment: z datą przekazania w roku (pit11_untaxed_ppk — wiersz umowy, bez zaliczki), przychód zwolniony
+--comment: (ZWOL-MLODZI), koszty (faktycznie uwzględnione: KUP, KUP50), zaliczka (PIT), składki społeczne pracownika i część odliczona od dochodu (ślad
 --comment: PODST-PIT), zdrowotna. Wiersz części E: umowa o pracę 1 (do 26 lat w dniu wypłaty — 2), zlecenie 6 (7),
 --comment: dzieło 5. Wypłaty z ryczałtem (PIT-RYCZ) pomijane — idą do PIT-8AR. youth — zwolnienie art. 21 ust. 1 pkt 148
 --comment: (do 26 lat bez rezygnacji), inaczej pkt 152–154 z oświadczeń (return/family/senior).
@@ -92,8 +116,8 @@ AS $$
     WITH ent AS (
         SELECT n.id, p.id AS payroll_id, n.employment_id, m.kind AS contract_kind, p.payment_date, n.terms_id,
                payroll.age_on(e.birth_date, p.payment_date) < 26 AS young,
-               coalesce(sum(l.amount) FILTER (WHERE (l.side = 'income' AND l.taxable)
-                                              OR l.code IN ('PPK-PR', 'PPK-PRD')), 0) AS taxable,
+               coalesce(sum(l.amount) FILTER (WHERE (l.side = 'income' AND l.taxable) OR l.code = 'PPK-PRZ'), 0)
+                   AS taxable,
                coalesce(sum(l.amount) FILTER (WHERE l.code = 'ZWOL-MLODZI'), 0) AS exempt,
                coalesce(sum(l.amount) FILTER (WHERE l.code IN ('KUP', 'KUP50')), 0) AS costs,
                coalesce(sum(l.amount) FILTER (WHERE l.code = 'PIT'), 0) AS pit,
@@ -109,6 +133,12 @@ AS $$
         WHERE n.employee_id = p_employee_id
           AND p.payment_date >= make_date(p_year, 1, 1) AND p.payment_date < make_date(p_year + 1, 1, 1)
         GROUP BY n.id, p.id, m.kind, e.birth_date
+        UNION ALL
+        SELECT u.entry_id, u.payroll_id, u.employment_id, u.contract_kind, u.paid_on,
+               (SELECT n.terms_id FROM payroll.entries n WHERE n.id = u.entry_id),
+               payroll.age_on(e.birth_date, u.paid_on) < 26, u.amount, 0, 0, 0, 0, 0, 0, false
+        FROM documents.pit11_untaxed_ppk(p_employee_id, p_year) u
+        JOIN employees.employees e ON e.id = p_employee_id
     )
     SELECT x.id, x.payroll_id, x.employment_id, x.contract_kind, x.payment_date,
            CASE x.contract_kind
@@ -183,6 +213,17 @@ BEGIN
     IF v_office.code IS NULL THEN
         v_missing := array_append(v_missing, 'taxOffice');
     END IF;
+    -- Wpłata PPK nieujęta na liście u osoby z ulgą (do 26 lat, oświadczenia 152–154) — czy i w jakiej części jest
+    -- zwolniona, system nie liczy (R6): formularza nie można oznaczyć jako wysłany.
+    IF EXISTS (
+        SELECT FROM documents.pit11_untaxed_ppk(p_employee_id, p_year) u
+        WHERE (payroll.age_on(v_employee.birth_date, u.paid_on) < 26 AND NOT EXISTS (
+                   SELECT FROM tax_declarations.in_force(p_employee_id, u.paid_on) d WHERE d.kind = 'youthReliefWaiver'))
+           OR EXISTS (SELECT FROM tax_declarations.in_force(p_employee_id, u.paid_on) d
+                      WHERE d.kind IN ('returnRelief', 'familyRelief', 'seniorRelief'))
+    ) THEN
+        v_missing := array_append(v_missing, 'ppkIncomeRelief');
+    END IF;
 
     -- Część E: wiersz → kolumny (przychód, koszty, dochód, zaliczka); dzieło i zlecenie bez kolumny e.
     FOR v_row IN
@@ -210,7 +251,7 @@ BEGIN
         END IF;
     END LOOP;
 
-    SELECT count(*) AS entry_count,
+    SELECT count(DISTINCT x.entry_id) AS entry_count,
            coalesce(jsonb_agg(DISTINCT x.payroll_id), '[]') AS payroll_ids,
            count(DISTINCT x.employment_id) FILTER (WHERE x.row_no IN (1, 2)) AS employments,
            coalesce(bool_or(x.increased_costs) FILTER (WHERE x.row_no IN (1, 2)), false) AS increased,

@@ -340,6 +340,14 @@ public sealed class PayrollKit(DatabaseFixture database)
     public async Task CloseAsync(Guid payroll) =>
         await KadryAsync<object>("CALL payroll_app.payroll_close($1, NULL)", payroll);
 
+    /// <summary>Data przekazania wpłat PPK zamkniętej listy do instytucji finansowej (009 R19).</summary>
+    public async Task PpkPaidAsync(Guid payroll, DateOnly? paidOn) =>
+        await KadryAsync<object>(
+            "CALL payroll_app.payroll_ppk_paid($1, NULL, $2)",
+            payroll,
+            paidOn
+        );
+
     /// <summary>Lista zwykła za miesiąc wypłacona ostatniego dnia miesiąca: naliczona, a gdy close — zamknięta.</summary>
     public async Task<Guid> MonthAsync(
         Guid company,

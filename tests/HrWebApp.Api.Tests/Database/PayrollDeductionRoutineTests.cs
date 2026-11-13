@@ -34,17 +34,17 @@ public sealed class PayrollDeductionRoutineTests(DatabaseFixture database)
         var october = await _kit.MonthAsync(company, 10);
         var entry = await _kit.EntryAsync(october, employment);
 
-        Assert.Equal(8128.87m, entry.Net);
-        // min(½ × 8 128,87; 8 128,87 − kwota wolna z PPK 3 501,73; 6 000).
-        Assert.Equal(4064.43m, entry.Amount("KOMOR"));
-        Assert.Equal(3944.44m, entry.Payout);
-        Assert.Equal(4064.43m, await CollectedAsync(ewa, bailiff));
+        Assert.Equal(8149.87m, entry.Net);
+        // min(½ × 8 149,87; 8 149,87 − kwota wolna z PPK 3 501,73; 6 000).
+        Assert.Equal(4074.93m, entry.Amount("KOMOR"));
+        Assert.Equal(3954.94m, entry.Payout);
+        Assert.Equal(4074.93m, await CollectedAsync(ewa, bailiff));
 
         var november = await _kit.MonthAsync(company, 11);
         var second = await _kit.EntryAsync(november, employment);
 
-        Assert.Equal(1935.57m, second.Amount("KOMOR"));
-        Assert.Equal(6073.30m, second.Payout);
+        Assert.Equal(1925.07m, second.Amount("KOMOR"));
+        Assert.Equal(6104.80m, second.Payout);
         Assert.Equal(6000.00m, await CollectedAsync(ewa, bailiff));
         Assert.Equal(
             "paidOff",

@@ -6,13 +6,20 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace HrWebApp.Api.Features.Payroll;
 
 /// <summary>
-/// Ostrzeżenie wypłaty (nie błąd). <c>Code</c>: <c>pensionLimitReached</c> (limit 30-krotności),
-/// <c>peselMissing</c> (FP i FGŚP bez sprawdzenia wieku), <c>sicknessBaseMissing</c> (zlecenie godzinowe bez
-/// historii — podstawa 0), <c>unconfirmedHours</c> (niepotwierdzone godziny zlecenia nie są płacone),
+/// Ostrzeżenie wypłaty. <c>Code</c>: <c>pensionLimitReached</c> (limit 30-krotności),
+/// <c>peselMissing</c> (FP i FGŚP bez sprawdzenia wieku), <c>unconfirmedHours</c> (niepotwierdzone godziny zlecenia nie są płacone),
 /// <c>rateTimesHoursNotSupported</c> (składnik stawka × godziny na umowie o pracę), <c>leaveEntitlementMissing</c>
 /// (koniec umowy bez limitu urlopu — bez ekwiwalentu), <c>deductionLimited</c> (potrącenie obcięte granicą albo
 /// kwotą wolną), <c>negativeTaxBase</c>, <c>negativeCorrection</c>, <c>deductionsNotRecalculated</c> (korekta nie
-/// liczy potrąceń). <c>Details</c> — obiekt JSON z wartościami ostrzeżenia (np. <c>limitedBase</c>, <c>count</c>,
+/// liczy potrąceń). Blokujące zamknięcie listy — przypadki, których system nie liczy (reguła niepotwierdzona
+/// w przepisach albo dane spoza systemu): <c>sicknessWaitingPeriod</c> (choroba w okresie wyczekiwania),
+/// <c>sicknessBaseUnknown</c> (brak zamkniętych list okresu podstawy), <c>sicknessBaseMissing</c> (zlecenie
+/// godzinowe przed pełnym miesiącem), <c>sicknessBaseSupplement</c> (podstawa wymaga uzupełnienia),
+/// <c>sicknessBaseFteChange</c> (zmiana etatu w okresie podstawy), <c>overtimeNormalPayUnknown</c> (nadgodziny przy
+/// innych składnikach), <c>equivalentComponentsUnknown</c> (ekwiwalent przy składnikach), <c>healthCapUnknown</c>
+/// (obniżenie zdrowotnej do zaliczki z 2021 r. możliwe, ale nieustalone), <c>authorCostsLimitReached</c> (limit
+/// kosztów 50%), <c>noAdvancesThresholdCrossed</c> (miesiąc przekroczenia 30 000 zł przy wniosku o niepobieranie
+/// zaliczek). <c>Details</c> — obiekt JSON z wartościami ostrzeżenia (np. <c>limitedBase</c>, <c>count</c>,
 /// <c>year</c>).
 /// </summary>
 public sealed record PayrollWarning(string Code, JsonObject Details);
@@ -89,7 +96,8 @@ public static class GetPayrollEntry
     /// <c>URLOP-ZM</c>, <c>NADG50</c>, <c>NADG100</c>, <c>ZLEC</c>, <c>DZIELO</c>, <c>EKWIW</c>, <c>PODST-ZUS</c>,
     /// <c>PODST-CHOR</c>, <c>ZUS-E-P</c>, <c>ZUS-R-P</c>, <c>ZUS-C-P</c>, <c>ZUS-E-PR</c>, <c>ZUS-R-PR</c>,
     /// <c>ZUS-W-PR</c>, <c>FP</c>, <c>FGSP</c>, <c>PPK-P</c>, <c>PPK-PD</c>, <c>PPK-PR</c>, <c>PPK-PRD</c>,
-    /// <c>ZDROW</c>, <c>ZWOL-MLODZI</c>, <c>KUP</c>, <c>KUP50</c>, <c>PODST-PIT</c>, <c>PIT-ZMN</c>, <c>PIT</c>,
+    /// <c>PPK-PRZ</c> (przychód z wpłat pracodawcy PPK przekazanych w miesiącu wypłaty, R19), <c>ZDROW</c>,
+    /// <c>ZWOL-MLODZI</c>, <c>KUP</c>, <c>KUP50</c>, <c>PODST-PIT</c>, <c>PIT-ZMN</c>, <c>PIT</c>,
     /// <c>PIT-RYCZ</c>, <c>ALIM</c>, <c>KOMOR</c> albo kod składnika płacowego (<c>ComponentName</c>). Stawka jako
     /// ułamek (0,0976 = 9,76%). Cechy przychodu (<c>InZusBase</c>, <c>InHealthBase</c>, <c>Taxable</c>,
     /// <c>InSicknessBase</c>) tylko przy przychodach. <c>Trace</c> — obiekt JSON ze źródłami: parametry prawne

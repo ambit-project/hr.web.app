@@ -7,7 +7,7 @@ export const TAX_FORM_PURPOSES = ["filing", "correction"] as const;
 export type TaxFormPurpose = (typeof TAX_FORM_PURPOSES)[number];
 
 /** Data a form cannot go out without (data.missing from documents.pit11_compute). */
-export const MISSING_FIELDS = ["pesel", "address", "taxOffice"] as const;
+export const MISSING_FIELDS = ["pesel", "address", "taxOffice", "ppkIncomeRelief"] as const;
 export type MissingField = (typeof MISSING_FIELDS)[number];
 
 export function isMissingField(value: string): value is MissingField {

@@ -24,8 +24,11 @@ export interface GetPayrollResponse {
 	calculatedAt: string | null;
 	/** @nullable */
 	closedAt: string | null;
+	/** @nullable */
+	ppkPaidOn: string | null;
 	entryCount: number;
 	warningCount: number;
+	blockedCount: number;
 	memberCount: number;
 	excludedCount: number;
 	gross: number;

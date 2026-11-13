@@ -3,9 +3,10 @@
 --changeset hr:payroll.employee_costs runOnChange:true splitStatements:false
 --comment: Koszty uzyskania przychodu (R16, R18). Umowa o pracę: 250 / 300 zł (warunki increased albo oświadczenie
 --comment: increasedCosts), 0 przy employeeCostsWaiver, nie więcej niż dochód części opodatkowanej (art. 22 ust. 3b).
---comment: Zlecenie i dzieło: 20% albo 50% (author50 bez authorCostsWaiver; łącznie z zamkniętymi listami roku do
---comment: limitu kup.autorskie.limit — ponad limit bez kosztów [?]) od przychodu minus składki społeczne. Zwraca
---comment: koszty i kod pozycji (KUP albo KUP50).
+--comment: Zlecenie i dzieło: 20% albo 50% (author50 bez authorCostsWaiver) od przychodu minus składki społeczne (art. 22
+--comment: ust. 9 pkt 3–4). Koszty 50% łącznie z zamkniętymi listami roku do limitu kup.autorskie.limit (art. 22 ust. 9a);
+--comment: gdy limit ogranicza koszty, sposób liczenia ponad limit nie jest ustalony — trace.limitReached, a etap podatku
+--comment: zgłasza ostrzeżenie blokujące authorCostsLimitReached. Zwraca koszty i kod pozycji (KUP albo KUP50).
 CREATE OR REPLACE FUNCTION payroll.employee_costs(
     p_ctx payroll.ctx_t,
     p_income numeric,
@@ -41,6 +42,8 @@ BEGIN
         costs := least(round(greatest(p_income - p_social, 0) * platform.legal_parameter('kup.autorskie',
             p_ctx.payment_date), 2), greatest(v_limit - p_author_costs_before, 0));
         trace := jsonb_build_object('yearAuthorCostsBefore', p_author_costs_before,
+            'limitReached', costs < round(greatest(p_income - p_social, 0)
+                * platform.legal_parameter('kup.autorskie', p_ctx.payment_date), 2),
             'params', payroll.params(ARRAY['kup.autorskie', 'kup.autorskie.limit'], p_ctx.payment_date));
     ELSE
         costs := round(greatest(p_income - p_social, 0) * platform.legal_parameter('kup.zlecenie', p_ctx.payment_date),
@@ -52,12 +55,15 @@ $$;
 
 --changeset hr:payroll.stage_tax runOnChange:true splitStatements:false
 --comment: Etap 8 — zaliczka PIT (R16–R19) w miesiącu daty wypłaty. Przychód opodatkowany = przychody z cechą PIT +
---comment: wpłaty pracodawcy PPK (R19 [?]). Ulga dla młodych (do 26 lat w dniu wypłaty, bez youthReliefWaiver) i ulgi
+--comment: wpłaty pracodawcy PPK tej umowy z zamkniętych list, przekazane do instytucji finansowej w miesiącu daty wypłaty,
+--comment: nie później niż w dniu wypłaty, i nie ujęte na innej liście (R19; przychód w dniu przekazania — stanowisko MF,
+--comment: PPK-PRZ ze śladem sourceEntryIds). Ulga dla młodych (do 26 lat w dniu wypłaty, bez youthReliefWaiver) i ulgi
 --comment: 152–154 z oświadczeń — zwolnienie do limitu roku (zamknięte listy, art. 21 ust. 44) dla umowy o pracę
 --comment: i zlecenia (ZWOL-MLODZI). Składki społeczne odliczane w części przypadającej na przychód opodatkowany.
 --comment: Podstawa do zł. Umowa o pracę: 12% do progu 120 000 zł dochodu narastająco u płatnika, 32% nadwyżki;
---comment: higherRate — 32%; noAdvances — bez zaliczki do 30 000 zł dochodu u płatnika (art. 31c), od nadwyżki
---comment: w miesiącu przekroczenia [?]. Zlecenie i dzieło: 12% (art. 41 ust. 1; higherRate — 32%); ryczałt 12% od
+--comment: higherRate — 32%; noAdvances — bez zaliczki, póki dochód u płatnika w roku nie przekroczy 30 000 zł (art. 31c
+--comment: ust. 1–2); po przekroczeniu zaliczka bez kwoty zmniejszającej (ust. 3); miesiąc przekroczenia — nie liczony,
+--comment: ostrzeżenie blokujące noAdvancesThresholdCrossed. Zlecenie i dzieło: 12% (art. 41 ust. 1; higherRate — 32%); ryczałt 12% od
 --comment: przychodu (art. 30 ust. 1 pkt 5a), gdy kwota w umowie ≤ 200 zł i osoba nie ma umowy o pracę w spółce
 --comment: (PIT-RYCZ). Kwota zmniejszająca z PIT-2 (300 × 12 ÷ mianownik udziału) raz w miesiącu podatkowym — na
 --comment: pierwszej naliczonej liście z wypłatą w miesiącu [D] (PIT-ZMN). Zaliczka do zł, nie mniej niż 0.
@@ -95,6 +101,8 @@ DECLARE
     v_advance numeric;
     v_limit numeric;
     v_trace jsonb;
+    v_ppk_sources jsonb;
+    v_no_advances_exceeded boolean := false;
 BEGIN
     SELECT coalesce(array_agg(d.kind), '{}') AS kinds, coalesce(jsonb_agg(d.id), '[]') AS ids,
            max(d.share) FILTER (WHERE d.kind = 'pit2') AS share
@@ -104,10 +112,16 @@ BEGIN
         p_ctx.pit_exclude);
 
     SELECT coalesce(sum(l.amount) FILTER (WHERE l.side = 'income' AND l.taxable), 0),
-           coalesce(sum(l.amount) FILTER (WHERE l.code IN ('PPK-PR', 'PPK-PRD')), 0),
            coalesce(sum(l.amount) FILTER (WHERE l.code IN ('ZUS-E-P', 'ZUS-R-P', 'ZUS-C-P')), 0)
-    INTO v_income, v_ppk_employer, v_social
+    INTO v_income, v_social
     FROM unnest(v_lines) l;
+    SELECT coalesce(sum(x.amount), 0), coalesce(jsonb_agg(DISTINCT x.entry_id), '[]')
+    INTO v_ppk_employer, v_ppk_sources
+    FROM payroll.ppk_income_sources(p_ctx.employment_id, p_ctx.payroll_id, v_on) x;
+    IF v_ppk_employer <> 0 THEN
+        v_lines := v_lines || payroll.item('PPK-PRZ', 'info', NULL, NULL, v_ppk_employer,
+            jsonb_build_object('sourceEntryIds', v_ppk_sources));
+    END IF;
     v_taxable := v_income + v_ppk_employer;
     v_rate1 := platform.legal_parameter('pit.skala.stawka1', v_on);
     v_rate2 := platform.legal_parameter('pit.skala.stawka2', v_on);
@@ -142,7 +156,7 @@ BEGIN
               AND employment.period(m.start_date, m.end_date, m.terminated_at)
                   && daterange(p_ctx.period_from, p_ctx.period_to, '[]')
         ) THEN
-        -- Ryczałt od przychodu [?] (spec R18: 12% od przychodu), bez kosztów i kwoty zmniejszającej.
+        -- Ryczałt 12% od przychodu (art. 30 ust. 1 pkt 5a), bez kosztów i kwoty zmniejszającej.
         v_lines := v_lines || payroll.item('PIT-RYCZ', 'employee', v_taxed, v_rate1, round(v_taxed * v_rate1),
             v_trace);
         RETURN v_lines;
@@ -158,6 +172,10 @@ BEGIN
     IF v_costs <> 0 THEN
         v_lines := v_lines || payroll.item(v_costs_code, 'info', NULL, NULL, v_costs, v_costs_trace);
     END IF;
+    IF coalesce((v_costs_trace ->> 'limitReached')::boolean, false) THEN
+        v_lines := v_lines || payroll.warning('authorCostsLimitReached',
+            jsonb_build_object('yearAuthorCostsBefore', v_totals.author_costs, 'costs', v_costs));
+    END IF;
 
     v_base := round(v_taxed - v_social_deductible - v_costs);
     IF v_base < 0 THEN
@@ -170,8 +188,18 @@ BEGIN
     v_base_for_advance := v_base;
     IF 'noAdvances' = ANY (v_declarations.kinds) THEN
         v_limit := platform.legal_parameter('pit.niepobieranie.limit', v_on);
-        v_base_for_advance := v_base - greatest(least(v_limit - v_totals.tax_base_all, v_base), 0);
-        v_trace := v_trace || jsonb_build_object('noAdvancesFreeBase', v_base - v_base_for_advance);
+        IF v_totals.tax_base_all > v_limit THEN
+            v_no_advances_exceeded := true;
+            v_trace := v_trace || jsonb_build_object('noAdvancesExceeded', true);
+        ELSIF v_totals.tax_base_all + v_base > v_limit THEN
+            -- Zaliczka w miesiącu przekroczenia (od całego dochodu czy od nadwyżki) — przepis tego nie rozstrzyga.
+            v_lines := v_lines || payroll.warning('noAdvancesThresholdCrossed',
+                jsonb_build_object('yearBaseBefore', v_totals.tax_base_all, 'base', v_base, 'limit', v_limit));
+            RETURN v_lines;
+        ELSE
+            v_base_for_advance := 0;
+            v_trace := v_trace || jsonb_build_object('noAdvancesFreeBase', v_base);
+        END IF;
     END IF;
 
     IF 'higherRate' = ANY (v_declarations.kinds) THEN
@@ -186,7 +214,7 @@ BEGIN
         v_tax := v_base_for_advance * v_rate1;
     END IF;
 
-    IF v_declarations.share IS NOT NULL AND NOT EXISTS (
+    IF v_declarations.share IS NOT NULL AND NOT v_no_advances_exceeded AND NOT EXISTS (
         SELECT FROM payroll.entries e
         JOIN payroll.payrolls p ON p.id = e.payroll_id
         JOIN payroll.lines l ON l.entry_id = e.id AND l.code = 'PIT-ZMN' AND l.amount > 0

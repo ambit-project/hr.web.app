@@ -11,6 +11,7 @@ import { formatDecimal } from "#/lib/money";
 import { PayrollStatusChip } from "./PayrollStatusChip";
 import { LateIcon } from "./PayrollsPage";
 import { PayrollWizard, type PayrollWizardHandle } from "./PayrollWizard";
+import { PpkPaidDialog, type PpkPaidDialogHandle } from "./PpkPaidDialog";
 import {
 	payrollEntriesQuery,
 	payrollMembersQuery,
@@ -31,6 +32,7 @@ export function PayrollPage() {
 	const { id } = route.useParams();
 	const { data: payroll, isPending, error } = useQuery(payrollQuery(id));
 	const wizard = useRef<PayrollWizardHandle>(null);
+	const ppkPaid = useRef<PpkPaidDialogHandle>(null);
 
 	if (error) return <Notice status="danger">{problemMessage(t, error)}</Notice>;
 	if (isPending || !payroll) return <Spinner aria-label={t("common.loading")} />;
@@ -73,6 +75,7 @@ export function PayrollPage() {
 		rows.push([t("payroll.page.calculatedAt"), formatTimestamp(payroll.calculatedAt)]);
 	}
 	if (payroll.closedAt) rows.push([t("payroll.page.closedAt"), formatTimestamp(payroll.closedAt)]);
+	if (payroll.ppkPaidOn) rows.push([t("payroll.page.ppkPaidOn"), payroll.ppkPaidOn]);
 
 	return (
 		<section className="flex flex-col gap-4">
@@ -106,11 +109,17 @@ export function PayrollPage() {
 						periodFrom: payroll.periodFrom,
 					})
 				}
+				onPpkPaid={() => ppkPaid.current?.open(payroll)}
 			/>
 			{status === "open" ? <Notice status="default">{t("payroll.page.openNotice")}</Notice> : null}
 			{status === "stale" ? <Notice>{t("payroll.page.staleNotice")}</Notice> : null}
 			{status === "closed" ? (
 				<Notice status="success">{t("payroll.page.closedNotice")}</Notice>
+			) : null}
+			{payroll.blockedCount > 0 ? (
+				<Notice status="danger">
+					{t("payroll.page.blockedNotice", { count: payroll.blockedCount })}
+				</Notice>
 			) : null}
 			{payroll.warningCount > 0 ? (
 				<Notice>{t("payroll.page.warningsNotice", { count: payroll.warningCount })}</Notice>
@@ -120,6 +129,7 @@ export function PayrollPage() {
 			<EntriesTable id={payroll.id} />
 			<MembersSection payroll={payroll} />
 			<PayrollWizard ref={wizard} />
+			<PpkPaidDialog ref={ppkPaid} />
 		</section>
 	);
 }
@@ -135,9 +145,11 @@ function formatTimestamp(value: string): string {
 function PayrollActions({
 	payroll,
 	onCorrect,
+	onPpkPaid,
 }: {
 	payroll: GetPayrollResponse;
 	onCorrect: () => void;
+	onPpkPaid: () => void;
 }) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -149,10 +161,15 @@ function PayrollActions({
 
 	if (status === "closed") {
 		// A correction corrects a regular list; a correction of a correction does not exist (R4).
-		return payroll.kind === "correction" ? null : (
+		return (
 			<div className="flex flex-wrap gap-2">
-				<Button variant="secondary" onPress={onCorrect}>
-					{t("payroll.page.correction")}
+				{payroll.kind === "correction" ? null : (
+					<Button variant="secondary" onPress={onCorrect}>
+						{t("payroll.page.correction")}
+					</Button>
+				)}
+				<Button variant="secondary" onPress={onPpkPaid}>
+					{t("payroll.page.ppkPaid.action")}
 				</Button>
 			</div>
 		);

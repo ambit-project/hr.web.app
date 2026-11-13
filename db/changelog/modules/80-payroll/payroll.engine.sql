@@ -113,7 +113,7 @@ CREATE OR REPLACE FUNCTION payroll.tax_codes()
     IMMUTABLE
     SET search_path = pg_catalog, pg_temp
 AS $$
-    SELECT ARRAY['KUP', 'KUP50', 'PODST-PIT', 'ZWOL-MLODZI', 'PIT-ZMN', 'PIT', 'PIT-RYCZ'];
+    SELECT ARRAY['KUP', 'KUP50', 'PODST-PIT', 'ZWOL-MLODZI', 'PIT-ZMN', 'PIT', 'PIT-RYCZ', 'PPK-PRZ'];
 $$;
 
 --changeset hr:payroll.diff_lines runOnChange:true splitStatements:false
@@ -174,7 +174,7 @@ AS $$
 $$;
 
 --changeset hr:payroll.calc_entry runOnChange:true splitStatements:false
---comment: Wypłata umowy na liście (R5–R24): etapy 1–7, podatek, potrącenia; korekta — różnice z pozycjami już ujętymi
+--comment: Wypłata umowy na liście (R5–R24): etapy 1–7, podatek, obniżenie zdrowotnej (R15), potrącenia; korekta — różnice z pozycjami już ujętymi
 --comment: i podatek od różnic, bez potrąceń [D]. Zapisuje wypłatę z kwotami (brutto = przychody, netto = brutto −
 --comment: pozycje pracownika, do wypłaty = netto − potrącenia), godzinami i ostrzeżeniami. Korekta bez różnic — bez
 --comment: wypłaty (NULL).
@@ -198,15 +198,17 @@ DECLARE
 BEGIN
     v_lines := payroll.compute(v_ctx);
     IF v_ctx.mode = 'regular' THEN
-        v_lines := payroll.stage_deductions(v_ctx, payroll.stage_tax(v_ctx, v_lines));
+        v_lines := payroll.stage_deductions(v_ctx, payroll.health_cap(v_ctx, payroll.stage_tax(v_ctx, v_lines)));
     ELSE
+        -- Obniżenie zdrowotnej (R15) przy korekcie nie jest liczone — ostrzeżenie, gdy może zachodzić.
+        v_lines := payroll.health_cap(v_ctx, v_lines);
         v_prior := payroll.prior_lines(p_payroll.corrects_payroll_id, p_employment_id, p_payroll.id);
         SELECT coalesce(array_agg(d.kind), '{}') INTO v_kinds
         FROM tax_declarations.in_force(v_ctx.employee_id, v_ctx.payment_date) d;
         SELECT c.costs INTO v_full_costs
         FROM payroll.employee_costs(v_ctx,
             payroll.sum_lines(ARRAY(SELECT l FROM unnest(v_lines) l WHERE l.side = 'income' AND l.taxable), '{}')
-                + payroll.sum_lines(v_lines, ARRAY['PPK-PR', 'PPK-PRD']),
+                + payroll.sum_lines(v_prior, ARRAY['PPK-PRZ']),
             payroll.sum_lines(v_lines, ARRAY['ZUS-E-P', 'ZUS-R-P', 'ZUS-C-P']), v_kinds, 0) c;
         v_ctx.costs_override := v_full_costs - payroll.sum_lines(v_prior, ARRAY['KUP', 'KUP50']);
         v_lines := payroll.diff_lines(v_lines, v_prior, p_payroll.corrects_payroll_id);

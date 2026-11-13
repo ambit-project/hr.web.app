@@ -55,12 +55,13 @@ public sealed class PayrollCorrectionRoutineTests(DatabaseFixture database)
         Assert.Equal(38.83m, entry.Amount("ZDROW"));
         Assert.Equal(10.00m, entry.Amount("PPK-P"));
         Assert.Equal(7.50m, entry.Amount("PPK-PR"));
-        // Bez kosztów (już ujęte) i bez kwoty zmniejszającej (użyta w grudniu): 500 + 7,50 − 68,55 = 438,95.
+        // Bez kosztów (już ujęte), bez kwoty zmniejszającej (użyta w grudniu) i bez wpłaty PPK pracodawcy (przychód
+        // dopiero po przekazaniu, R19): 500 − 68,55 = 431,45 — jak w scenariuszu.
         Assert.False(entry.Amounts.ContainsKey("KUP"));
         Assert.False(entry.Amounts.ContainsKey("PIT-ZMN"));
-        Assert.Equal(439m, entry.Amount("PODST-PIT"));
-        Assert.Equal(53m, entry.Amount("PIT"));
-        Assert.Equal(329.62m, entry.Net);
+        Assert.Equal(431m, entry.Amount("PODST-PIT"));
+        Assert.Equal(52m, entry.Amount("PIT"));
+        Assert.Equal(330.62m, entry.Net);
         Assert.Equal(32.50m, entry.Amount("ZUS-R-PR"));
         Assert.Equal(8.35m, entry.Amount("ZUS-W-PR"));
         Assert.Equal(12.25m, entry.Amount("FP"));
@@ -68,7 +69,7 @@ public sealed class PayrollCorrectionRoutineTests(DatabaseFixture database)
 
         await _kit.CloseAsync(correction);
         var original = await _kit.EntryAsync(october, employment);
-        Assert.Equal(5279.29m, original.Net);
+        Assert.Equal(5292.29m, original.Net);
         Assert.False(original.Amounts.ContainsKey(await BonusCodeAsync(bonus)));
         var totals = await _kit.KadryAsync<decimal>(
             "SELECT pension_base FROM payroll_app.year_totals($1, 2026)",
