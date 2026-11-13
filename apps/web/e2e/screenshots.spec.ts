@@ -55,7 +55,9 @@ test("zrzuty ekranu — ciemny motyw", async ({ page }) => {
 
 	await page.goto(`/payrolls?${DEMO}`);
 	await shot(page, "10-payrolls");
-	await openFirst(page);
+	// Zamknięta lista października — tylko z niej powstaje pasek.
+	await page.getByRole("row", { name: /2026\/10\/UP/ }).locator("a.open-link").click();
+	await page.waitForLoadState("networkidle");
 	await shot(page, "11-payroll");
 	await openFirst(page);
 	await shot(page, "12-payroll-entry");

@@ -32,6 +32,15 @@ export const getPayslip = (
 		options,
 	);
 };
+export const getPayslipPdf = (
+	id: string,
+	options?: SecondParameter<typeof customInstance<void>>,
+) => {
+	return customInstance<void>(
+		{ url: `/api/payroll-entries/${id}/payslip/pdf`, method: "GET" },
+		options,
+	);
+};
 export const listEmployeePayslips = (
 	id: string,
 	options?: SecondParameter<typeof customInstance<ListPayslipsItem[]>>,
@@ -151,6 +160,7 @@ export const getConsentDocument = (
 	);
 };
 export type GetPayslipResult = NonNullable<Awaited<ReturnType<typeof getPayslip>>>;
+export type GetPayslipPdfResult = NonNullable<Awaited<ReturnType<typeof getPayslipPdf>>>;
 export type ListEmployeePayslipsResult = NonNullable<
 	Awaited<ReturnType<typeof listEmployeePayslips>>
 >;

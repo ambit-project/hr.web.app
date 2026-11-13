@@ -2,7 +2,7 @@
 
 Kadry i Płace zgodne z polskim prawem (kwoty w PLN): kartoteki pracowników, umowy, oświadczenia podatkowe, składniki
 płacowe, zgody na potrącenia i zajęcia wynagrodzenia, czas pracy i nieobecności, PPK, listy płac, paski wypłaty,
-karta wynagrodzeń i PIT-11 (XML zgodny ze schematem MF).
+karta wynagrodzeń i PIT-11 (XML zgodny ze schematem MF), PDF paska, eksport pracowników do Comarch ERP Optima (.xls).
 
 > [!WARNING]
 > **Projekt nie jest gotowy do produkcji.** To otwarty projekt w budowie: listy płac (moduł 009) są nowe i nie zostały
@@ -151,3 +151,7 @@ i przyjmują tylko nagłówek `X-Optima-Agent-Key`.
 
 MIT — `LICENSE`. Oprogramowanie jest dostarczane „tak jak jest”, bez gwarancji; za zgodność rozliczeń z prawem
 odpowiada ten, kto go używa.
+
+Biblioteki z własnymi licencjami: NPOI 2.7.x (Apache-2.0, arkusz `.xls` dla Optimy — wersje 2.8+ mają inną licencję),
+PDFsharp-MigraDoc 6.2.4 (MIT, PDF paska — wersja przypięta, przed podbiciem sprawdź licencję), czcionka Noto Sans
+(SIL OFL 1.1, `apps/api/HrWebApp.Api/Common/Pdf/Fonts/OFL.txt`).

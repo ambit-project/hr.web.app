@@ -14,6 +14,7 @@ import { Notice } from "#/features/time-absence/Notice";
 import { currentYear } from "#/features/time-absence/types";
 import { YearSelect } from "#/features/time-absence/YearSelect";
 import { onActionError, problemMessage } from "#/forms/feedback";
+import { saveFile } from "#/lib/download";
 import { fetchTaxFormXml, pit11Query, useGeneratePit11 } from "./documentsQueries";
 import { TaxFormMarkDialog, type TaxFormMarkDialogHandle } from "./TaxFormMarkDialog";
 import {
@@ -42,16 +43,6 @@ function missingText(t: TFunction<"translation">, missing: readonly string[]): s
 			.map((field) => (isMissingField(field) ? t(`documents.pit11.missing.${field}`) : field))
 			.join(", "),
 	});
-}
-
-/** Saves text as a file in the browser (the XML comes through a server function, not a link to the API). */
-function saveFile(name: string, content: string) {
-	const url = URL.createObjectURL(new Blob([content], { type: "application/xml" }));
-	const link = document.createElement("a");
-	link.href = url;
-	link.download = name;
-	link.click();
-	URL.revokeObjectURL(url);
 }
 
 /** "Płace → PIT-11" (Kadry, Administrator): forms of a company for a tax year, generation, marks and XML (R7–R9). */
@@ -129,7 +120,7 @@ function Pit11List({ companyId, year }: { companyId: string; year: number }) {
 				employeeNumber: item.employeeNumber,
 				version: item.version,
 			});
-			saveFile(name, await fetchTaxFormXml(item.taxFormId));
+			saveFile(name, await fetchTaxFormXml(item.taxFormId), "application/xml");
 			toast.success(t("documents.pit11.downloaded", { file: name }));
 		} catch (failure) {
 			onActionError(t, failure);

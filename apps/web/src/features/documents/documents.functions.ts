@@ -3,6 +3,7 @@ import {
 	generatePit11,
 	getConsentDocument,
 	getPayslip,
+	getPayslipPdf,
 	getTaxForm,
 	getTaxFormXml,
 	getTaxSummary,
@@ -16,7 +17,7 @@ import {
 import { listMyPayslips, listMyTaxForms } from "#/api/endpoints/my-documents/my-documents";
 import type { MarkTaxFormGivenRequest, MarkTaxFormSentRequest } from "#/api/models";
 import { toResult } from "#/lib/problem";
-import { apiOptions, callApi } from "#/server/api";
+import { apiOptions, callApi, callApiFile, fileApiOptions } from "#/server/api";
 
 // Payslips and wage card
 
@@ -107,3 +108,8 @@ export const getTaxSummaryFn = createServerFn({ method: "GET" })
 export const getConsentDocumentFn = createServerFn({ method: "GET" })
 	.validator((id: string) => id)
 	.handler(({ data }) => toResult(() => callApi(() => getConsentDocument(data, apiOptions()))));
+
+/** Payslip PDF (011 R6) as base64; the browser saves it. */
+export const getPayslipPdfFn = createServerFn({ method: "GET" })
+	.validator((id: string) => id)
+	.handler(({ data }) => toResult(() => callApiFile(() => getPayslipPdf(data, fileApiOptions()))));

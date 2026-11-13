@@ -12,6 +12,7 @@ import {
 } from "#/features/payroll/types";
 import { formatDecimal } from "#/lib/money";
 import { payslipQuery } from "./documentsQueries";
+import { PayslipPdfButton } from "./PayslipPdfButton";
 import { DocField, PrintPage } from "./PrintLayout";
 
 const route = getRouteApi("/payslips/$entryId");
@@ -34,6 +35,15 @@ export function PayslipPrintPage() {
 		<PrintPage
 			isPending={isPending}
 			error={error}
+			actions={
+				data ? (
+					<PayslipPdfButton
+						entryId={entryId}
+						payrollNumber={data.payrollNumber}
+						paymentDate={data.paymentDate}
+					/>
+				) : null
+			}
 			back={
 				<button type="button" className="hover:underline" onClick={() => router.history.back()}>
 					{t("documents.back")}

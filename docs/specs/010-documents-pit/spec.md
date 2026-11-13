@@ -16,8 +16,8 @@ Podstawa (stan na 13.11.2026): ustawa o PIT — art. 39 ust. 1, 42g, 45b ust. 1 
 - **R1.** Pasek wypłaty z wypłaty na **zamkniętej** liście (009): spółka, osoba, umowa, okres, data wypłaty, pozycje
   według stron (przychody, składki, zdrowotna, podatek, PPK, potrącenia), netto, do wypłaty, podstawy. Przepisy nie
   wymagają paska (KP art. 85 § 5 — wgląd na żądanie); jest udogodnieniem.
-- **R2.** Pasek to strona do wydruku (HTML z CSS druku); PDF powstaje przez drukowanie w przeglądarce **[D: bez
-  biblioteki PDF po stronie serwera — licencje i prostota]**.
+- **R2.** Pasek to strona do wydruku (HTML z CSS druku); PDF powstaje przez drukowanie w przeglądarce **[D]**; od
+  011 pasek ma też PDF z API (PDFsharp-MigraDoc, MIT).
 - **R3.** Pracownik widzi swoje paski w „Moich dokumentach” (lista według miesięcy). Odczyt paska przez kogoś innego
   niż pracownik zapisuje audyt odczytów (`payslip`).
 

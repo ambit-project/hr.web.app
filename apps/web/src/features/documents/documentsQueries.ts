@@ -6,6 +6,7 @@ import {
 	generatePit11Fn,
 	getConsentDocumentFn,
 	getPayslipFn,
+	getPayslipPdfFn,
 	getTaxFormFn,
 	getTaxFormXmlFn,
 	getTaxSummaryFn,
@@ -86,6 +87,10 @@ export function consentDocumentQuery(id: string) {
 }
 
 /** The XML of a form as text (not cached: each download reads the current file). */
+export async function fetchPayslipPdf(entryId: string): Promise<string> {
+	return unwrap(await getPayslipPdfFn({ data: entryId }));
+}
+
 export async function fetchTaxFormXml(id: string): Promise<string> {
 	return unwrap(await getTaxFormXmlFn({ data: id }));
 }

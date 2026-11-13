@@ -18,6 +18,14 @@ public static class DocumentsEndpoints
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status409Conflict);
+        app.MapGroup("/payroll-entries/{id:guid}")
+            .WithTags("Documents")
+            .MapGet("/payslip/pdf", GetPayslipPdf.Handle)
+            .WithName("GetPayslipPdf")
+            .Produces(StatusCodes.Status200OK, contentType: "application/pdf")
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict);
 
         var employee = app.MapGroup("/employees/{id:guid}").WithTags("Documents");
         employee

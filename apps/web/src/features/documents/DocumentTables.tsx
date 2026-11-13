@@ -13,6 +13,7 @@ import { YearSelect } from "#/features/time-absence/YearSelect";
 import { problemMessage } from "#/forms/feedback";
 import { formatDecimal } from "#/lib/money";
 import { payslipsQuery, taxFormsQuery } from "./documentsQueries";
+import { PayslipPdfButton } from "./PayslipPdfButton";
 import type { GivenHow, TaxFormPurpose } from "./types";
 
 /** Payslips of an employee record by payment date; each row opens the printable payslip. */
@@ -43,6 +44,9 @@ export function PayslipsTable({
 						<Table.Column className="text-right">{t("documents.payslips.net")}</Table.Column>
 						<Table.Column className="text-right">{t("documents.payslips.payout")}</Table.Column>
 						<Table.Column className="w-12">
+							<span className="sr-only">{t("documents.downloadPdf")}</span>
+						</Table.Column>
+						<Table.Column className="w-12">
 							<span className="sr-only">{t("common.open")}</span>
 						</Table.Column>
 					</Table.Header>
@@ -60,6 +64,15 @@ export function PayslipsTable({
 								<Table.Cell className="text-right">{formatDecimal(item.gross)}</Table.Cell>
 								<Table.Cell className="text-right">{formatDecimal(item.net)}</Table.Cell>
 								<Table.Cell className="text-right">{formatDecimal(item.payout)}</Table.Cell>
+								<Table.Cell>
+									<PayslipPdfButton
+										entryId={item.id}
+										payrollNumber={item.payrollNumber}
+										paymentDate={item.paymentDate}
+										variant="ghost"
+										size="sm"
+									/>
+								</Table.Cell>
 								<Table.Cell>
 									<RouterLink
 										to="/payslips/$entryId"

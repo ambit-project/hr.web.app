@@ -1,3 +1,5 @@
+using HrWebApp.Api.Features.OptimaExport;
+
 namespace HrWebApp.Api.Features.Employees;
 
 public static class EmployeeEndpoints
@@ -10,6 +12,7 @@ public static class EmployeeEndpoints
         services.AddScoped<UpdateEmployeeHandler>();
         services.AddScoped<DeleteEmployeeHandler>();
         services.AddScoped<CopyEmployeesHandler>();
+        services.AddScoped<ExportEmployeesToOptimaHandler>();
         services.AddScoped<EmployeeAddressesHandler>();
         services.AddScoped<EmployeeBankAccountsHandler>();
         services.AddScoped<EmployeeAccountHandler>();
@@ -27,6 +30,11 @@ public static class EmployeeEndpoints
         group
             .MapPost("/copy", CopyEmployees.Handle)
             .WithName("CopyEmployees")
+            .ProducesValidationProblem();
+        group
+            .MapPost("/export/optima", ExportEmployeesToOptima.Handle)
+            .WithName("ExportEmployeesToOptima")
+            .Produces(StatusCodes.Status200OK, contentType: OptimaHrImportSheet.ContentType)
             .ProducesValidationProblem();
         group
             .MapGet("/{id:guid}", GetEmployee.Handle)

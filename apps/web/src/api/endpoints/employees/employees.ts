@@ -14,6 +14,7 @@ import type {
 	CopyEmployeesResponse,
 	CreateEmployeeRequest,
 	CreateEmployeeResponse,
+	ExportEmployeesToOptimaRequest,
 	GetEmployeeResponse,
 	LinkEmployeeAccountRequest,
 	ListEmployeeAddressesItem,
@@ -62,6 +63,20 @@ export const copyEmployees = (
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			data: copyEmployeesRequest,
+		},
+		options,
+	);
+};
+export const exportEmployeesToOptima = (
+	exportEmployeesToOptimaRequest: BodyType<ExportEmployeesToOptimaRequest>,
+	options?: SecondParameter<typeof customInstance<void>>,
+) => {
+	return customInstance<void>(
+		{
+			url: `/api/employees/export/optima`,
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			data: exportEmployeesToOptimaRequest,
 		},
 		options,
 	);
@@ -193,6 +208,9 @@ export const listEmployeeReadAudit = (
 export type ListEmployeesResult = NonNullable<Awaited<ReturnType<typeof listEmployees>>>;
 export type CreateEmployeeResult = NonNullable<Awaited<ReturnType<typeof createEmployee>>>;
 export type CopyEmployeesResult = NonNullable<Awaited<ReturnType<typeof copyEmployees>>>;
+export type ExportEmployeesToOptimaResult = NonNullable<
+	Awaited<ReturnType<typeof exportEmployeesToOptima>>
+>;
 export type GetEmployeeResult = NonNullable<Awaited<ReturnType<typeof getEmployee>>>;
 export type UpdateEmployeeResult = NonNullable<Awaited<ReturnType<typeof updateEmployee>>>;
 export type DeleteEmployeeResult = NonNullable<Awaited<ReturnType<typeof deleteEmployee>>>;

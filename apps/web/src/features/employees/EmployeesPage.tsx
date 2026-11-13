@@ -1,7 +1,7 @@
-import { Checkbox, Chip, EmptyState, Spinner, Table } from "@heroui/react";
+import { Checkbox, Chip, EmptyState, Spinner, Table, toast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi, Link as RouterLink } from "@tanstack/react-router";
-import { Copy } from "lucide-react";
+import { Copy, FileSpreadsheet } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import type { Selection } from "react-aria-components";
 import { useTranslation } from "react-i18next";
@@ -11,9 +11,13 @@ import { AddButton, IconButton } from "#/components/ui/AddButton";
 import { OpenIcon, openLinkClass } from "#/components/ui/OpenLink";
 import { OptionSelect } from "#/components/ui/OptionSelect";
 import { CompanySelect } from "#/features/companies/CompanySelect";
+import { onActionError } from "#/forms/feedback";
 import { birthDateWithAge } from "#/lib/age";
+import { saveBase64File } from "#/lib/download";
+import { unwrap } from "#/lib/problem";
 import { CopyEmployeesDialog, type CopyEmployeesDialogHandle } from "./CopyEmployeesDialog";
 import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
+import { exportEmployeesToOptimaFn } from "./employees.functions";
 import { EMPLOYEES_PAGE_SIZE, employeesQuery } from "./employeesQueries";
 import { EMPLOYEE_STATUSES, type EmployeeStatus } from "./types";
 
@@ -44,6 +48,31 @@ export function EmployeesPage() {
 	}
 	const selectedIds =
 		selection === "all" ? (data?.items ?? []).map((item) => item.id) : [...selection].map(String);
+
+	const [exporting, setExporting] = useState(false);
+	const onOptimaExport = async () => {
+		if (!search.companyId) return;
+		setExporting(true);
+		try {
+			const name = `optima-kadry-${new Date().toISOString().slice(0, 10)}.xls`;
+			const file = unwrap(
+				await exportEmployeesToOptimaFn({
+					data: {
+						companyId: search.companyId,
+						employeeIds: selectedIds,
+						search: search.search ?? null,
+						status: search.status ?? null,
+					},
+				}),
+			);
+			saveBase64File(name, file, "application/vnd.ms-excel");
+			toast.success(t("employees.optimaExport.done", { file: name }));
+		} catch (failure) {
+			onActionError(t, failure);
+		} finally {
+			setExporting(false);
+		}
+	};
 
 	const onSearch = useCallback(
 		(term: string | undefined) =>
@@ -78,6 +107,18 @@ export function EmployeesPage() {
 								filterTotal: data?.total ?? 0,
 							})
 						}
+					/>
+					<IconButton
+						icon={FileSpreadsheet}
+						label={
+							!search.companyId
+								? t("employees.optimaExport.chooseCompany")
+								: selectedIds.length > 0
+									? t("employees.optimaExport.actionSelected")
+									: t("employees.optimaExport.action")
+						}
+						isDisabled={!search.companyId || exporting}
+						onPress={() => void onOptimaExport()}
 					/>
 					<AddButton
 						label={t("employees.create.title")}

@@ -6,6 +6,7 @@ import {
 	copyEmployees,
 	createEmployee,
 	deleteEmployee,
+	exportEmployeesToOptima,
 	getEmployee,
 	linkEmployeeAccount,
 	listEmployeeAddresses,
@@ -21,13 +22,14 @@ import type {
 	CloseEmployeeBankAccountRequest,
 	CopyEmployeesRequest,
 	CreateEmployeeRequest,
+	ExportEmployeesToOptimaRequest,
 	LinkEmployeeAccountRequest,
 	ListEmployeeReadAuditParams,
 	ListEmployeesParams,
 	UpdateEmployeeRequest,
 } from "#/api/models";
 import { toResult } from "#/lib/problem";
-import { apiOptions, callApi } from "#/server/api";
+import { apiOptions, callApi, callApiFile, fileApiOptions } from "#/server/api";
 
 export const listEmployeesFn = createServerFn({ method: "GET" })
 	.validator((input: ListEmployeesParams) => input)
@@ -94,3 +96,10 @@ export const unlinkEmployeeAccountFn = createServerFn({ method: "POST" })
 export const listEmployeeReadAuditFn = createServerFn({ method: "GET" })
 	.validator((input: { id: string; params: ListEmployeeReadAuditParams }) => input)
 	.handler(({ data }) => callApi(() => listEmployeeReadAudit(data.id, data.params, apiOptions())));
+
+/** Employees as the .xls Optima imports (011 R1–R5), base64; the browser saves it. */
+export const exportEmployeesToOptimaFn = createServerFn({ method: "POST" })
+	.validator((input: ExportEmployeesToOptimaRequest) => input)
+	.handler(({ data }) =>
+		toResult(() => callApiFile(() => exportEmployeesToOptima(data, fileApiOptions()))),
+	);

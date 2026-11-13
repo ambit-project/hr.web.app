@@ -32,3 +32,29 @@ export async function callApi<T>(call: () => Promise<T>): Promise<T> {
 		throw error;
 	}
 }
+
+/** Options for an API call that returns a file (xls, pdf): the body comes as bytes. */
+export function fileApiOptions(): AxiosRequestConfig {
+	return { ...apiOptions(), responseType: "arraybuffer" };
+}
+
+/**
+ * Calls an API endpoint that returns a file and gives it back as base64 (a server function returns JSON). A failure
+ * body arrives as bytes too, so it is parsed back to the ProblemDetails toResult reads.
+ */
+export async function callApiFile(call: () => Promise<unknown>): Promise<string> {
+	try {
+		const bytes = await callApi(call);
+		return Buffer.from(bytes as ArrayBuffer).toString("base64");
+	} catch (error) {
+		if (isAxiosError(error) && error.response?.data instanceof ArrayBuffer) {
+			const text = Buffer.from(error.response.data).toString("utf8");
+			try {
+				error.response.data = JSON.parse(text);
+			} catch {
+				error.response.data = {};
+			}
+		}
+		throw error;
+	}
+}

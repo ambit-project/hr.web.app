@@ -84,6 +84,7 @@ export * from "./endEmploymentComponentRequest.ts";
 export * from "./endTaxDeclarationRequest.ts";
 export * from "./enrollInPpkRequest.ts";
 export * from "./enrollInPpkResponse.ts";
+export * from "./exportEmployeesToOptimaRequest.ts";
 export * from "./generateCalendarResponse.ts";
 export * from "./generatePit11Request.ts";
 export * from "./generatePit11Response.ts";

@@ -22,16 +22,18 @@ przez Optimę, arkusz `Dane_kadrowe`.
   błąd z prośbą o zawężenie filtrów.
 - **R3.** Wypełniane kolumny (potwierdzone znaczenie i format): `Kod` = akronim kartoteki (≤ 20 znaków — akronim
   003 ma 14), `Nazwisko`, `Imie`, `Drugie_imie`, `Data_urodzenia`, `Plec` (`K`/`M` z PESEL, 10. cyfra parzysta = K;
-  bez PESEL puste), `Pesel`, `Archiwalny` (`1` dla kartoteki bez umowy trwającej i bez przyszłej, `0` w innym
-  razie), adres zamieszkania (`Kraj`/`Kod_kraju`, `Miejscowosc`, `Ulica`, `Nr_domu`, `Nr_lokalu`, `Kod_pocztowy`) —
-  w blokach zameldowania i zamieszkania, korespondencyjny w bloku `_korespondencja`, `Email`. Każda komórka jako
+  bez PESEL puste), `Pesel`, `Archiwalny` (`1` dla byłego pracownika — status `former`, `0` w innym razie), bieżący
+  adres zamieszkania w bloku `_zamieszkania` i korespondencyjny w `_korespondencja` (`Kraj` nazwą, `Kod_kraju`,
+  `Miejscowosc`, `Ulica`, `Nr_domu`, `Nr_lokalu`, `Kod_pocztowy`; ulica rozdzielona jak w PIT-11), `Email`. Blok
+  zameldowania (bez przyrostka) zostaje z domyślnymi Optimy — kartoteka nie zna adresu zameldowania. Każda komórka jako
   tekst (PESEL zachowuje zero na początku), poza kolumnami liczbowymi Optimy z wartością domyślną.
 - **R4.** Niewypełniane **[?]** (format wartości w imporcie niepotwierdzony): dane etatowe (`Rodzaj_umowy`,
   `Rodzaj_zatrudnienia`, `Stanowisko`, wymiar, stawka, daty zatrudnienia), ubezpieczenia (`Kod_tytulu_ubezpieczenia`,
   `Emerytalne`…), urząd skarbowy (`US_*`), PPK, rachunek bankowy (forma płatności), dokument tożsamości. Kolumny są
   w arkuszu z domyślną Optimy albo puste. Rozszerzenie — po sprawdzeniu na wzorcowym `kadry.xls` z Optimy.
 - **R5.** Pobranie zapisuje audyt odczytu (`optima_export`, liczba kartotek, filtry) — plik zawiera PESEL. Odpowiedź
-  z `Cache-Control: no-store`. Nazwa `optima-kadry-<spółka>-RRRR-MM-DD.xls`.
+  z `Cache-Control: no-store`. Nazwa `optima-kadry-RRRR-MM-DD.xls`. Bez wybranej spółki
+  eksport jest niedostępny (`companyId` `required`) — import w Optimie jest do bazy jednej firmy.
 
 ### PDF paska wypłaty
 - **R6.** Pasek wypłaty z zamkniętej listy (010 R1) do pobrania jako PDF: te same dane co strona do wydruku
@@ -40,7 +42,7 @@ przez Optimę, arkusz `Dane_kadrowe`.
   na licencji MIT (docs.pdfsharp.net), wersja przypięta; czcionka Noto Sans (OFL) osadzona — polskie znaki]**.
 - **R7.** PDF pobiera Kadry/Administrator (przy wypłacie, w kartotece „Dokumenty”) i pracownik — swój pasek
   w „Moich dokumentach”. Odczyt cudzego paska — audyt jak 010 R3 (`payslip`). Nazwa
-  `pasek-<lista>-<akronim>.pdf`, `Cache-Control: no-store`.
+  `pasek-<numer listy>-<data wypłaty>.pdf`, `Cache-Control: no-store`.
 - **R8.** Wypłata z listy niezamkniętej — 409 `notClosed` (jak 010).
 
 ### Role

@@ -4,8 +4,15 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
+    <!-- Arkusz .xls do importu w Optimie (011). 2.7.6 — Apache-2.0; 2.8.x ma licencję OSMF EULA (nuspec), nie podbijać. -->
+    <PackageVersion Include="NPOI" Version="[2.7.6]" />
     <PackageVersion Include="Npgsql" Version="10.0.3" />
+    <!-- PDF paska (011). 6.2.4 na licencji MIT — przed podbiciem sprawdzić licencję wydania. -->
+    <PackageVersion Include="PDFsharp-MigraDoc" Version="[6.2.4]" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.20.0" />
+    <!-- Testy: wersje bez podatności zamiast 8.0.x z NPOI. -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="11.0.0" />
     <!-- Testy -->
     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />

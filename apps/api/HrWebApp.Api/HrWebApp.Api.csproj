@@ -5,8 +5,14 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="NPOI" />
     <PackageReference Include="Npgsql" />
+    <PackageReference Include="PDFsharp-MigraDoc" />
     <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Noto Sans (SIL OFL 1.1, Common/Pdf/Fonts/OFL.txt) — polskie znaki w PDF; PDFsharp Core nie widzi czcionek systemu. -->
+    <EmbeddedResource Include="Common/Pdf/Fonts/*.ttf" LogicalName="Fonts.%(Filename).ttf" />
   </ItemGroup>
   <Target Name="Husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0" Inputs="../../../.config/dotnet-tools.json" Outputs="../../../.husky/_/install.stamp">
     <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />

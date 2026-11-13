@@ -19,4 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\apps\api\HrWebApp.Api\HrWebApp.Api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- NPOI (przez API) ciągnie 8.0.x z podatnościami; w API daje je framework, tu trzeba podnieść wersję. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
 </Project>

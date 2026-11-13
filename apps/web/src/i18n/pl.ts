@@ -326,6 +326,13 @@ export const pl = {
 		},
 		wizard: { person: "Dane osobowe" },
 		selectAll: "Zaznacz wszystkie na stronie",
+		optimaExport: {
+			action: "Eksport do Comarch ERP Optima (.xls)",
+			actionSelected: "Eksport zaznaczonych do Comarch ERP Optima (.xls)",
+			chooseCompany:
+				"Eksport do Optimy — najpierw wybierz spółkę (import w Optimie jest do bazy jednej firmy).",
+			done: "Pobrano {{file}} — w Optimie: Narzędzia / Importy / Danych kadrowych / z arkusza MS Excel.",
+		},
 		copy: {
 			action: "Kopiuj do innej spółki",
 			title: "Kopiowanie kartotek do innej spółki",
@@ -1183,7 +1190,9 @@ export const pl = {
 		},
 	},
 	documents: {
-		print: "Drukuj (PDF — „Zapisz jako PDF” w oknie drukowania)",
+		print: "Drukuj",
+		downloadPdf: "Pobierz PDF",
+		downloaded: "Pobrano {{file}}.",
 		back: "← Wróć",
 		company: "Spółka",
 		year: "Rok",

@@ -61,6 +61,29 @@ public static class GetPayslip
     ) => TypedResults.Ok(await handler.GetAsync(id, cancellationToken));
 }
 
+public static class GetPayslipPdf
+{
+    /// <summary>
+    /// Pasek wypłaty jako PDF (011 R6–R8) — dane i dostęp jak <c>GetPayslip</c> (Pracownik — tylko swój, odczyt cudzego
+    /// w audycie, lista niezamknięta → 409 <c>notClosed</c>).
+    /// </summary>
+    public static async Task<FileContentHttpResult> Handle(
+        Guid id,
+        PayslipsHandler handler,
+        HttpContext http,
+        CancellationToken cancellationToken
+    )
+    {
+        var payslip = await handler.GetAsync(id, cancellationToken);
+        http.Response.Headers.CacheControl = "no-store";
+        return TypedResults.File(
+            PayslipPdf.Build(payslip),
+            "application/pdf",
+            PayslipPdf.FileName(payslip)
+        );
+    }
+}
+
 public static class ListPayslips
 {
     /// <summary>

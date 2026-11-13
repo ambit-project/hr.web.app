@@ -883,6 +883,39 @@
         }
       }
     },
+    "/api/employees/export/optima": {
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "operationId": "ExportEmployeesToOptima",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportEmployeesToOptimaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/employees/{id}": {
       "get": {
         "tags": [
@@ -6123,6 +6156,60 @@
         }
       }
     },
+    "/api/payroll-entries/{id}/payslip/pdf": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetPayslipPdf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/employees/{id}/payslips": {
       "get": {
         "tags": [
@@ -9981,6 +10068,46 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "ExportEmployeesToOptimaRequest": {
+        "required": [
+          "companyId",
+          "employeeIds",
+          "search",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "employeeIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "search": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
