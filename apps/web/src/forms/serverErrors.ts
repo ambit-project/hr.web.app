@@ -1,4 +1,4 @@
-type MetaLike = { isTouched: boolean; errorMap: object };
+type MetaLike = { isTouched: boolean; errorMap: object; errorSourceMap: object };
 
 /** Minimal slice of the TanStack Form API needed to put server errors on fields. */
 type FieldMetaSetter<TField extends string> = {
@@ -20,7 +20,11 @@ export function applyFieldErrors<TField extends string>(
 			form.setFieldMeta(field as TField, (meta) => ({
 				...meta,
 				isTouched: true,
-				errorMap: { ...meta.errorMap, onSubmit: codes[0] },
+				// Marked as a form-level change error, so the form's next change validation clears it: a server error
+				// must not outlive the values it was about and block the next submit (form-core keeps errors whose
+				// source is "field").
+				errorMap: { ...meta.errorMap, onChange: codes[0] },
+				errorSourceMap: { ...meta.errorSourceMap, onChange: "form" },
 			}));
 			applied = true;
 		}

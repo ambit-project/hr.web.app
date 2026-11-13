@@ -561,6 +561,8 @@ function TerminateForm({
 
 	const form = useAppForm({
 		defaultValues: { terminatedAt: employment.terminatedAt ?? "" },
+		// Shape only; it also lets a later edit clear the server's field errors (see applyFieldErrors).
+		validators: { onChange: z.object({ terminatedAt: z.string() }) },
 		onSubmit: async ({ value, formApi }) => {
 			try {
 				await terminate.mutateAsync({
