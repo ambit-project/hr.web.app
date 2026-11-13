@@ -9,3 +9,10 @@ body {
 	color: var(--color-text);
 	font-size: 14px;
 }
+
+/* Dialogs of add and edit forms are wide (decision: no drawers — a dialog with room for rows of short
+   fields). Outside any layer, so it beats HeroUI's size class, which is also unlayered. */
+.modal__dialog.form-dialog {
+	width: 100%;
+	max-width: min(48rem, calc(100vw - 2rem));
+}

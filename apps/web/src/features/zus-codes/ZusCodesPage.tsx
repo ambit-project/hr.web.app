@@ -8,7 +8,7 @@ import { Pager } from "#/components/table/Pager";
 import { DayInput } from "#/components/ui/DateInputs";
 import { hasRole } from "#/features/auth/session";
 import { ZUS_CODE_KINDS, type ZusCodeKind } from "./types";
-import { ZusCodeDrawer, type ZusCodeDrawerHandle } from "./ZusCodeDrawer";
+import { ZusCodeDialog, type ZusCodeDialogHandle } from "./ZusCodeDialog";
 import { ZUS_CODES_PAGE_SIZE, zusCodesQuery } from "./zusCodesQueries";
 
 const route = getRouteApi("/zus-codes/");
@@ -21,7 +21,7 @@ export function ZusCodesPage() {
 	const { me } = route.useRouteContext();
 	// Only hides buttons that would end in 403; the database checks the role.
 	const canEdit = hasRole(me, "administrator");
-	const drawer = useRef<ZusCodeDrawerHandle>(null);
+	const dialog = useRef<ZusCodeDialogHandle>(null);
 	const { data, isPending } = useQuery(zusCodesQuery(search));
 
 	const onSearch = useCallback(
@@ -41,7 +41,7 @@ export function ZusCodesPage() {
 					<p className="text-sm text-muted">{t("zusCodes.hint")}</p>
 				</div>
 				{canEdit ? (
-					<Button onPress={() => drawer.current?.create(search.kind)}>{t("common.add")}</Button>
+					<Button onPress={() => dialog.current?.create(search.kind)}>{t("common.add")}</Button>
 				) : null}
 			</header>
 
@@ -135,7 +135,7 @@ export function ZusCodesPage() {
 												<Button
 													size="sm"
 													variant="ghost"
-													onPress={() => drawer.current?.edit(code)}
+													onPress={() => dialog.current?.edit(code)}
 												>
 													{t("common.edit")}
 												</Button>
@@ -162,7 +162,7 @@ export function ZusCodesPage() {
 				/>
 			) : null}
 
-			{canEdit ? <ZusCodeDrawer ref={drawer} /> : null}
+			{canEdit ? <ZusCodeDialog ref={dialog} /> : null}
 		</section>
 	);
 }

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { hasRole } from "#/features/auth/session";
-import { CompanyDrawer, type CompanyDrawerHandle } from "./CompanyDrawer";
+import { CompanyDialog, type CompanyDialogHandle } from "./CompanyDialog";
 import { COMPANIES_PAGE_SIZE, companiesQuery } from "./companiesQueries";
 
 const route = getRouteApi("/companies/");
@@ -20,7 +20,7 @@ export function CompaniesPage() {
 	const { me } = route.useRouteContext();
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
-	const drawer = useRef<CompanyDrawerHandle>(null);
+	const dialog = useRef<CompanyDialogHandle>(null);
 	const { data, isPending } = useQuery(companiesQuery(search));
 	const canEdit = hasRole(me, "administrator");
 	const page = search.page ?? 1;
@@ -41,7 +41,7 @@ export function CompaniesPage() {
 					) : null}
 				</div>
 				{canEdit ? (
-					<Button onPress={() => drawer.current?.create()}>{t("common.add")}</Button>
+					<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
 				) : null}
 			</header>
 
@@ -98,7 +98,7 @@ export function CompaniesPage() {
 												<Button
 													size="sm"
 													variant="ghost"
-													onPress={() => drawer.current?.edit(company)}
+													onPress={() => dialog.current?.edit(company)}
 												>
 													{t("common.edit")}
 												</Button>
@@ -125,7 +125,7 @@ export function CompaniesPage() {
 				/>
 			) : null}
 
-			<CompanyDrawer ref={drawer} />
+			<CompanyDialog ref={dialog} />
 		</section>
 	);
 }

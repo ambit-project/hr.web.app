@@ -7,9 +7,9 @@ import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { DayInput } from "#/components/ui/DateInputs";
 import {
-	AddLegalParameterDrawer,
-	type AddLegalParameterDrawerHandle,
-} from "./AddLegalParameterDrawer";
+	AddLegalParameterDialog,
+	type AddLegalParameterDialogHandle,
+} from "./AddLegalParameterDialog";
 import { LEGAL_PARAMETERS_PAGE_SIZE, legalParametersQuery } from "./legalParametersQueries";
 
 const route = getRouteApi("/legal-parameters/");
@@ -21,7 +21,7 @@ export function LegalParametersPage() {
 	const { t } = useTranslation();
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
-	const drawer = useRef<AddLegalParameterDrawerHandle>(null);
+	const dialog = useRef<AddLegalParameterDialogHandle>(null);
 	const { data, isPending } = useQuery(legalParametersQuery(search));
 
 	const onSearch = useCallback(
@@ -37,7 +37,7 @@ export function LegalParametersPage() {
 					<h1 className="text-2xl font-semibold">{t("legalParameters.title")}</h1>
 					<p className="text-sm text-muted">{t("legalParameters.hint")}</p>
 				</div>
-				<Button onPress={() => drawer.current?.open()}>{t("common.add")}</Button>
+				<Button onPress={() => dialog.current?.open()}>{t("common.add")}</Button>
 			</header>
 
 			<div className="flex flex-wrap items-end gap-4">
@@ -95,7 +95,7 @@ export function LegalParametersPage() {
 											<Button
 												size="sm"
 												variant="ghost"
-												onPress={() => drawer.current?.open(parameter.code)}
+												onPress={() => dialog.current?.open(parameter.code)}
 											>
 												{t("common.add")}
 											</Button>
@@ -121,7 +121,7 @@ export function LegalParametersPage() {
 				/>
 			) : null}
 
-			<AddLegalParameterDrawer ref={drawer} />
+			<AddLegalParameterDialog ref={dialog} />
 		</section>
 	);
 }

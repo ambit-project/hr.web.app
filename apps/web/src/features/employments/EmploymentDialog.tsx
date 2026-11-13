@@ -1,4 +1,4 @@
-import { Button, Checkbox, CheckboxGroup, Description, Drawer, Label, toast } from "@heroui/react";
+import { Button, Checkbox, CheckboxGroup, Description, Label, Modal, toast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { GetEmploymentResponse, GetEmploymentTerms } from "#/api/models";
 import { OptionSelect } from "#/components/ui/OptionSelect";
+import { firstStepWithError, WizardSteps } from "#/components/ui/WizardSteps";
 import { positionOptionsQuery } from "#/features/positions/positionsQueries";
 import { ZusCodePicker } from "#/features/zus-codes/ZusCodePicker";
 import { useAppForm } from "#/forms";
@@ -35,7 +36,7 @@ import {
 	termsValues,
 } from "./types";
 
-export type EmploymentDrawerHandle = {
+export type EmploymentDialogHandle = {
 	create: (employeeId: string) => void;
 	edit: (employment: GetEmploymentResponse) => void;
 	addTerms: (employment: GetEmploymentResponse) => void;
@@ -48,8 +49,8 @@ type FormTarget =
 	| { mode: "terms"; employment: GetEmploymentResponse };
 type Target = FormTarget | { mode: "terminate"; employment: GetEmploymentResponse };
 
-export const EmploymentDrawer = forwardRef<EmploymentDrawerHandle>(
-	function EmploymentDrawer(_props, ref) {
+export const EmploymentDialog = forwardRef<EmploymentDialogHandle>(
+	function EmploymentDialog(_props, ref) {
 		const [target, setTarget] = useState<Target | null>(null);
 		useImperativeHandle(
 			ref,
@@ -64,17 +65,17 @@ export const EmploymentDrawer = forwardRef<EmploymentDrawerHandle>(
 		const close = () => setTarget(null);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
+					<Modal.Container scroll="inside">
 						{target?.mode === "terminate" ? (
 							<TerminateForm employment={target.employment} onDone={close} />
 						) : target ? (
 							<EmploymentForm target={target} onDone={close} />
 						) : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -118,6 +119,30 @@ const FIELDS = [
 	"insurances",
 	"costKind",
 ] as const;
+
+type Step = "contract" | "pay" | "zus";
+
+// Wizard steps: a new contract is contract → pay → ZUS and insurances (none for specific work); a new terms
+// version is pay → ZUS; editing the contract itself is one step.
+function stepsFor(mode: FormTarget["mode"], kind: EmploymentKind): Step[] {
+	const terms: Step[] = hasZusCodes(kind) ? ["pay", "zus"] : ["pay"];
+	if (mode === "edit") return ["contract"];
+	return mode === "create" ? ["contract", ...terms] : terms;
+}
+
+const STEP_FIELDS: Record<Step, readonly string[]> = {
+	contract: ["number", "kind", "contractType", "signedAt", "startDate", "endDate"],
+	pay: [
+		"validFrom",
+		"positionId",
+		"fteNumerator",
+		"fteDenominator",
+		"payBasis",
+		"baseAmount",
+		"costKind",
+	],
+	zus: ["zusTitleCode", "zusPensionCode", "zusDisabilityCode", "insurances"],
+};
 
 type ContractValues = {
 	number: string;
@@ -164,8 +189,7 @@ function EmploymentForm({ target, onDone }: { target: FormTarget; onDone: () => 
 	const create = useCreateEmployment();
 	const update = useUpdateEmployment();
 	const addTerms = useAddEmploymentTerms();
-	const showContract = target.mode !== "terms";
-	const showTerms = target.mode !== "edit";
+	const [step, setStep] = useState(0);
 	const { data: positions } = useQuery(positionOptionsQuery());
 
 	const form = useAppForm({
@@ -230,14 +254,21 @@ function EmploymentForm({ target, onDone }: { target: FormTarget; onDone: () => 
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
 					toast.danger(t("common.serverError"));
+				} else {
+					// The error may sit on a field of a step that is not shown — go to the first such step.
+					const steps = stepsFor(target.mode, value.kind);
+					const index = firstStepWithError(
+						steps.map((item) => STEP_FIELDS[item]),
+						error.problem.errors,
+					);
+					if (index !== null) setStep(index);
 				}
 			}
 		},
 	});
 
-	const renderTerms = (kind: EmploymentKind) => (
+	const renderPay = (kind: EmploymentKind) => (
 		<>
-			<h3 className="pt-2 text-sm font-semibold">{t("employments.terms.section")}</h3>
 			{hasPosition(kind) ? (
 				<>
 					<form.Field name="positionId">
@@ -312,92 +343,93 @@ function EmploymentForm({ target, onDone }: { target: FormTarget; onDone: () => 
 					/>
 				)}
 			</form.AppField>
-			{hasZusCodes(kind) ? (
-				<>
-					<form.Field name="zusTitleCode">
-						{(field) => (
-							<ZusCodePicker
-								label={t("employments.fields.zusTitleCode")}
-								kind="title"
-								value={field.state.value}
-								onChange={field.handleChange}
-								onBlur={field.handleBlur}
-								isRequired
-								errorMessage={fieldError(t, field.state.meta)}
-							/>
-						)}
-					</form.Field>
-					<div className="grid grid-cols-2 gap-3">
-						<form.Field name="zusPensionCode">
-							{(field) => (
-								<ZusCodePicker
-									label={t("employments.fields.zusPensionCode")}
-									kind="pension"
-									value={field.state.value}
-									onChange={field.handleChange}
-									onBlur={field.handleBlur}
-									isRequired
-									errorMessage={fieldError(t, field.state.meta)}
-								/>
-							)}
-						</form.Field>
-						<form.Field name="zusDisabilityCode">
-							{(field) => (
-								<ZusCodePicker
-									label={t("employments.fields.zusDisabilityCode")}
-									kind="disability"
-									value={field.state.value}
-									onChange={field.handleChange}
-									onBlur={field.handleBlur}
-									isRequired
-									errorMessage={fieldError(t, field.state.meta)}
-								/>
-							)}
-						</form.Field>
-					</div>
-					<form.Field name="insurances">
-						{(field) => (
-							<div className="flex flex-col gap-2">
-								<CheckboxGroup
-									value={field.state.value}
-									onChange={field.handleChange}
-									isInvalid={Boolean(fieldError(t, field.state.meta))}
-								>
-									<Label>{t("employments.fields.insurances")}</Label>
-									{kind === "mandate" ? (
-										<Description>{t("employments.insurancesHint")}</Description>
-									) : null}
-									{INSURANCES.map((insurance) => (
-										<Checkbox key={insurance} value={insurance}>
-											<Checkbox.Content>
-												<Checkbox.Control>
-													<Checkbox.Indicator />
-												</Checkbox.Control>
-												{t(`employments.insurances.${insurance}`)}
-											</Checkbox.Content>
-										</Checkbox>
-									))}
-								</CheckboxGroup>
-								{kind === "mandate" ? (
-									<div className="flex flex-wrap gap-2">
-										{(["mandateSoleTitle", "mandateHealthOnly", "none"] as const).map((preset) => (
-											<Button
-												key={preset}
-												size="sm"
-												variant="tertiary"
-												onPress={() => field.handleChange([...INSURANCE_PRESETS[preset]])}
-											>
-												{t(`employments.presets.${preset}`)}
-											</Button>
-										))}
-									</div>
-								) : null}
-								<p className="text-sm text-danger">{fieldError(t, field.state.meta)}</p>
+		</>
+	);
+
+	const renderZus = (kind: EmploymentKind) => (
+		<>
+			<form.Field name="zusTitleCode">
+				{(field) => (
+					<ZusCodePicker
+						label={t("employments.fields.zusTitleCode")}
+						kind="title"
+						value={field.state.value}
+						onChange={field.handleChange}
+						onBlur={field.handleBlur}
+						isRequired
+						errorMessage={fieldError(t, field.state.meta)}
+					/>
+				)}
+			</form.Field>
+			<div className="grid grid-cols-2 gap-3">
+				<form.Field name="zusPensionCode">
+					{(field) => (
+						<ZusCodePicker
+							label={t("employments.fields.zusPensionCode")}
+							kind="pension"
+							value={field.state.value}
+							onChange={field.handleChange}
+							onBlur={field.handleBlur}
+							isRequired
+							errorMessage={fieldError(t, field.state.meta)}
+						/>
+					)}
+				</form.Field>
+				<form.Field name="zusDisabilityCode">
+					{(field) => (
+						<ZusCodePicker
+							label={t("employments.fields.zusDisabilityCode")}
+							kind="disability"
+							value={field.state.value}
+							onChange={field.handleChange}
+							onBlur={field.handleBlur}
+							isRequired
+							errorMessage={fieldError(t, field.state.meta)}
+						/>
+					)}
+				</form.Field>
+			</div>
+			<form.Field name="insurances">
+				{(field) => (
+					<div className="flex flex-col gap-2">
+						<CheckboxGroup
+							value={field.state.value}
+							onChange={field.handleChange}
+							isInvalid={Boolean(fieldError(t, field.state.meta))}
+						>
+							<Label>{t("employments.fields.insurances")}</Label>
+							{kind === "mandate" ? (
+								<Description>{t("employments.insurancesHint")}</Description>
+							) : null}
+							{INSURANCES.map((insurance) => (
+								<Checkbox key={insurance} value={insurance}>
+									<Checkbox.Content>
+										<Checkbox.Control>
+											<Checkbox.Indicator />
+										</Checkbox.Control>
+										{t(`employments.insurances.${insurance}`)}
+									</Checkbox.Content>
+								</Checkbox>
+							))}
+						</CheckboxGroup>
+						{kind === "mandate" ? (
+							<div className="flex flex-wrap gap-2">
+								{(["mandateSoleTitle", "mandateHealthOnly", "none"] as const).map((preset) => (
+									<Button
+										key={preset}
+										size="sm"
+										variant="tertiary"
+										onPress={() => field.handleChange([...INSURANCE_PRESETS[preset]])}
+									>
+										{t(`employments.presets.${preset}`)}
+									</Button>
+								))}
 							</div>
-						)}
-					</form.Field>
-				</>
-			) : null}
+						) : null}
+						<p className="text-sm text-danger">{fieldError(t, field.state.meta)}</p>
+					</div>
+				)}
+			</form.Field>
 		</>
 	);
 
@@ -409,132 +441,165 @@ function EmploymentForm({ target, onDone }: { target: FormTarget; onDone: () => 
 				: t("employments.terms.title", { number: target.employment.number });
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>{title}</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
-				{target.mode === "terms" ? (
-					<p className="mb-4 text-sm text-muted">{t("employments.terms.hint")}</p>
-				) : null}
-				<form
-					id={formId}
-					className="flex flex-col gap-4"
-					noValidate
-					onSubmit={(event) => {
-						event.preventDefault();
-						void form.handleSubmit();
-					}}
-				>
-					{target.mode === "create" ? (
-						<form.Field
-							name="kind"
-							listeners={{
-								onChange: ({ value }) => {
-									const terms = emptyTerms(value);
-									for (const [key, fieldValue] of Object.entries(terms)) {
-										form.setFieldValue(key as keyof TermsValues, fieldValue);
-									}
-									form.setFieldValue("contractType", value === "employment" ? "indefinite" : "");
-								},
-							}}
-						>
-							{(field) => (
-								<OptionSelect
-									label={t("employments.fields.kind")}
-									value={field.state.value}
-									options={EMPLOYMENT_KINDS.map((kind) => ({
-										id: kind,
-										label: t(`employments.kinds.${kind}`),
-									}))}
-									onChange={(kind) => kind && field.handleChange(kind as EmploymentKind)}
-									isRequired
-								/>
-							)}
-						</form.Field>
-					) : null}
-
-					<form.Subscribe
-						selector={(state) => [state.values.kind, state.values.contractType] as const}
-					>
-						{([kind, contractType]) => (
-							<>
-								{showContract ? (
-									<>
-										<form.AppField name="number">
-											{(field) => (
-												<field.TextInput
-													label={t("employments.fields.number")}
-													description={
-														target.mode === "create"
-															? t("employments.fields.numberHint")
-															: undefined
-													}
-													isRequired={target.mode !== "create"}
-												/>
-											)}
-										</form.AppField>
-										{kind === "employment" ? (
-											<form.AppField name="contractType">
-												{(field) => (
-													<field.SelectInput
-														label={t("employments.fields.contractType")}
-														options={CONTRACT_TYPES.map((type) => ({
-															id: type,
-															label: t(`employments.contractTypes.${type}`),
-														}))}
-														isRequired
-													/>
-												)}
-											</form.AppField>
-										) : null}
-										<form.AppField name="signedAt">
-											{(field) => (
-												<field.DateInput label={t("employments.fields.signedAt")} isRequired />
-											)}
-										</form.AppField>
-										<form.AppField name="startDate">
-											{(field) => (
-												<field.DateInput label={t("employments.fields.startDate")} isRequired />
-											)}
-										</form.AppField>
-										{kind === "employment" && contractType === "indefinite" ? null : (
-											<form.AppField name="endDate">
-												{(field) => (
-													<field.DateInput label={t("employments.fields.endDate")} isRequired />
-												)}
-											</form.AppField>
-										)}
-									</>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>{title}</Modal.Heading>
+			</Modal.Header>
+			<form.Subscribe selector={(state) => [state.values.kind, state.values.contractType] as const}>
+				{([kind, contractType]) => {
+					const steps = stepsFor(target.mode, kind);
+					const current = steps[Math.min(step, steps.length - 1)] ?? "contract";
+					const isLastStep = step >= steps.length - 1;
+					return (
+						<>
+							<Modal.Body>
+								{steps.length > 1 ? (
+									<WizardSteps
+										steps={steps.map((item) => t(`employments.wizard.${item}`))}
+										current={Math.min(step, steps.length - 1)}
+										onSelect={setStep}
+									/>
 								) : null}
-
-								{target.mode === "terms" ? (
-									<form.AppField name="validFrom">
-										{(field) => (
-											<field.DateInput label={t("employments.fields.validFrom")} isRequired />
-										)}
-									</form.AppField>
+								{target.mode === "terms" && current === "pay" ? (
+									<p className="mb-4 text-sm text-muted">{t("employments.terms.hint")}</p>
 								) : null}
-
-								{showTerms ? renderTerms(kind) : null}
-							</>
-						)}
-					</form.Subscribe>
-				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
-				<Button slot="close" variant="secondary">
-					{t("common.cancel")}
-				</Button>
-				<form.Subscribe selector={(state) => state.isSubmitting}>
-					{(isSubmitting) => (
-						<Button type="submit" form={formId} isPending={isSubmitting}>
-							{t("common.save")}
-						</Button>
-					)}
-				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+								<form
+									id={formId}
+									className="flex flex-col gap-4"
+									noValidate
+									onSubmit={(event) => {
+										event.preventDefault();
+										// Enter on an earlier step moves on; only the last step saves.
+										if (isLastStep) void form.handleSubmit();
+										else setStep(step + 1);
+									}}
+								>
+									{current === "contract" ? (
+										<>
+											{target.mode === "create" ? (
+												<form.Field
+													name="kind"
+													listeners={{
+														onChange: ({ value }) => {
+															const terms = emptyTerms(value);
+															for (const [key, fieldValue] of Object.entries(terms)) {
+																form.setFieldValue(key as keyof TermsValues, fieldValue);
+															}
+															form.setFieldValue(
+																"contractType",
+																value === "employment" ? "indefinite" : "",
+															);
+														},
+													}}
+												>
+													{(field) => (
+														<OptionSelect
+															label={t("employments.fields.kind")}
+															value={field.state.value}
+															options={EMPLOYMENT_KINDS.map((item) => ({
+																id: item,
+																label: t(`employments.kinds.${item}`),
+															}))}
+															onChange={(item) =>
+																item && field.handleChange(item as EmploymentKind)
+															}
+															isRequired
+														/>
+													)}
+												</form.Field>
+											) : null}
+											<div className="grid gap-4 sm:grid-cols-2">
+												<form.AppField name="number">
+													{(field) => (
+														<field.TextInput
+															label={t("employments.fields.number")}
+															description={
+																target.mode === "create"
+																	? t("employments.fields.numberHint")
+																	: undefined
+															}
+															isRequired={target.mode !== "create"}
+														/>
+													)}
+												</form.AppField>
+												{kind === "employment" ? (
+													<form.AppField name="contractType">
+														{(field) => (
+															<field.SelectInput
+																label={t("employments.fields.contractType")}
+																options={CONTRACT_TYPES.map((type) => ({
+																	id: type,
+																	label: t(`employments.contractTypes.${type}`),
+																}))}
+																isRequired
+															/>
+														)}
+													</form.AppField>
+												) : null}
+											</div>
+											<div className="grid gap-4 sm:grid-cols-3">
+												<form.AppField name="signedAt">
+													{(field) => (
+														<field.DateInput label={t("employments.fields.signedAt")} isRequired />
+													)}
+												</form.AppField>
+												<form.AppField name="startDate">
+													{(field) => (
+														<field.DateInput label={t("employments.fields.startDate")} isRequired />
+													)}
+												</form.AppField>
+												{kind === "employment" && contractType === "indefinite" ? null : (
+													<form.AppField name="endDate">
+														{(field) => (
+															<field.DateInput label={t("employments.fields.endDate")} isRequired />
+														)}
+													</form.AppField>
+												)}
+											</div>
+										</>
+									) : null}
+									{current === "pay" ? (
+										<>
+											{target.mode === "terms" ? (
+												<div className="grid gap-4 sm:grid-cols-2">
+													<form.AppField name="validFrom">
+														{(field) => (
+															<field.DateInput
+																label={t("employments.fields.validFrom")}
+																isRequired
+															/>
+														)}
+													</form.AppField>
+												</div>
+											) : null}
+											{renderPay(kind)}
+										</>
+									) : null}
+									{current === "zus" ? renderZus(kind) : null}
+								</form>
+							</Modal.Body>
+							<Modal.Footer>
+								<Button slot="close" variant="secondary">
+									{t("common.cancel")}
+								</Button>
+								{step > 0 ? (
+									<Button variant="tertiary" onPress={() => setStep(step - 1)}>
+										{t("common.back")}
+									</Button>
+								) : null}
+								<form.Subscribe selector={(state) => state.isSubmitting}>
+									{(isSubmitting) => (
+										<Button type="submit" form={formId} isPending={isSubmitting}>
+											{isLastStep ? t("common.save") : t("common.continue")}
+										</Button>
+									)}
+								</form.Subscribe>
+							</Modal.Footer>
+						</>
+					);
+				}}
+			</form.Subscribe>
+		</Modal.Dialog>
 	);
 }
 
@@ -597,13 +662,13 @@ function TerminateForm({
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{t("employments.terminate.title", { number: employment.number })}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<p className="mb-4 text-sm text-muted">{t("employments.terminate.hint")}</p>
 				<form
 					id={formId}
@@ -617,8 +682,8 @@ function TerminateForm({
 						{(field) => <field.DateInput label={t("employments.fields.terminatedAt")} />}
 					</form.AppField>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -629,7 +694,7 @@ function TerminateForm({
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

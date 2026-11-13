@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmployeeResponse } from "#/api/models";
-import { BankAccountDrawer, type BankAccountDrawerHandle } from "../BankAccountDrawer";
+import { BankAccountDialog, type BankAccountDialogHandle } from "../BankAccountDialog";
 import { employeeBankAccountsQuery } from "../employeesQueries";
 
 /** PL61 1090 1014 … — groups of four, as on a bank statement. */
@@ -13,7 +13,7 @@ export function formatIban(iban: string) {
 
 export function BankSection({ employee }: { employee: GetEmployeeResponse }) {
 	const { t } = useTranslation();
-	const drawer = useRef<BankAccountDrawerHandle>(null);
+	const dialog = useRef<BankAccountDialogHandle>(null);
 	const { data, isPending } = useQuery(employeeBankAccountsQuery(employee.id));
 
 	return (
@@ -23,9 +23,9 @@ export function BankSection({ employee }: { employee: GetEmployeeResponse }) {
 				{employee.iban ? <code>{formatIban(employee.iban)}</code> : t("employees.bank.cash")}
 			</p>
 			<div className="flex gap-2">
-				<Button onPress={() => drawer.current?.open("add")}>{t("employees.bank.add")}</Button>
+				<Button onPress={() => dialog.current?.open("add")}>{t("employees.bank.add")}</Button>
 				{employee.iban ? (
-					<Button variant="secondary" onPress={() => drawer.current?.open("close")}>
+					<Button variant="secondary" onPress={() => dialog.current?.open("close")}>
 						{t("employees.bank.close")}
 					</Button>
 				) : null}
@@ -62,7 +62,7 @@ export function BankSection({ employee }: { employee: GetEmployeeResponse }) {
 					</Table.ScrollContainer>
 				</Table>
 			)}
-			<BankAccountDrawer ref={drawer} employeeId={employee.id} />
+			<BankAccountDialog ref={dialog} employeeId={employee.id} />
 		</div>
 	);
 }

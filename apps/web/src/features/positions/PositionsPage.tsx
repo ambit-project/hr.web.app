@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
-import { PositionDrawer, type PositionDrawerHandle } from "./PositionDrawer";
+import { PositionDialog, type PositionDialogHandle } from "./PositionDialog";
 import { POSITIONS_PAGE_SIZE, positionsQuery } from "./positionsQueries";
 
 const route = getRouteApi("/positions/");
@@ -15,7 +15,7 @@ export function PositionsPage() {
 	const { t } = useTranslation();
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
-	const drawer = useRef<PositionDrawerHandle>(null);
+	const dialog = useRef<PositionDialogHandle>(null);
 	const { data, isPending } = useQuery(positionsQuery(search));
 
 	const page = search.page ?? 1;
@@ -37,7 +37,7 @@ export function PositionsPage() {
 						<p className="text-sm text-muted">{t("positions.total", { count: data.total })}</p>
 					) : null}
 				</div>
-				<Button onPress={() => drawer.current?.create()}>{t("common.add")}</Button>
+				<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
 			</header>
 
 			<div className="flex flex-wrap items-center gap-4">
@@ -90,7 +90,7 @@ export function PositionsPage() {
 											<Button
 												size="sm"
 												variant="ghost"
-												onPress={() => drawer.current?.edit(position)}
+												onPress={() => dialog.current?.edit(position)}
 											>
 												{t("common.edit")}
 											</Button>
@@ -116,7 +116,7 @@ export function PositionsPage() {
 				/>
 			) : null}
 
-			<PositionDrawer ref={drawer} />
+			<PositionDialog ref={dialog} />
 		</section>
 	);
 }

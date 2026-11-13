@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -15,7 +15,7 @@ import {
 	PIT2_SHARES,
 } from "./types";
 
-export type TaxDeclarationDrawerHandle = {
+export type TaxDeclarationDialogHandle = {
 	create: (employeeId: string) => void;
 	end: (item: ListTaxDeclarationsItem) => void;
 };
@@ -24,8 +24,8 @@ type Target =
 	| { mode: "create"; employeeId: string }
 	| { mode: "end"; item: ListTaxDeclarationsItem };
 
-export const TaxDeclarationDrawer = forwardRef<TaxDeclarationDrawerHandle>(
-	function TaxDeclarationDrawer(_props, ref) {
+export const TaxDeclarationDialog = forwardRef<TaxDeclarationDialogHandle>(
+	function TaxDeclarationDialog(_props, ref) {
 		const [target, setTarget] = useState<Target | null>(null);
 		useImperativeHandle(
 			ref,
@@ -38,17 +38,17 @@ export const TaxDeclarationDrawer = forwardRef<TaxDeclarationDrawerHandle>(
 		const close = () => setTarget(null);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
+					<Modal.Container scroll="inside">
 						{target?.mode === "create" ? (
 							<CreateForm employeeId={target.employeeId} onDone={close} />
 						) : target?.mode === "end" ? (
 							<EndForm item={target.item} onDone={close} />
 						) : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -119,11 +119,11 @@ function CreateForm({ employeeId, onDone }: { employeeId: string; onDone: () => 
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>{t("taxDeclarations.create.title")}</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>{t("taxDeclarations.create.title")}</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
@@ -180,38 +180,40 @@ function CreateForm({ employeeId, onDone }: { employeeId: string; onDone: () => 
 							</>
 						)}
 					</form.Subscribe>
-					<form.AppField
-						name="submittedAt"
-						listeners={{
-							// Payers apply a declaration from the next month at the latest, so that is the default.
-							onChange: ({ value }) =>
-								form.setFieldValue("validFrom", allowedMonths(value)[1] ?? ""),
-						}}
-					>
-						{(field) => (
-							<field.DateInput label={t("taxDeclarations.fields.submittedAt")} isRequired />
-						)}
-					</form.AppField>
-					<form.Subscribe selector={(state) => state.values.submittedAt}>
-						{(submittedAt) => (
-							<form.AppField name="validFrom">
-								{(field) => (
-									<field.SelectInput
-										label={t("taxDeclarations.fields.validFrom")}
-										options={allowedMonths(submittedAt).map((month) => ({
-											id: month,
-											label: formatMonth(month),
-										}))}
-										isRequired
-									/>
-								)}
-							</form.AppField>
-						)}
-					</form.Subscribe>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<form.AppField
+							name="submittedAt"
+							listeners={{
+								// Payers apply a declaration from the next month at the latest, so that is the default.
+								onChange: ({ value }) =>
+									form.setFieldValue("validFrom", allowedMonths(value)[1] ?? ""),
+							}}
+						>
+							{(field) => (
+								<field.DateInput label={t("taxDeclarations.fields.submittedAt")} isRequired />
+							)}
+						</form.AppField>
+						<form.Subscribe selector={(state) => state.values.submittedAt}>
+							{(submittedAt) => (
+								<form.AppField name="validFrom">
+									{(field) => (
+										<field.SelectInput
+											label={t("taxDeclarations.fields.validFrom")}
+											options={allowedMonths(submittedAt).map((month) => ({
+												id: month,
+												label: formatMonth(month),
+											}))}
+											isRequired
+										/>
+									)}
+								</form.AppField>
+							)}
+						</form.Subscribe>
+					</div>
 					<p className="text-sm text-muted">{t("taxDeclarations.validFromHint")}</p>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -222,8 +224,8 @@ function CreateForm({ employeeId, onDone }: { employeeId: string; onDone: () => 
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }
 
@@ -265,15 +267,15 @@ function EndForm({ item, onDone }: { item: ListTaxDeclarationsItem; onDone: () =
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{t("taxDeclarations.end.title", {
 						kind: t(`taxDeclarations.kinds.${item.kind as DeclarationKind}`),
 					})}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<p className="mb-4 text-sm text-muted">{t("taxDeclarations.end.hint")}</p>
 				<form
 					id={formId}
@@ -284,33 +286,35 @@ function EndForm({ item, onDone }: { item: ListTaxDeclarationsItem; onDone: () =
 						void form.handleSubmit();
 					}}
 				>
-					<form.AppField
-						name="withdrawnAt"
-						listeners={{
-							onChange: ({ value }) =>
-								form.setFieldValue("stopFrom", allowedMonths(value)[1] ?? ""),
-						}}
-					>
-						{(field) => (
-							<field.DateInput label={t("taxDeclarations.fields.withdrawnAt")} isRequired />
-						)}
-					</form.AppField>
-					<form.Subscribe selector={(state) => state.values.withdrawnAt}>
-						{(withdrawnAt) => (
-							<form.AppField name="stopFrom">
-								{(field) => (
-									<field.SelectInput
-										label={t("taxDeclarations.fields.stopFrom")}
-										options={allowedMonths(withdrawnAt).map((month) => ({
-											id: month,
-											label: formatMonth(month),
-										}))}
-										isRequired
-									/>
-								)}
-							</form.AppField>
-						)}
-					</form.Subscribe>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<form.AppField
+							name="withdrawnAt"
+							listeners={{
+								onChange: ({ value }) =>
+									form.setFieldValue("stopFrom", allowedMonths(value)[1] ?? ""),
+							}}
+						>
+							{(field) => (
+								<field.DateInput label={t("taxDeclarations.fields.withdrawnAt")} isRequired />
+							)}
+						</form.AppField>
+						<form.Subscribe selector={(state) => state.values.withdrawnAt}>
+							{(withdrawnAt) => (
+								<form.AppField name="stopFrom">
+									{(field) => (
+										<field.SelectInput
+											label={t("taxDeclarations.fields.stopFrom")}
+											options={allowedMonths(withdrawnAt).map((month) => ({
+												id: month,
+												label: formatMonth(month),
+											}))}
+											isRequired
+										/>
+									)}
+								</form.AppField>
+							)}
+						</form.Subscribe>
+					</div>
 				</form>
 				{item.withdrawnAt ? (
 					<Button
@@ -327,8 +331,8 @@ function EndForm({ item, onDone }: { item: ListTaxDeclarationsItem; onDone: () =
 						{t("taxDeclarations.end.undo")}
 					</Button>
 				) : null}
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -339,8 +343,8 @@ function EndForm({ item, onDone }: { item: ListTaxDeclarationsItem; onDone: () =
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }
 

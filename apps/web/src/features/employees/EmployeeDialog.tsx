@@ -1,9 +1,10 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { useNavigate } from "@tanstack/react-router";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { GetEmployeeResponse } from "#/api/models";
+import { firstStepWithError, WizardSteps } from "#/components/ui/WizardSteps";
 import { CompanySelect } from "#/features/companies/CompanySelect";
 import { TaxOfficePicker } from "#/features/tax-offices/TaxOfficePicker";
 import { text, useAppForm } from "#/forms";
@@ -13,7 +14,7 @@ import { ProblemError } from "#/lib/problem";
 import { useCreateEmployee, useUpdateEmployee } from "./employeesQueries";
 import { peselBirthDate } from "./pesel";
 
-export type EmployeeDrawerHandle = {
+export type EmployeeDialogHandle = {
 	create: (companyId?: string) => void;
 	edit: (employee: GetEmployeeResponse) => void;
 };
@@ -82,8 +83,14 @@ const FIELDS = [
 
 const PERSON_FIELDS = ["number", "firstName", "secondName", "lastName"] as const;
 
-export const EmployeeDrawer = forwardRef<EmployeeDrawerHandle>(
-	function EmployeeDrawer(_props, ref) {
+// Fields of each step of the "new employee" wizard; edit has only the first step.
+const STEP_FIELDS = [
+	["companyId", ...PERSON_FIELDS, "pesel", "identityDocument", "birthDate", "taxOfficeId", "email"],
+	["street", "postalCode", "city", "addressFrom"],
+] as const;
+
+export const EmployeeDialog = forwardRef<EmployeeDialogHandle>(
+	function EmployeeDialog(_props, ref) {
 		const [target, setTarget] = useState<Target | null>(null);
 		useImperativeHandle(
 			ref,
@@ -95,13 +102,13 @@ export const EmployeeDrawer = forwardRef<EmployeeDrawerHandle>(
 		);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+					<Modal.Container scroll="inside">
 						{target ? <EmployeeForm target={target} onDone={() => setTarget(null)} /> : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -113,6 +120,7 @@ function EmployeeForm({ target, onDone }: { target: Target; onDone: () => void }
 	const create = useCreateEmployee();
 	const update = useUpdateEmployee();
 	const employee = target.mode === "edit" ? target.employee : null;
+	const [step, setStep] = useState(0);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -176,141 +184,180 @@ function EmployeeForm({ target, onDone }: { target: Target; onDone: () => void }
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
 					toast.danger(t("common.serverError"));
+				} else {
+					// The error may sit on a field of a step that is not shown — go to the first such step.
+					setStep((current) => firstStepWithError(STEP_FIELDS, error.problem.errors) ?? current);
 				}
 			}
 		},
 	});
 
+	const isWizard = employee === null;
+	const steps = [t("employees.wizard.person"), t("employees.addresses.residence")];
+	const isLastStep = !isWizard || step === steps.length - 1;
+	const textField = (name: (typeof PERSON_FIELDS)[number]) => (
+		<form.AppField name={name}>
+			{(field) => (
+				<field.TextInput
+					label={t(`employees.fields.${name}`)}
+					isRequired={name === "firstName" || name === "lastName"}
+					description={
+						name === "number" && !employee ? t("employees.fields.numberHint") : undefined
+					}
+				/>
+			)}
+		</form.AppField>
+	);
+
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{employee ? t("employees.edit.title") : t("employees.create.title")}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
+				{isWizard ? <WizardSteps steps={steps} current={step} onSelect={setStep} /> : null}
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
 					noValidate
 					onSubmit={(event) => {
 						event.preventDefault();
-						void form.handleSubmit();
+						// Enter on an earlier step moves on; only the last step saves.
+						if (isLastStep) void form.handleSubmit();
+						else setStep(step + 1);
 					}}
 				>
-					{employee ? (
-						<p className="text-sm">
-							{t("employees.fields.company")}: <strong>{employee.companyShortName}</strong>
-						</p>
-					) : (
-						<form.Field name="companyId">
-							{(field) => {
-								const code = errorCode(field.state.meta.errors);
-								return (
-									<CompanySelect
-										label={t("employees.fields.company")}
-										value={field.state.value}
-										onChange={field.handleChange}
-										isRequired
-										errorMessage={
-											code && field.state.meta.isTouched ? t(`validation.${code}`) : null
-										}
-									/>
-								);
-							}}
-						</form.Field>
-					)}
-					{PERSON_FIELDS.map((name) => (
-						<form.AppField key={name} name={name}>
-							{(field) => (
-								<field.TextInput
-									label={t(`employees.fields.${name}`)}
-									isRequired={name === "firstName" || name === "lastName"}
-									description={
-										name === "number" && !employee ? t("employees.fields.numberHint") : undefined
-									}
-								/>
-							)}
-						</form.AppField>
-					))}
-					<form.AppField
-						name="pesel"
-						listeners={{
-							onChange: ({ value }) => {
-								const birthDate = peselBirthDate(value);
-								if (birthDate && form.getFieldValue("birthDate") === "") {
-									form.setFieldValue("birthDate", birthDate);
-								}
-							},
-						}}
-					>
-						{(field) => <field.TextInput label={t("employees.fields.pesel")} />}
-					</form.AppField>
-					<form.AppField name="identityDocument">
-						{(field) => (
-							<field.TextInput
-								label={t("employees.fields.identityDocument")}
-								description={t("employees.fields.identityDocumentHint")}
-							/>
-						)}
-					</form.AppField>
-					<form.AppField name="birthDate">
-						{(field) => <field.DateInput label={t("employees.fields.birthDate")} isRequired />}
-					</form.AppField>
-					<form.Field name="taxOfficeId">
-						{(field) => {
-							const code = errorCode(field.state.meta.errors);
-							return (
-								<TaxOfficePicker
-									label={t("employees.fields.taxOffice")}
-									value={field.state.value}
-									initialLabel={
-										employee?.taxOfficeCode
-											? `${employee.taxOfficeCode} ${employee.taxOfficeName ?? ""}`.trim()
-											: undefined
-									}
-									onChange={field.handleChange}
-									onBlur={field.handleBlur}
-									isRequired
-									errorMessage={code && field.state.meta.isTouched ? t(`validation.${code}`) : null}
-								/>
-							);
-						}}
-					</form.Field>
-					<form.AppField name="email">
-						{(field) => <field.TextInput label={t("employees.fields.email")} type="email" />}
-					</form.AppField>
-					{employee ? null : (
+					{step === 0 ? (
 						<>
-							<h3 className="pt-2 text-sm font-semibold">{t("employees.addresses.residence")}</h3>
+							{employee ? (
+								<p className="text-sm">
+									{t("employees.fields.company")}: <strong>{employee.companyShortName}</strong>
+								</p>
+							) : (
+								<form.Field name="companyId">
+									{(field) => {
+										const code = errorCode(field.state.meta.errors);
+										return (
+											<CompanySelect
+												label={t("employees.fields.company")}
+												value={field.state.value}
+												onChange={field.handleChange}
+												isRequired
+												errorMessage={
+													code && field.state.meta.isTouched ? t(`validation.${code}`) : null
+												}
+											/>
+										);
+									}}
+								</form.Field>
+							)}
+							<div className="grid gap-4 sm:grid-cols-2">
+								{textField("firstName")}
+								{textField("secondName")}
+							</div>
+							{textField("lastName")}
+							<div className="grid gap-4 sm:grid-cols-2">
+								<form.AppField
+									name="pesel"
+									listeners={{
+										onChange: ({ value }) => {
+											const birthDate = peselBirthDate(value);
+											if (birthDate && form.getFieldValue("birthDate") === "") {
+												form.setFieldValue("birthDate", birthDate);
+											}
+										},
+									}}
+								>
+									{(field) => <field.TextInput label={t("employees.fields.pesel")} />}
+								</form.AppField>
+								<form.AppField name="birthDate">
+									{(field) => (
+										<field.DateInput label={t("employees.fields.birthDate")} isRequired />
+									)}
+								</form.AppField>
+							</div>
+							<div className="grid gap-4 sm:grid-cols-2">
+								<form.AppField name="identityDocument">
+									{(field) => (
+										<field.TextInput
+											label={t("employees.fields.identityDocument")}
+											description={t("employees.fields.identityDocumentHint")}
+										/>
+									)}
+								</form.AppField>
+								{textField("number")}
+							</div>
+							<form.Field name="taxOfficeId">
+								{(field) => {
+									const code = errorCode(field.state.meta.errors);
+									return (
+										<TaxOfficePicker
+											label={t("employees.fields.taxOffice")}
+											value={field.state.value}
+											initialLabel={
+												employee?.taxOfficeCode
+													? `${employee.taxOfficeCode} ${employee.taxOfficeName ?? ""}`.trim()
+													: undefined
+											}
+											onChange={field.handleChange}
+											onBlur={field.handleBlur}
+											isRequired
+											errorMessage={
+												code && field.state.meta.isTouched ? t(`validation.${code}`) : null
+											}
+										/>
+									);
+								}}
+							</form.Field>
+							<form.AppField name="email">
+								{(field) => <field.TextInput label={t("employees.fields.email")} type="email" />}
+							</form.AppField>
+						</>
+					) : (
+						<>
 							<form.AppField name="street">
 								{(field) => <field.TextInput label={t("employees.fields.street")} isRequired />}
 							</form.AppField>
-							<form.AppField name="postalCode">
-								{(field) => <field.TextInput label={t("employees.fields.postalCode")} isRequired />}
-							</form.AppField>
-							<form.AppField name="city">
-								{(field) => <field.TextInput label={t("employees.fields.city")} isRequired />}
-							</form.AppField>
-							<form.AppField name="addressFrom">
-								{(field) => <field.DateInput label={t("employees.fields.validFrom")} isRequired />}
-							</form.AppField>
+							<div className="grid gap-4 sm:grid-cols-[12rem_1fr]">
+								<form.AppField name="postalCode">
+									{(field) => (
+										<field.TextInput label={t("employees.fields.postalCode")} isRequired />
+									)}
+								</form.AppField>
+								<form.AppField name="city">
+									{(field) => <field.TextInput label={t("employees.fields.city")} isRequired />}
+								</form.AppField>
+							</div>
+							<div className="grid gap-4 sm:grid-cols-2">
+								<form.AppField name="addressFrom">
+									{(field) => (
+										<field.DateInput label={t("employees.fields.validFrom")} isRequired />
+									)}
+								</form.AppField>
+							</div>
 						</>
 					)}
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
+				{isWizard && step > 0 ? (
+					<Button variant="tertiary" onPress={() => setStep(step - 1)}>
+						{t("common.back")}
+					</Button>
+				) : null}
 				<form.Subscribe selector={(state) => state.isSubmitting}>
 					{(isSubmitting) => (
 						<Button type="submit" form={formId} isPending={isSubmitting}>
-							{t("common.save")}
+							{isLastStep ? t("common.save") : t("common.continue")}
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

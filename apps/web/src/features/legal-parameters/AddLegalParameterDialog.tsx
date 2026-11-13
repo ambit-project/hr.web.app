@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -7,7 +7,7 @@ import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useAddLegalParameter } from "./legalParametersQueries";
 
-export type AddLegalParameterDrawerHandle = { open: (code?: string) => void };
+export type AddLegalParameterDialogHandle = { open: (code?: string) => void };
 
 const schema = z.object({
 	code: text({ required: true, max: 100 }).regex(/^\s*[a-z0-9]+(\.[a-z0-9]+)*\s*$/, "invalid"),
@@ -18,19 +18,19 @@ const schema = z.object({
 
 const FIELDS = ["code", "value", "validFrom", "source"] as const;
 
-export const AddLegalParameterDrawer = forwardRef<AddLegalParameterDrawerHandle>(
-	function AddLegalParameterDrawer(_props, ref) {
+export const AddLegalParameterDialog = forwardRef<AddLegalParameterDialogHandle>(
+	function AddLegalParameterDialog(_props, ref) {
 		const [code, setCode] = useState<string | null>(null);
 		useImperativeHandle(ref, () => ({ open: (value) => setCode(value ?? "") }), []);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={code !== null} onOpenChange={(open) => !open && setCode(null)}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={code !== null} onOpenChange={(open) => !open && setCode(null)}>
+					<Modal.Container scroll="inside">
 						{code !== null ? <AddForm code={code} onDone={() => setCode(null)} /> : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -65,11 +65,11 @@ function AddForm({ code, onDone }: { code: string; onDone: () => void }) {
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>{t("legalParameters.add.title")}</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>{t("legalParameters.add.title")}</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<p className="mb-4 text-sm text-muted">{t("legalParameters.add.hint")}</p>
 				<form
 					id={formId}
@@ -83,22 +83,24 @@ function AddForm({ code, onDone }: { code: string; onDone: () => void }) {
 					<form.AppField name="code">
 						{(field) => <field.TextInput label={t("legalParameters.fields.code")} isRequired />}
 					</form.AppField>
-					<form.AppField name="value">
-						{(field) => <field.TextInput label={t("legalParameters.fields.value")} isRequired />}
-					</form.AppField>
-					<form.AppField name="validFrom">
-						{(field) => (
-							<field.DateInput label={t("legalParameters.fields.validFrom")} isRequired />
-						)}
-					</form.AppField>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<form.AppField name="value">
+							{(field) => <field.TextInput label={t("legalParameters.fields.value")} isRequired />}
+						</form.AppField>
+						<form.AppField name="validFrom">
+							{(field) => (
+								<field.DateInput label={t("legalParameters.fields.validFrom")} isRequired />
+							)}
+						</form.AppField>
+					</div>
 					<form.AppField name="source">
 						{(field) => (
 							<field.TextInput label={t("legalParameters.fields.source")} isRequired multiline />
 						)}
 					</form.AppField>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -109,7 +111,7 @@ function AddForm({ code, onDone }: { code: string; onDone: () => void }) {
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

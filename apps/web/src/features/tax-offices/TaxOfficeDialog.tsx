@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useCreateTaxOffice, useUpdateTaxOffice } from "./taxOfficesQueries";
 
-export type TaxOfficeDrawerHandle = {
+export type TaxOfficeDialogHandle = {
 	create: () => void;
 	edit: (office: ListTaxOfficesItem) => void;
 };
@@ -23,8 +23,8 @@ const schema = z.object({
 
 const FIELDS = ["code", "name"] as const;
 
-export const TaxOfficeDrawer = forwardRef<TaxOfficeDrawerHandle>(
-	function TaxOfficeDrawer(_props, ref) {
+export const TaxOfficeDialog = forwardRef<TaxOfficeDialogHandle>(
+	function TaxOfficeDialog(_props, ref) {
 		const [target, setTarget] = useState<Target | null>(null);
 		useImperativeHandle(
 			ref,
@@ -36,13 +36,13 @@ export const TaxOfficeDrawer = forwardRef<TaxOfficeDrawerHandle>(
 		);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+					<Modal.Container scroll="inside">
 						{target ? <TaxOfficeForm target={target} onDone={() => setTarget(null)} /> : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -89,15 +89,15 @@ function TaxOfficeForm({ target, onDone }: { target: Target; onDone: () => void 
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{office
 						? t("taxOffices.edit.title", { code: office.code })
 						: t("taxOffices.create.title")}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
@@ -121,8 +121,8 @@ function TaxOfficeForm({ target, onDone }: { target: Target; onDone: () => void 
 						</form.AppField>
 					) : null}
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -133,7 +133,7 @@ function TaxOfficeForm({ target, onDone }: { target: Target; onDone: () => void 
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

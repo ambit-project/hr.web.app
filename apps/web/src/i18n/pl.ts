@@ -30,6 +30,8 @@ export const pl = {
 			"Ktoś zmienił te dane w międzyczasie. Lista została odświeżona — wprowadź zmianę jeszcze raz.",
 		edit: "Edytuj",
 		actions: "Akcje",
+		back: "Wstecz",
+		continue: "Dalej",
 		yes: "tak",
 		no: "nie",
 	},
@@ -251,6 +253,7 @@ export const pl = {
 			account: "Konto",
 			reads: "Odczyty",
 		},
+		wizard: { person: "Dane osobowe" },
 		create: { title: "Nowa kartoteka", created: "Założono kartotekę." },
 		edit: { title: "Edycja kartoteki", saved: "Zapisano kartotekę." },
 		delete: {
@@ -304,6 +307,7 @@ export const pl = {
 		onlyVersion: "Nie można usunąć jedynej wersji warunków umowy.",
 	},
 	employments: {
+		wizard: { contract: "Umowa", pay: "Wynagrodzenie", zus: "ZUS i ubezpieczenia" },
 		titleOne: "Umowa {{number}}",
 		empty: "Brak umów.",
 		period: "Okres",

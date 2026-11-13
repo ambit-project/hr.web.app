@@ -3,21 +3,21 @@ import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { EmploymentDrawer, type EmploymentDrawerHandle } from "./EmploymentDrawer";
+import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
 import { employmentsQuery } from "./employmentsQueries";
 import { type ContractType, type EmploymentKind, type EmploymentStatus, formatFte } from "./types";
 
-/** Contracts tab of the employee page: list and the "new contract" drawer. */
+/** Contracts tab of the employee page: list and the "new contract" dialog. */
 export function EmploymentsSection({ employeeId }: { employeeId: string }) {
 	const { t } = useTranslation();
-	const drawer = useRef<EmploymentDrawerHandle>(null);
+	const dialog = useRef<EmploymentDialogHandle>(null);
 	const { data, isPending } = useQuery(employmentsQuery(employeeId));
 
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex gap-2">
-				<Button onPress={() => drawer.current?.create(employeeId)}>
+				<Button onPress={() => dialog.current?.create(employeeId)}>
 					{t("employments.create.title")}
 				</Button>
 			</div>
@@ -85,7 +85,7 @@ export function EmploymentsSection({ employeeId }: { employeeId: string }) {
 					</Table.ScrollContainer>
 				</Table>
 			)}
-			<EmploymentDrawer ref={drawer} />
+			<EmploymentDialog ref={dialog} />
 		</div>
 	);
 }

@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -8,28 +8,28 @@ import { ProblemError } from "#/lib/problem";
 import { useAddEmployeeBankAccount, useCloseEmployeeBankAccount } from "./employeesQueries";
 
 type Mode = "add" | "close";
-export type BankAccountDrawerHandle = { open: (mode: Mode) => void };
+export type BankAccountDialogHandle = { open: (mode: Mode) => void };
 
 const addSchema = z.object({
 	iban: text({ required: true, max: 40 }),
 	date: text({ required: true, max: 10 }),
 });
 
-export const BankAccountDrawer = forwardRef<BankAccountDrawerHandle, { employeeId: string }>(
-	function BankAccountDrawer({ employeeId }, ref) {
+export const BankAccountDialog = forwardRef<BankAccountDialogHandle, { employeeId: string }>(
+	function BankAccountDialog({ employeeId }, ref) {
 		const [mode, setMode] = useState<Mode | null>(null);
 		useImperativeHandle(ref, () => ({ open: setMode }), []);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={mode !== null} onOpenChange={(open) => !open && setMode(null)}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={mode !== null} onOpenChange={(open) => !open && setMode(null)}>
+					<Modal.Container scroll="inside">
 						{mode ? (
 							<BankAccountForm employeeId={employeeId} mode={mode} onDone={() => setMode(null)} />
 						) : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -88,13 +88,13 @@ function BankAccountForm({
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{mode === "add" ? t("employees.bank.add") : t("employees.bank.close")}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<p className="mb-4 text-sm text-muted">
 					{mode === "add" ? t("employees.bank.addHint") : t("employees.bank.closeHint")}
 				</p>
@@ -123,8 +123,8 @@ function BankAccountForm({
 						)}
 					</form.AppField>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -135,7 +135,7 @@ function BankAccountForm({
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

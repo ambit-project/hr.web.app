@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { GetEmploymentResponse } from "#/api/models";
 import { ProblemError } from "#/lib/problem";
-import { EmploymentDrawer, type EmploymentDrawerHandle } from "./EmploymentDrawer";
+import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
 import {
 	employmentQuery,
@@ -29,7 +29,7 @@ export function EmploymentDetailsPage() {
 	const { t } = useTranslation();
 	const { id } = route.useParams();
 	const { data: employment, isPending } = useQuery(employmentQuery(id));
-	const drawer = useRef<EmploymentDrawerHandle>(null);
+	const dialog = useRef<EmploymentDialogHandle>(null);
 
 	if (isPending || !employment) {
 		return <Spinner aria-label={t("common.loading")} />;
@@ -78,8 +78,8 @@ export function EmploymentDetailsPage() {
 				))}
 			</dl>
 			<div className="flex flex-wrap gap-2">
-				<Button onPress={() => drawer.current?.edit(employment)}>{t("common.edit")}</Button>
-				<Button variant="secondary" onPress={() => drawer.current?.terminate(employment)}>
+				<Button onPress={() => dialog.current?.edit(employment)}>{t("common.edit")}</Button>
+				<Button variant="secondary" onPress={() => dialog.current?.terminate(employment)}>
 					{t("employments.terminate.action")}
 				</Button>
 				<DeleteEmploymentButton employment={employment} />
@@ -87,7 +87,7 @@ export function EmploymentDetailsPage() {
 
 			<h2 className="pt-4 text-lg font-semibold">{t("employments.terms.history")}</h2>
 			<div className="flex gap-2">
-				<Button onPress={() => drawer.current?.addTerms(employment)}>
+				<Button onPress={() => dialog.current?.addTerms(employment)}>
 					{t("employments.terms.add")}
 				</Button>
 				{employment.termsHistory.length > 1 ? (
@@ -151,7 +151,7 @@ export function EmploymentDetailsPage() {
 					</Table.Content>
 				</Table.ScrollContainer>
 			</Table>
-			<EmploymentDrawer ref={drawer} />
+			<EmploymentDialog ref={dialog} />
 		</section>
 	);
 }

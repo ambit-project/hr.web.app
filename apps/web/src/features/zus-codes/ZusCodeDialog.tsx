@@ -1,4 +1,4 @@
-import { Button, Drawer, Label, ListBox, Select, toast } from "@heroui/react";
+import { Button, Label, ListBox, Modal, Select, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -9,7 +9,7 @@ import { ProblemError } from "#/lib/problem";
 import { isZusCodeKind, ZUS_CODE_KINDS, ZUS_CODE_PATTERN, type ZusCodeKind } from "./types";
 import { useCreateZusCode, useUpdateZusCode } from "./zusCodesQueries";
 
-export type ZusCodeDrawerHandle = {
+export type ZusCodeDialogHandle = {
 	create: (kind?: ZusCodeKind) => void;
 	edit: (code: ListZusCodesItem) => void;
 };
@@ -36,7 +36,7 @@ const schema = z
 
 const FIELDS = ["kind", "code", "name", "validFrom", "validTo"] as const;
 
-export const ZusCodeDrawer = forwardRef<ZusCodeDrawerHandle>(function ZusCodeDrawer(_props, ref) {
+export const ZusCodeDialog = forwardRef<ZusCodeDialogHandle>(function ZusCodeDialog(_props, ref) {
 	const [target, setTarget] = useState<Target | null>(null);
 	useImperativeHandle(
 		ref,
@@ -48,13 +48,13 @@ export const ZusCodeDrawer = forwardRef<ZusCodeDrawerHandle>(function ZusCodeDra
 	);
 
 	return (
-		<Drawer>
-			<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
-				<Drawer.Content placement="right">
+		<Modal>
+			<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+				<Modal.Container scroll="inside">
 					{target ? <ZusCodeForm target={target} onDone={() => setTarget(null)} /> : null}
-				</Drawer.Content>
-			</Drawer.Backdrop>
-		</Drawer>
+				</Modal.Container>
+			</Modal.Backdrop>
+		</Modal>
 	);
 });
 
@@ -113,15 +113,15 @@ function ZusCodeForm({ target, onDone }: { target: Target; onDone: () => void })
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{existing
 						? t("zusCodes.edit.title", { code: existing.code })
 						: t("zusCodes.create.title")}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
@@ -173,15 +173,17 @@ function ZusCodeForm({ target, onDone }: { target: Target; onDone: () => void })
 					<form.AppField name="name">
 						{(field) => <field.TextInput label={t("zusCodes.fields.name")} isRequired multiline />}
 					</form.AppField>
-					<form.AppField name="validFrom">
-						{(field) => <field.DateInput label={t("zusCodes.fields.validFrom")} isRequired />}
-					</form.AppField>
-					<form.AppField name="validTo">
-						{(field) => <field.DateInput label={t("zusCodes.fields.validTo")} />}
-					</form.AppField>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<form.AppField name="validFrom">
+							{(field) => <field.DateInput label={t("zusCodes.fields.validFrom")} isRequired />}
+						</form.AppField>
+						<form.AppField name="validTo">
+							{(field) => <field.DateInput label={t("zusCodes.fields.validTo")} />}
+						</form.AppField>
+					</div>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -192,7 +194,7 @@ function ZusCodeForm({ target, onDone }: { target: Target; onDone: () => void })
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

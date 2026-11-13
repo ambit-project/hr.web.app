@@ -5,14 +5,14 @@ import { useTranslation } from "react-i18next";
 import type { ListTaxDeclarationsItem } from "#/api/models";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
 import { ProblemError } from "#/lib/problem";
-import { TaxDeclarationDrawer, type TaxDeclarationDrawerHandle } from "./TaxDeclarationDrawer";
+import { TaxDeclarationDialog, type TaxDeclarationDialogHandle } from "./TaxDeclarationDialog";
 import { TaxDeclarationsTable } from "./TaxDeclarationsTable";
 import { taxDeclarationsQuery, useDeleteTaxDeclaration } from "./taxDeclarationsQueries";
 
 /** Tax declarations tab of the employee page (Kadry, Administrator). */
 export function TaxDeclarationsSection({ employeeId }: { employeeId: string }) {
 	const { t } = useTranslation();
-	const drawer = useRef<TaxDeclarationDrawerHandle>(null);
+	const dialog = useRef<TaxDeclarationDialogHandle>(null);
 	const [onlyActive, setOnlyActive] = useState(false);
 	const { data, isPending } = useQuery(taxDeclarationsQuery(employeeId, onlyActive));
 
@@ -20,7 +20,7 @@ export function TaxDeclarationsSection({ employeeId }: { employeeId: string }) {
 		<div className="flex flex-col gap-4">
 			<p className="max-w-3xl text-sm text-muted">{t("taxDeclarations.hint")}</p>
 			<div className="flex flex-wrap items-center gap-4">
-				<Button onPress={() => drawer.current?.create(employeeId)}>
+				<Button onPress={() => dialog.current?.create(employeeId)}>
 					{t("taxDeclarations.create.title")}
 				</Button>
 				<ToggleFilter
@@ -36,7 +36,7 @@ export function TaxDeclarationsSection({ employeeId }: { employeeId: string }) {
 					items={data ?? []}
 					actions={(item) => (
 						<div className="flex gap-2">
-							<Button size="sm" variant="tertiary" onPress={() => drawer.current?.end(item)}>
+							<Button size="sm" variant="tertiary" onPress={() => dialog.current?.end(item)}>
 								{t("taxDeclarations.end.action")}
 							</Button>
 							<DeleteButton item={item} />
@@ -44,7 +44,7 @@ export function TaxDeclarationsSection({ employeeId }: { employeeId: string }) {
 					)}
 				/>
 			)}
-			<TaxDeclarationDrawer ref={drawer} />
+			<TaxDeclarationDialog ref={dialog} />
 		</div>
 	);
 }

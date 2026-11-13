@@ -7,7 +7,7 @@ import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { OptionSelect } from "#/components/ui/OptionSelect";
 import { CompanySelect } from "#/features/companies/CompanySelect";
-import { EmployeeDrawer, type EmployeeDrawerHandle } from "./EmployeeDrawer";
+import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
 import { EMPLOYEES_PAGE_SIZE, employeesQuery } from "./employeesQueries";
 import { EMPLOYEE_STATUSES, type EmployeeStatus } from "./types";
 
@@ -24,7 +24,7 @@ export function EmployeesPage() {
 	const { t } = useTranslation();
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
-	const drawer = useRef<EmployeeDrawerHandle>(null);
+	const dialog = useRef<EmployeeDialogHandle>(null);
 	const { data, isPending } = useQuery(employeesQuery(search));
 
 	const onSearch = useCallback(
@@ -45,7 +45,7 @@ export function EmployeesPage() {
 						<p className="text-sm text-muted">{t("employees.total", { count: data.total })}</p>
 					) : null}
 				</div>
-				<Button onPress={() => drawer.current?.create(search.companyId)}>{t("common.add")}</Button>
+				<Button onPress={() => dialog.current?.create(search.companyId)}>{t("common.add")}</Button>
 			</header>
 
 			<div className="flex flex-wrap items-end gap-4">
@@ -155,7 +155,7 @@ export function EmployeesPage() {
 				/>
 			) : null}
 
-			<EmployeeDrawer ref={drawer} />
+			<EmployeeDialog ref={dialog} />
 		</section>
 	);
 }

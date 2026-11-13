@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useCreateUser, useSetUserPassword, useUpdateUser } from "./usersQueries";
 
-export type UserDrawerHandle = {
+export type UserDialogHandle = {
 	create: () => void;
 	edit: (user: ListUsersItem) => void;
 	password: (user: ListUsersItem) => void;
@@ -17,7 +17,7 @@ export type UserDrawerHandle = {
 type AccountTarget = { mode: "create" } | { mode: "edit"; user: ListUsersItem };
 type Target = AccountTarget | { mode: "password"; user: ListUsersItem };
 
-export const UserDrawer = forwardRef<UserDrawerHandle>(function UserDrawer(_props, ref) {
+export const UserDialog = forwardRef<UserDialogHandle>(function UserDialog(_props, ref) {
 	const [target, setTarget] = useState<Target | null>(null);
 	useImperativeHandle(
 		ref,
@@ -31,17 +31,17 @@ export const UserDrawer = forwardRef<UserDrawerHandle>(function UserDrawer(_prop
 	const close = () => setTarget(null);
 
 	return (
-		<Drawer>
-			<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
-				<Drawer.Content placement="right">
+		<Modal>
+			<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && close()}>
+				<Modal.Container scroll="inside">
 					{target?.mode === "password" ? (
 						<PasswordForm user={target.user} onDone={close} />
 					) : target ? (
 						<AccountForm target={target} onDone={close} />
 					) : null}
-				</Drawer.Content>
-			</Drawer.Backdrop>
-		</Drawer>
+				</Modal.Container>
+			</Modal.Backdrop>
+		</Modal>
 	);
 });
 
@@ -124,11 +124,11 @@ function AccountForm({ target, onDone }: { target: AccountTarget; onDone: () => 
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>{user ? t("users.edit.title") : t("users.create.title")}</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>{user ? t("users.edit.title") : t("users.create.title")}</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
@@ -147,12 +147,16 @@ function AccountForm({ target, onDone }: { target: AccountTarget; onDone: () => 
 							{(field) => <field.TextInput label={t("users.fields.login")} isRequired />}
 						</form.AppField>
 					)}
-					<form.AppField name="displayName">
-						{(field) => <field.TextInput label={t("users.fields.displayName")} isRequired />}
-					</form.AppField>
-					<form.AppField name="email">
-						{(field) => <field.TextInput label={t("users.fields.email")} isRequired type="email" />}
-					</form.AppField>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<form.AppField name="displayName">
+							{(field) => <field.TextInput label={t("users.fields.displayName")} isRequired />}
+						</form.AppField>
+						<form.AppField name="email">
+							{(field) => (
+								<field.TextInput label={t("users.fields.email")} isRequired type="email" />
+							)}
+						</form.AppField>
+					</div>
 					<form.AppField name="roles">
 						{(field) => <field.RolesInput label={t("users.fields.roles")} />}
 					</form.AppField>
@@ -173,8 +177,8 @@ function AccountForm({ target, onDone }: { target: AccountTarget; onDone: () => 
 						</form.AppField>
 					)}
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -185,8 +189,8 @@ function AccountForm({ target, onDone }: { target: AccountTarget; onDone: () => 
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }
 
@@ -215,11 +219,11 @@ function PasswordForm({ user, onDone }: { user: ListUsersItem; onDone: () => voi
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>{t("users.password.title", { login: user.login })}</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>{t("users.password.title", { login: user.login })}</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<p className="mb-4 text-sm text-muted">{t("users.password.hint")}</p>
 				<form
 					id={formId}
@@ -240,8 +244,8 @@ function PasswordForm({ user, onDone }: { user: ListUsersItem; onDone: () => voi
 						)}
 					</form.AppField>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -252,7 +256,7 @@ function PasswordForm({ user, onDone }: { user: ListUsersItem; onDone: () => voi
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

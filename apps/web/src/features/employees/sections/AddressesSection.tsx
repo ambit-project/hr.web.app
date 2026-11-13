@@ -2,19 +2,19 @@ import { Button, EmptyState, Spinner, Table } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { AddressDrawer, type AddressDrawerHandle } from "../AddressDrawer";
+import { AddressDialog, type AddressDialogHandle } from "../AddressDialog";
 import { employeeAddressesQuery } from "../employeesQueries";
 import type { AddressKind } from "../types";
 
 export function AddressesSection({ employeeId }: { employeeId: string }) {
 	const { t } = useTranslation();
-	const drawer = useRef<AddressDrawerHandle>(null);
+	const dialog = useRef<AddressDialogHandle>(null);
 	const { data, isPending } = useQuery(employeeAddressesQuery(employeeId));
 
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex gap-2">
-				<Button onPress={() => drawer.current?.open("residence")}>
+				<Button onPress={() => dialog.current?.open("residence")}>
 					{t("employees.addresses.add")}
 				</Button>
 			</div>
@@ -56,7 +56,7 @@ export function AddressesSection({ employeeId }: { employeeId: string }) {
 					</Table.ScrollContainer>
 				</Table>
 			)}
-			<AddressDrawer ref={drawer} employeeId={employeeId} />
+			<AddressDialog ref={dialog} employeeId={employeeId} />
 		</div>
 	);
 }

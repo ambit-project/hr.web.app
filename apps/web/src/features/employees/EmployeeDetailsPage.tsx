@@ -8,7 +8,7 @@ import { hasRole } from "#/features/auth/session";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
 import { ProblemError } from "#/lib/problem";
-import { EmployeeDrawer, type EmployeeDrawerHandle } from "./EmployeeDrawer";
+import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
 import { employeeQuery, useDeleteEmployee } from "./employeesQueries";
 import { AccountSection } from "./sections/AccountSection";
 import { AddressesSection } from "./sections/AddressesSection";
@@ -101,7 +101,7 @@ export function EmployeeDetailsPage() {
 
 function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 	const { t } = useTranslation();
-	const drawer = useRef<EmployeeDrawerHandle>(null);
+	const dialog = useRef<EmployeeDialogHandle>(null);
 	const remove = useDeleteEmployee();
 	const navigate = useNavigate();
 
@@ -153,7 +153,7 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 				))}
 			</dl>
 			<div className="flex gap-2">
-				<Button onPress={() => drawer.current?.edit(employee)}>{t("common.edit")}</Button>
+				<Button onPress={() => dialog.current?.edit(employee)}>{t("common.edit")}</Button>
 				<AlertDialog>
 					<Button variant="danger-soft">{t("employees.delete.action")}</Button>
 					<AlertDialog.Backdrop>
@@ -179,7 +179,7 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 					</AlertDialog.Backdrop>
 				</AlertDialog>
 			</div>
-			<EmployeeDrawer ref={drawer} />
+			<EmployeeDialog ref={dialog} />
 		</div>
 	);
 }

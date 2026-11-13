@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useCreatePosition, useUpdatePosition } from "./positionsQueries";
 
-export type PositionDrawerHandle = {
+export type PositionDialogHandle = {
 	create: () => void;
 	edit: (position: ListPositionsItem) => void;
 };
@@ -23,8 +23,8 @@ const schema = z.object({
 
 const FIELDS = ["name", "description"] as const;
 
-export const PositionDrawer = forwardRef<PositionDrawerHandle>(
-	function PositionDrawer(_props, ref) {
+export const PositionDialog = forwardRef<PositionDialogHandle>(
+	function PositionDialog(_props, ref) {
 		const [target, setTarget] = useState<Target | null>(null);
 		useImperativeHandle(
 			ref,
@@ -36,13 +36,13 @@ export const PositionDrawer = forwardRef<PositionDrawerHandle>(
 		);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+					<Modal.Container scroll="inside">
 						{target ? <PositionForm target={target} onDone={() => setTarget(null)} /> : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -95,13 +95,13 @@ function PositionForm({ target, onDone }: { target: Target; onDone: () => void }
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{position ? t("positions.edit.title") : t("positions.create.title")}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
@@ -123,8 +123,8 @@ function PositionForm({ target, onDone }: { target: Target; onDone: () => void }
 						</form.AppField>
 					) : null}
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -135,7 +135,7 @@ function PositionForm({ target, onDone }: { target: Target; onDone: () => void }
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

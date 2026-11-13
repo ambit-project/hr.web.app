@@ -1,4 +1,4 @@
-import { Button, Drawer, Label, ListBox, Select, toast } from "@heroui/react";
+import { Button, Label, ListBox, Modal, Select, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import { ProblemError } from "#/lib/problem";
 import { useAddEmployeeAddress } from "./employeesQueries";
 import { ADDRESS_KINDS, type AddressKind } from "./types";
 
-export type AddressDrawerHandle = { open: (kind: AddressKind) => void };
+export type AddressDialogHandle = { open: (kind: AddressKind) => void };
 
 const schema = z.object({
 	kind: z.enum(ADDRESS_KINDS),
@@ -20,21 +20,21 @@ const schema = z.object({
 
 const FIELDS = ["kind", "street", "postalCode", "city", "validFrom"] as const;
 
-export const AddressDrawer = forwardRef<AddressDrawerHandle, { employeeId: string }>(
-	function AddressDrawer({ employeeId }, ref) {
+export const AddressDialog = forwardRef<AddressDialogHandle, { employeeId: string }>(
+	function AddressDialog({ employeeId }, ref) {
 		const [kind, setKind] = useState<AddressKind | null>(null);
 		useImperativeHandle(ref, () => ({ open: setKind }), []);
 
 		return (
-			<Drawer>
-				<Drawer.Backdrop isOpen={kind !== null} onOpenChange={(open) => !open && setKind(null)}>
-					<Drawer.Content placement="right">
+			<Modal>
+				<Modal.Backdrop isOpen={kind !== null} onOpenChange={(open) => !open && setKind(null)}>
+					<Modal.Container scroll="inside">
 						{kind ? (
 							<AddressForm employeeId={employeeId} kind={kind} onDone={() => setKind(null)} />
 						) : null}
-					</Drawer.Content>
-				</Drawer.Backdrop>
-			</Drawer>
+					</Modal.Container>
+				</Modal.Backdrop>
+			</Modal>
 		);
 	},
 );
@@ -72,11 +72,11 @@ function AddressForm({
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>{t("employees.addresses.add")}</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>{t("employees.addresses.add")}</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<p className="mb-4 text-sm text-muted">{t("employees.addresses.hint")}</p>
 				<form
 					id={formId}
@@ -118,18 +118,20 @@ function AddressForm({
 					<form.AppField name="street">
 						{(field) => <field.TextInput label={t("employees.fields.street")} isRequired />}
 					</form.AppField>
-					<form.AppField name="postalCode">
-						{(field) => <field.TextInput label={t("employees.fields.postalCode")} isRequired />}
-					</form.AppField>
-					<form.AppField name="city">
-						{(field) => <field.TextInput label={t("employees.fields.city")} isRequired />}
-					</form.AppField>
+					<div className="grid gap-4 sm:grid-cols-[12rem_1fr]">
+						<form.AppField name="postalCode">
+							{(field) => <field.TextInput label={t("employees.fields.postalCode")} isRequired />}
+						</form.AppField>
+						<form.AppField name="city">
+							{(field) => <field.TextInput label={t("employees.fields.city")} isRequired />}
+						</form.AppField>
+					</div>
 					<form.AppField name="validFrom">
 						{(field) => <field.DateInput label={t("employees.fields.validFrom")} isRequired />}
 					</form.AppField>
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -140,7 +142,7 @@ function AddressForm({
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }

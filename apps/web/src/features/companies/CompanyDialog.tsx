@@ -1,4 +1,4 @@
-import { Button, Drawer, toast } from "@heroui/react";
+import { Button, Modal, toast } from "@heroui/react";
 import { forwardRef, useId, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -10,7 +10,7 @@ import { applyFieldErrors } from "#/forms/serverErrors";
 import { ProblemError } from "#/lib/problem";
 import { useCreateCompany, useUpdateCompany } from "./companiesQueries";
 
-export type CompanyDrawerHandle = {
+export type CompanyDialogHandle = {
 	create: () => void;
 	edit: (company: ListCompaniesItem) => void;
 };
@@ -45,7 +45,7 @@ const EMPTY: Values = {
 
 type Target = { mode: "create" } | { mode: "edit"; company: ListCompaniesItem };
 
-export const CompanyDrawer = forwardRef<CompanyDrawerHandle>(function CompanyDrawer(_props, ref) {
+export const CompanyDialog = forwardRef<CompanyDialogHandle>(function CompanyDialog(_props, ref) {
 	const [target, setTarget] = useState<Target | null>(null);
 	useImperativeHandle(
 		ref,
@@ -57,13 +57,13 @@ export const CompanyDrawer = forwardRef<CompanyDrawerHandle>(function CompanyDra
 	);
 
 	return (
-		<Drawer>
-			<Drawer.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
-				<Drawer.Content placement="right">
+		<Modal>
+			<Modal.Backdrop isOpen={target !== null} onOpenChange={(open) => !open && setTarget(null)}>
+				<Modal.Container scroll="inside">
 					{target ? <CompanyForm target={target} onDone={() => setTarget(null)} /> : null}
-				</Drawer.Content>
-			</Drawer.Backdrop>
-		</Drawer>
+				</Modal.Container>
+			</Modal.Backdrop>
+		</Modal>
 	);
 });
 
@@ -114,13 +114,13 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 	});
 
 	return (
-		<Drawer.Dialog>
-			<Drawer.Header>
-				<Drawer.Heading>
+		<Modal.Dialog className="form-dialog">
+			<Modal.Header>
+				<Modal.Heading>
 					{target.mode === "create" ? t("companies.create.title") : t("companies.edit.title")}
-				</Drawer.Heading>
-			</Drawer.Header>
-			<Drawer.Body>
+				</Modal.Heading>
+			</Modal.Header>
+			<Modal.Body>
 				<form
 					id={formId}
 					className="flex flex-col gap-4"
@@ -130,10 +130,20 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 						void form.handleSubmit();
 					}}
 				>
-					{FIELDS.map((name) => (
-						<form.AppField key={name} name={name}>
-							{(field) => <field.TextInput label={t(`companies.fields.${name}`)} isRequired />}
-						</form.AppField>
+					{/* Long texts take the whole width; short identifiers and the postal code sit in pairs. */}
+					{(
+						[["shortName"], ["name"], ["nip", "regon"], ["street"], ["postalCode", "city"]] as const
+					).map((row) => (
+						<div
+							key={row.join("-")}
+							className={row.length > 1 ? "grid gap-4 sm:grid-cols-2" : undefined}
+						>
+							{row.map((name) => (
+								<form.AppField key={name} name={name}>
+									{(field) => <field.TextInput label={t(`companies.fields.${name}`)} isRequired />}
+								</form.AppField>
+							))}
+						</div>
 					))}
 					<form.Field name="taxOfficeId">
 						{(field) => {
@@ -157,8 +167,8 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 						</form.AppField>
 					) : null}
 				</form>
-			</Drawer.Body>
-			<Drawer.Footer>
+			</Modal.Body>
+			<Modal.Footer>
 				<Button slot="close" variant="secondary">
 					{t("common.cancel")}
 				</Button>
@@ -169,8 +179,8 @@ function CompanyForm({ target, onDone }: { target: Target; onDone: () => void })
 						</Button>
 					)}
 				</form.Subscribe>
-			</Drawer.Footer>
-		</Drawer.Dialog>
+			</Modal.Footer>
+		</Modal.Dialog>
 	);
 }
 

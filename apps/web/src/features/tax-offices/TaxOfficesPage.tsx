@@ -7,7 +7,7 @@ import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
 import { hasRole } from "#/features/auth/session";
-import { TaxOfficeDrawer, type TaxOfficeDrawerHandle } from "./TaxOfficeDrawer";
+import { TaxOfficeDialog, type TaxOfficeDialogHandle } from "./TaxOfficeDialog";
 import { TAX_OFFICES_PAGE_SIZE, taxOfficesQuery } from "./taxOfficesQueries";
 
 const route = getRouteApi("/tax-offices/");
@@ -19,7 +19,7 @@ export function TaxOfficesPage() {
 	const { me } = route.useRouteContext();
 	// Only hides buttons that would end in 403; the database checks the role.
 	const canEdit = hasRole(me, "administrator");
-	const drawer = useRef<TaxOfficeDrawerHandle>(null);
+	const dialog = useRef<TaxOfficeDialogHandle>(null);
 	const { data, isPending } = useQuery(taxOfficesQuery(search));
 
 	const onSearch = useCallback(
@@ -39,7 +39,7 @@ export function TaxOfficesPage() {
 					<p className="text-sm text-muted">{t("taxOffices.hint")}</p>
 				</div>
 				{canEdit ? (
-					<Button onPress={() => drawer.current?.create()}>{t("common.add")}</Button>
+					<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
 				) : null}
 			</header>
 
@@ -96,7 +96,7 @@ export function TaxOfficesPage() {
 												<Button
 													size="sm"
 													variant="ghost"
-													onPress={() => drawer.current?.edit(office)}
+													onPress={() => dialog.current?.edit(office)}
 												>
 													{t("common.edit")}
 												</Button>
@@ -123,7 +123,7 @@ export function TaxOfficesPage() {
 				/>
 			) : null}
 
-			{canEdit ? <TaxOfficeDrawer ref={drawer} /> : null}
+			{canEdit ? <TaxOfficeDialog ref={dialog} /> : null}
 		</section>
 	);
 }

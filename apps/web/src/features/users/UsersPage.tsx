@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ListSearch } from "#/components/table/ListSearch";
 import { Pager } from "#/components/table/Pager";
 import type { Role } from "#/features/auth/auth.functions";
-import { UserDrawer, type UserDrawerHandle } from "./UserDrawer";
+import { UserDialog, type UserDialogHandle } from "./UserDialog";
 import { USERS_PAGE_SIZE, usersQuery } from "./usersQueries";
 
 const route = getRouteApi("/users/");
@@ -15,7 +15,7 @@ export function UsersPage() {
 	const { t } = useTranslation();
 	const search = route.useSearch();
 	const navigate = route.useNavigate();
-	const drawer = useRef<UserDrawerHandle>(null);
+	const dialog = useRef<UserDialogHandle>(null);
 	const { data, isPending } = useQuery(usersQuery(search));
 
 	const onSearch = useCallback(
@@ -28,7 +28,7 @@ export function UsersPage() {
 		<section className="flex flex-col gap-4">
 			<header className="flex flex-wrap items-center justify-between gap-3">
 				<h1 className="text-2xl font-semibold">{t("users.title")}</h1>
-				<Button onPress={() => drawer.current?.create()}>{t("common.add")}</Button>
+				<Button onPress={() => dialog.current?.create()}>{t("common.add")}</Button>
 			</header>
 
 			<ListSearch
@@ -88,14 +88,14 @@ export function UsersPage() {
 												<Button
 													size="sm"
 													variant="ghost"
-													onPress={() => drawer.current?.edit(user)}
+													onPress={() => dialog.current?.edit(user)}
 												>
 													{t("common.edit")}
 												</Button>
 												<Button
 													size="sm"
 													variant="ghost"
-													onPress={() => drawer.current?.password(user)}
+													onPress={() => dialog.current?.password(user)}
 												>
 													{t("users.password.action")}
 												</Button>
@@ -122,7 +122,7 @@ export function UsersPage() {
 				/>
 			) : null}
 
-			<UserDrawer ref={drawer} />
+			<UserDialog ref={dialog} />
 		</section>
 	);
 }
