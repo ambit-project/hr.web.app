@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuditIndexRouteImport } from './routes/audit/index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar/index'
 import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
+import { Route as ConsentDocumentsIdRouteImport } from './routes/consent-documents/$id'
 import { Route as EmployeesIndexRouteImport } from './routes/employees/index'
 import { Route as EmployeesIdRouteImport } from './routes/employees/$id'
 import { Route as EmploymentsIdRouteImport } from './routes/employments/$id'
@@ -25,10 +26,15 @@ import { Route as PayComponentsIndexRouteImport } from './routes/pay-components/
 import { Route as PayrollEntriesIdRouteImport } from './routes/payroll-entries/$id'
 import { Route as PayrollsIndexRouteImport } from './routes/payrolls/index'
 import { Route as PayrollsIdRouteImport } from './routes/payrolls/$id'
+import { Route as PayslipsEntryIdRouteImport } from './routes/payslips/$entryId'
+import { Route as Pit11IndexRouteImport } from './routes/pit11/index'
 import { Route as PositionsIndexRouteImport } from './routes/positions/index'
 import { Route as PpkIndexRouteImport } from './routes/ppk/index'
+import { Route as TaxFormsIdRouteImport } from './routes/tax-forms/$id'
 import { Route as TaxOfficesIndexRouteImport } from './routes/tax-offices/index'
+import { Route as TaxSummaryIndexRouteImport } from './routes/tax-summary/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as WageCardsEmployeeIdRouteImport } from './routes/wage-cards/$employeeId'
 import { Route as ZusCodesIndexRouteImport } from './routes/zus-codes/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +65,11 @@ const CalendarIndexRoute = CalendarIndexRouteImport.update({
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
   id: '/companies/',
   path: '/companies/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsentDocumentsIdRoute = ConsentDocumentsIdRouteImport.update({
+  id: '/consent-documents/$id',
+  path: '/consent-documents/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployeesIndexRoute = EmployeesIndexRouteImport.update({
@@ -111,6 +122,16 @@ const PayrollsIdRoute = PayrollsIdRouteImport.update({
   path: '/payrolls/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PayslipsEntryIdRoute = PayslipsEntryIdRouteImport.update({
+  id: '/payslips/$entryId',
+  path: '/payslips/$entryId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Pit11IndexRoute = Pit11IndexRouteImport.update({
+  id: '/pit11/',
+  path: '/pit11/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PositionsIndexRoute = PositionsIndexRouteImport.update({
   id: '/positions/',
   path: '/positions/',
@@ -121,14 +142,29 @@ const PpkIndexRoute = PpkIndexRouteImport.update({
   path: '/ppk/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaxFormsIdRoute = TaxFormsIdRouteImport.update({
+  id: '/tax-forms/$id',
+  path: '/tax-forms/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaxOfficesIndexRoute = TaxOfficesIndexRouteImport.update({
   id: '/tax-offices/',
   path: '/tax-offices/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaxSummaryIndexRoute = TaxSummaryIndexRouteImport.update({
+  id: '/tax-summary/',
+  path: '/tax-summary/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UsersIndexRoute = UsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WageCardsEmployeeIdRoute = WageCardsEmployeeIdRouteImport.update({
+  id: '/wage-cards/$employeeId',
+  path: '/wage-cards/$employeeId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ZusCodesIndexRoute = ZusCodesIndexRouteImport.update({
@@ -141,10 +177,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/health': typeof HealthRoute
   '/login': typeof LoginRoute
+  '/consent-documents/$id': typeof ConsentDocumentsIdRoute
   '/employees/$id': typeof EmployeesIdRoute
   '/employments/$id': typeof EmploymentsIdRoute
   '/payroll-entries/$id': typeof PayrollEntriesIdRoute
   '/payrolls/$id': typeof PayrollsIdRoute
+  '/payslips/$entryId': typeof PayslipsEntryIdRoute
+  '/tax-forms/$id': typeof TaxFormsIdRoute
+  '/wage-cards/$employeeId': typeof WageCardsEmployeeIdRoute
   '/audit/': typeof AuditIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/companies/': typeof CompaniesIndexRoute
@@ -154,9 +194,11 @@ export interface FileRoutesByFullPath {
   '/my/': typeof MyIndexRoute
   '/pay-components/': typeof PayComponentsIndexRoute
   '/payrolls/': typeof PayrollsIndexRoute
+  '/pit11/': typeof Pit11IndexRoute
   '/positions/': typeof PositionsIndexRoute
   '/ppk/': typeof PpkIndexRoute
   '/tax-offices/': typeof TaxOfficesIndexRoute
+  '/tax-summary/': typeof TaxSummaryIndexRoute
   '/users/': typeof UsersIndexRoute
   '/zus-codes/': typeof ZusCodesIndexRoute
 }
@@ -164,10 +206,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/health': typeof HealthRoute
   '/login': typeof LoginRoute
+  '/consent-documents/$id': typeof ConsentDocumentsIdRoute
   '/employees/$id': typeof EmployeesIdRoute
   '/employments/$id': typeof EmploymentsIdRoute
   '/payroll-entries/$id': typeof PayrollEntriesIdRoute
   '/payrolls/$id': typeof PayrollsIdRoute
+  '/payslips/$entryId': typeof PayslipsEntryIdRoute
+  '/tax-forms/$id': typeof TaxFormsIdRoute
+  '/wage-cards/$employeeId': typeof WageCardsEmployeeIdRoute
   '/audit': typeof AuditIndexRoute
   '/calendar': typeof CalendarIndexRoute
   '/companies': typeof CompaniesIndexRoute
@@ -177,9 +223,11 @@ export interface FileRoutesByTo {
   '/my': typeof MyIndexRoute
   '/pay-components': typeof PayComponentsIndexRoute
   '/payrolls': typeof PayrollsIndexRoute
+  '/pit11': typeof Pit11IndexRoute
   '/positions': typeof PositionsIndexRoute
   '/ppk': typeof PpkIndexRoute
   '/tax-offices': typeof TaxOfficesIndexRoute
+  '/tax-summary': typeof TaxSummaryIndexRoute
   '/users': typeof UsersIndexRoute
   '/zus-codes': typeof ZusCodesIndexRoute
 }
@@ -188,10 +236,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/health': typeof HealthRoute
   '/login': typeof LoginRoute
+  '/consent-documents/$id': typeof ConsentDocumentsIdRoute
   '/employees/$id': typeof EmployeesIdRoute
   '/employments/$id': typeof EmploymentsIdRoute
   '/payroll-entries/$id': typeof PayrollEntriesIdRoute
   '/payrolls/$id': typeof PayrollsIdRoute
+  '/payslips/$entryId': typeof PayslipsEntryIdRoute
+  '/tax-forms/$id': typeof TaxFormsIdRoute
+  '/wage-cards/$employeeId': typeof WageCardsEmployeeIdRoute
   '/audit/': typeof AuditIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/companies/': typeof CompaniesIndexRoute
@@ -201,9 +253,11 @@ export interface FileRoutesById {
   '/my/': typeof MyIndexRoute
   '/pay-components/': typeof PayComponentsIndexRoute
   '/payrolls/': typeof PayrollsIndexRoute
+  '/pit11/': typeof Pit11IndexRoute
   '/positions/': typeof PositionsIndexRoute
   '/ppk/': typeof PpkIndexRoute
   '/tax-offices/': typeof TaxOfficesIndexRoute
+  '/tax-summary/': typeof TaxSummaryIndexRoute
   '/users/': typeof UsersIndexRoute
   '/zus-codes/': typeof ZusCodesIndexRoute
 }
@@ -213,10 +267,14 @@ export interface FileRouteTypes {
     | '/'
     | '/health'
     | '/login'
+    | '/consent-documents/$id'
     | '/employees/$id'
     | '/employments/$id'
     | '/payroll-entries/$id'
     | '/payrolls/$id'
+    | '/payslips/$entryId'
+    | '/tax-forms/$id'
+    | '/wage-cards/$employeeId'
     | '/audit/'
     | '/calendar/'
     | '/companies/'
@@ -226,9 +284,11 @@ export interface FileRouteTypes {
     | '/my/'
     | '/pay-components/'
     | '/payrolls/'
+    | '/pit11/'
     | '/positions/'
     | '/ppk/'
     | '/tax-offices/'
+    | '/tax-summary/'
     | '/users/'
     | '/zus-codes/'
   fileRoutesByTo: FileRoutesByTo
@@ -236,10 +296,14 @@ export interface FileRouteTypes {
     | '/'
     | '/health'
     | '/login'
+    | '/consent-documents/$id'
     | '/employees/$id'
     | '/employments/$id'
     | '/payroll-entries/$id'
     | '/payrolls/$id'
+    | '/payslips/$entryId'
+    | '/tax-forms/$id'
+    | '/wage-cards/$employeeId'
     | '/audit'
     | '/calendar'
     | '/companies'
@@ -249,9 +313,11 @@ export interface FileRouteTypes {
     | '/my'
     | '/pay-components'
     | '/payrolls'
+    | '/pit11'
     | '/positions'
     | '/ppk'
     | '/tax-offices'
+    | '/tax-summary'
     | '/users'
     | '/zus-codes'
   id:
@@ -259,10 +325,14 @@ export interface FileRouteTypes {
     | '/'
     | '/health'
     | '/login'
+    | '/consent-documents/$id'
     | '/employees/$id'
     | '/employments/$id'
     | '/payroll-entries/$id'
     | '/payrolls/$id'
+    | '/payslips/$entryId'
+    | '/tax-forms/$id'
+    | '/wage-cards/$employeeId'
     | '/audit/'
     | '/calendar/'
     | '/companies/'
@@ -272,9 +342,11 @@ export interface FileRouteTypes {
     | '/my/'
     | '/pay-components/'
     | '/payrolls/'
+    | '/pit11/'
     | '/positions/'
     | '/ppk/'
     | '/tax-offices/'
+    | '/tax-summary/'
     | '/users/'
     | '/zus-codes/'
   fileRoutesById: FileRoutesById
@@ -283,10 +355,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HealthRoute: typeof HealthRoute
   LoginRoute: typeof LoginRoute
+  ConsentDocumentsIdRoute: typeof ConsentDocumentsIdRoute
   EmployeesIdRoute: typeof EmployeesIdRoute
   EmploymentsIdRoute: typeof EmploymentsIdRoute
   PayrollEntriesIdRoute: typeof PayrollEntriesIdRoute
   PayrollsIdRoute: typeof PayrollsIdRoute
+  PayslipsEntryIdRoute: typeof PayslipsEntryIdRoute
+  TaxFormsIdRoute: typeof TaxFormsIdRoute
+  WageCardsEmployeeIdRoute: typeof WageCardsEmployeeIdRoute
   AuditIndexRoute: typeof AuditIndexRoute
   CalendarIndexRoute: typeof CalendarIndexRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
@@ -296,9 +372,11 @@ export interface RootRouteChildren {
   MyIndexRoute: typeof MyIndexRoute
   PayComponentsIndexRoute: typeof PayComponentsIndexRoute
   PayrollsIndexRoute: typeof PayrollsIndexRoute
+  Pit11IndexRoute: typeof Pit11IndexRoute
   PositionsIndexRoute: typeof PositionsIndexRoute
   PpkIndexRoute: typeof PpkIndexRoute
   TaxOfficesIndexRoute: typeof TaxOfficesIndexRoute
+  TaxSummaryIndexRoute: typeof TaxSummaryIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   ZusCodesIndexRoute: typeof ZusCodesIndexRoute
 }
@@ -345,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/companies'
       fullPath: '/companies/'
       preLoaderRoute: typeof CompaniesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consent-documents/$id': {
+      id: '/consent-documents/$id'
+      path: '/consent-documents/$id'
+      fullPath: '/consent-documents/$id'
+      preLoaderRoute: typeof ConsentDocumentsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employees/': {
@@ -417,6 +502,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PayrollsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payslips/$entryId': {
+      id: '/payslips/$entryId'
+      path: '/payslips/$entryId'
+      fullPath: '/payslips/$entryId'
+      preLoaderRoute: typeof PayslipsEntryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pit11/': {
+      id: '/pit11/'
+      path: '/pit11'
+      fullPath: '/pit11/'
+      preLoaderRoute: typeof Pit11IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/positions/': {
       id: '/positions/'
       path: '/positions'
@@ -431,6 +530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PpkIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tax-forms/$id': {
+      id: '/tax-forms/$id'
+      path: '/tax-forms/$id'
+      fullPath: '/tax-forms/$id'
+      preLoaderRoute: typeof TaxFormsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tax-offices/': {
       id: '/tax-offices/'
       path: '/tax-offices'
@@ -438,11 +544,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaxOfficesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tax-summary/': {
+      id: '/tax-summary/'
+      path: '/tax-summary'
+      fullPath: '/tax-summary/'
+      preLoaderRoute: typeof TaxSummaryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/users/': {
       id: '/users/'
       path: '/users'
       fullPath: '/users/'
       preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wage-cards/$employeeId': {
+      id: '/wage-cards/$employeeId'
+      path: '/wage-cards/$employeeId'
+      fullPath: '/wage-cards/$employeeId'
+      preLoaderRoute: typeof WageCardsEmployeeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/zus-codes/': {
@@ -459,10 +579,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HealthRoute: HealthRoute,
   LoginRoute: LoginRoute,
+  ConsentDocumentsIdRoute: ConsentDocumentsIdRoute,
   EmployeesIdRoute: EmployeesIdRoute,
   EmploymentsIdRoute: EmploymentsIdRoute,
   PayrollEntriesIdRoute: PayrollEntriesIdRoute,
   PayrollsIdRoute: PayrollsIdRoute,
+  PayslipsEntryIdRoute: PayslipsEntryIdRoute,
+  TaxFormsIdRoute: TaxFormsIdRoute,
+  WageCardsEmployeeIdRoute: WageCardsEmployeeIdRoute,
   AuditIndexRoute: AuditIndexRoute,
   CalendarIndexRoute: CalendarIndexRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
@@ -472,9 +596,11 @@ const rootRouteChildren: RootRouteChildren = {
   MyIndexRoute: MyIndexRoute,
   PayComponentsIndexRoute: PayComponentsIndexRoute,
   PayrollsIndexRoute: PayrollsIndexRoute,
+  Pit11IndexRoute: Pit11IndexRoute,
   PositionsIndexRoute: PositionsIndexRoute,
   PpkIndexRoute: PpkIndexRoute,
   TaxOfficesIndexRoute: TaxOfficesIndexRoute,
+  TaxSummaryIndexRoute: TaxSummaryIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
   ZusCodesIndexRoute: ZusCodesIndexRoute,
 }

@@ -236,3 +236,131 @@ a.text-link,
 	background: repeating-linear-gradient(-45deg, #ffd24d 0 14px, #ffc61a 14px 28px);
 	border-bottom: 1px solid #c99700;
 }
+
+/* Dokumenty do wydruku (010): pasek, karta wynagrodzeń, PIT-11, zgoda na potrącenie. Na ekranie kartka na tle
+   strony, w druku sama kartka — bez menu, górnego paska, paska wersji deweloperskiej i przycisków (.no-print). */
+.print-doc {
+	max-width: 210mm;
+	padding: 12mm;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-strong);
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.print-doc h1 {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.print-doc h2 {
+	margin-top: 10px;
+	padding: 3px 6px;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	background: var(--color-table-head);
+	border: 1px solid var(--color-border-strong);
+}
+
+.print-doc table {
+	width: 100%;
+	border-collapse: collapse;
+	font-variant-numeric: tabular-nums;
+}
+
+.print-doc th,
+.print-doc td {
+	padding: 2px 6px;
+	border: 1px solid var(--color-border-strong);
+	vertical-align: top;
+}
+
+.print-doc th {
+	font-size: 10px;
+	font-weight: 600;
+	text-align: left;
+	background: var(--color-table-head);
+}
+
+.print-doc__field {
+	padding: 2px 6px;
+	border: 1px solid var(--color-border-strong);
+}
+
+.print-doc__label {
+	font-size: 10px;
+	color: var(--color-text-secondary);
+}
+
+.print-doc__value {
+	min-height: 1.2em;
+	font-weight: 600;
+}
+
+/* Numer pola formularza (jak „29.” na PIT-11). */
+.print-doc__pos {
+	font-size: 9px;
+	color: var(--color-text-secondary);
+}
+
+.print-doc__signature {
+	margin-top: 40px;
+	padding-top: 4px;
+	border-top: 1px dotted var(--color-border-strong);
+	font-size: 10px;
+	text-align: center;
+}
+
+@media print {
+	@page {
+		size: A4;
+		margin: 10mm;
+	}
+
+	.app-sidebar,
+	.app-topbar,
+	.dev-banner,
+	.no-print {
+		/* biome-ignore lint/complexity/noImportantStyles: druk musi przykryć style układu i motywu */
+		display: none !important;
+	}
+
+	body {
+		/* biome-ignore lint/complexity/noImportantStyles: druk musi przykryć style układu i motywu */
+		background: white !important;
+		/* biome-ignore lint/complexity/noImportantStyles: druk musi przykryć style układu i motywu */
+		color: black !important;
+	}
+
+	main {
+		/* biome-ignore lint/complexity/noImportantStyles: druk musi przykryć style układu i motywu */
+		padding: 0 !important;
+	}
+
+	.print-doc {
+		max-width: none;
+		padding: 0;
+		border: 0;
+		background: white;
+		color: black;
+	}
+
+	.print-doc h2,
+	.print-doc th {
+		background: none;
+	}
+
+	/* Kartka jest biała także w ciemnym motywie: tekst i linie bez kolorów motywu. */
+	.print-doc,
+	.print-doc * {
+		/* biome-ignore lint/complexity/noImportantStyles: klasy kolorów (text-muted) mają pierwszeństwo przed dziedziczeniem */
+		color: black !important;
+		/* biome-ignore lint/complexity/noImportantStyles: linie tabel i pól z tokenów motywu */
+		border-color: gray !important;
+	}
+
+	.print-doc tr {
+		break-inside: avoid;
+	}
+}

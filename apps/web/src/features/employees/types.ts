@@ -5,6 +5,7 @@ export const EMPLOYEE_TABS = [
 	"taxDeclarations",
 	"deductions",
 	"ppk",
+	"documents",
 	"addresses",
 	"bank",
 	"account",

@@ -2,6 +2,7 @@ import { Card, Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { PayslipsTable, TaxFormsTable } from "#/features/documents/DocumentTables";
 import { ConsentsTable } from "#/features/pay-components/ConsentsTable";
 import { consentsQuery } from "#/features/pay-components/payComponentsQueries";
 import { MyPpk } from "#/features/ppk/MyPpk";
@@ -35,7 +36,19 @@ export function MyPage() {
 									<Card.Title>{profile.companyShortName}</Card.Title>
 								</Card.Header>
 								<Card.Content className="flex flex-col gap-3">
-									<h2 className="text-sm font-semibold">{t("my.taxDeclarations")}</h2>
+									<h2 className="text-sm font-semibold">{t("my.payslips")}</h2>
+									<PayslipsTable
+										employeeId={profile.employeeId}
+										mine
+										empty={t("documents.my.payslipsEmpty")}
+									/>
+									<h2 className="pt-2 text-sm font-semibold">{t("my.taxForms")}</h2>
+									<TaxFormsTable
+										employeeId={profile.employeeId}
+										mine
+										empty={t("documents.my.taxFormsEmpty")}
+									/>
+									<h2 className="pt-2 text-sm font-semibold">{t("my.taxDeclarations")}</h2>
 									<ProfileDeclarations employeeId={profile.employeeId} />
 									<h2 className="pt-2 text-sm font-semibold">{t("my.deductionConsents")}</h2>
 									<ProfileConsents employeeId={profile.employeeId} />
@@ -45,7 +58,6 @@ export function MyPage() {
 									<MyAbsences employeeId={profile.employeeId} year={year} />
 									<h2 className="pt-2 text-sm font-semibold">{t("my.ppk")}</h2>
 									<MyPpk employeeId={profile.employeeId} />
-									<p className="text-sm text-muted">{t("my.empty")}</p>
 								</Card.Content>
 							</Card>
 						))}

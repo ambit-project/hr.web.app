@@ -13,6 +13,8 @@ type NavItem = {
 		| "/employees"
 		| "/ppk"
 		| "/payrolls"
+		| "/pit11"
+		| "/tax-summary"
 		| "/calendar"
 		| "/holidays"
 		| "/positions"
@@ -28,6 +30,8 @@ type NavItem = {
 		| "app.nav.employees"
 		| "app.nav.ppk"
 		| "app.nav.payrolls"
+		| "app.nav.pit11"
+		| "app.nav.taxSummary"
 		| "app.nav.calendar"
 		| "app.nav.holidays"
 		| "app.nav.positions"
@@ -66,7 +70,11 @@ const NAV: NavSection[] = [
 	},
 	{
 		label: "app.nav.pay",
-		items: [{ to: "/payrolls", label: "app.nav.payrolls", roles: STAFF }],
+		items: [
+			{ to: "/payrolls", label: "app.nav.payrolls", roles: STAFF },
+			{ to: "/pit11", label: "app.nav.pit11", roles: STAFF },
+			{ to: "/tax-summary", label: "app.nav.taxSummary", roles: STAFF },
+		],
 	},
 	{
 		label: "app.nav.workTime",

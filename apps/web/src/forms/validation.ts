@@ -34,7 +34,8 @@ export type ValidationCode =
 	| "tooYoung"
 	| "tooOld"
 	| "requestMissing"
-	| "notCycleYear";
+	| "notCycleYear"
+	| "noPayments";
 
 /** Text field rules mirrored from the database routine; the database stays the authority. */
 export function text({ required, max }: { required?: boolean; max: number }) {

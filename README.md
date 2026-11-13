@@ -30,8 +30,7 @@ grupę spółek. Żeby było to łatwe:
 
 Gotowe moduły: 001 Platforma (logowanie, role, spółki, parametry prawne, użytkownicy, audyt), 002 Słowniki,
 003 Pracownicy (kartoteki, akronim, szyfrowany PESEL, kopiowanie między spółkami), 004 Zatrudnienie, 005 Oświadczenia
-podatkowe, 006 Składniki, zgody i zajęcia, 007 Czas pracy i nieobecności, 008 PPK, 009 Listy płac. Kolejne: 010
-Dokumenty i PIT (`PRODUCT.md`).
+podatkowe, 006 Składniki, zgody i zajęcia, 007 Czas pracy i nieobecności, 008 PPK, 009 Listy płac, 010 Dokumenty i PIT (`PRODUCT.md`).
 
 ## Stack
 

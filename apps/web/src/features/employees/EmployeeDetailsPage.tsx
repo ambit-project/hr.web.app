@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { GetEmployeeResponse } from "#/api/models";
 import { EditButton } from "#/components/ui/AddButton";
 import { hasRole } from "#/features/auth/session";
+import { EmployeeDocumentsSection } from "#/features/documents/DocumentTables";
 import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { DeductionsSection } from "#/features/pay-components/DeductionsSection";
 import { EmployeePpkSection } from "#/features/ppk/EmployeePpkSection";
@@ -93,6 +94,9 @@ export function EmployeeDetailsPage() {
 						employeeId={employee.id}
 						name={`${employee.lastName} ${employee.firstName}`}
 					/>
+				</Tabs.Panel>
+				<Tabs.Panel id="documents" className="pt-4">
+					<EmployeeDocumentsSection employeeId={employee.id} />
 				</Tabs.Panel>
 				<Tabs.Panel id="addresses" className="pt-4">
 					<AddressesSection employeeId={employee.id} />

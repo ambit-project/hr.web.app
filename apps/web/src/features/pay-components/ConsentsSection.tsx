@@ -1,9 +1,11 @@
 import { Button, Spinner, toast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { Printer } from "lucide-react";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { ListConsentsItem } from "#/api/models";
-import { AddButton, EditButton } from "#/components/ui/AddButton";
+import { AddButton, EditButton, IconButton } from "#/components/ui/AddButton";
 import { ConfirmDelete } from "#/components/ui/ConfirmDelete";
 import { onActionError } from "#/forms/feedback";
 import { ConsentDialog, type ConsentDialogHandle } from "./ConsentDialog";
@@ -18,6 +20,7 @@ export function ConsentsSection({ employeeId }: { employeeId: string }) {
 	const endDialog = useRef<EndDateDialogHandle>(null);
 	const end = useEndConsent();
 	const { data, isPending } = useQuery(consentsQuery(employeeId));
+	const navigate = useNavigate();
 
 	const onEnd = (item: ListConsentsItem) =>
 		endDialog.current?.open({
@@ -47,6 +50,15 @@ export function ConsentsSection({ employeeId }: { employeeId: string }) {
 					items={data ?? []}
 					actions={(item) => (
 						<div className="flex items-center gap-2">
+							<IconButton
+								icon={Printer}
+								size="sm"
+								variant="ghost"
+								label={t("documents.consent.open")}
+								onPress={() =>
+									void navigate({ to: "/consent-documents/$id", params: { id: item.id } })
+								}
+							/>
 							{item.signedAt === null ? (
 								<EditButton
 									size="sm"

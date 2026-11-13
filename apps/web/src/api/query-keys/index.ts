@@ -1,5 +1,6 @@
 export { auditKeys } from "./auditKeys";
 export { companiesKeys } from "./companiesKeys";
+export { documentsKeys } from "./documentsKeys";
 export { employeesKeys } from "./employeesKeys";
 export { employmentsKeys } from "./employmentsKeys";
 export { legalParametersKeys } from "./legalParametersKeys";

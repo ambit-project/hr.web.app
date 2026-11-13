@@ -5988,6 +5988,861 @@
         }
       }
     },
+    "/api/payroll-entries/{id}/payslip": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetPayslip",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayslipResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employees/{id}/payslips": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "ListEmployeePayslips",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayslipsItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employees/{id}/wage-card/{year}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetWageCard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetWageCardItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employees/{id}/tax-forms": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "ListEmployeeTaxForms",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListTaxFormsItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{id}/pit11/{year}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "ListPit11",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPit11Item"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GeneratePit11",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratePit11Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratePit11Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{id}/tax-summary/{year}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetTaxSummary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetTaxSummaryItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tax-forms/{id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetTaxForm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTaxFormResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tax-forms/{id}/xml": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetTaxFormXml",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tax-forms/{id}/sent": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "MarkTaxFormSent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkTaxFormSentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tax-forms/{id}/given": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "MarkTaxFormGiven",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkTaxFormGivenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deduction-consents/{id}/document": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "operationId": "GetConsentDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetConsentDocumentResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/my/{employeeId}/payslips": {
+      "get": {
+        "tags": [
+          "MyDocuments"
+        ],
+        "operationId": "ListMyPayslips",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayslipsItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/my/{employeeId}/tax-forms": {
+      "get": {
+        "tags": [
+          "MyDocuments"
+        ],
+        "operationId": "ListMyTaxForms",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListTaxFormsItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/legal-parameters": {
       "get": {
         "tags": [
@@ -9067,6 +9922,33 @@
           }
         }
       },
+      "GeneratePit11Request": {
+        "required": [
+          "employeeId"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "GeneratePit11Response": {
+        "required": [
+          "changed"
+        ],
+        "type": "object",
+        "properties": {
+          "changed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "GetCalendarMonthDay": {
         "required": [
           "date",
@@ -9128,6 +10010,95 @@
           },
           "missingDesignated": {
             "type": "boolean"
+          }
+        }
+      },
+      "GetConsentDocumentResponse": {
+        "required": [
+          "id",
+          "companyName",
+          "companyNip",
+          "companyAddress",
+          "employeeId",
+          "employeeNumber",
+          "firstName",
+          "lastName",
+          "employeeAddress",
+          "componentCode",
+          "componentName",
+          "deductionCategory",
+          "monthlyAmount",
+          "validFrom",
+          "validTo",
+          "signedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "companyNip": {
+            "type": "string"
+          },
+          "companyAddress": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "employeeAddress": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "componentCode": {
+            "type": "string"
+          },
+          "componentName": {
+            "type": "string"
+          },
+          "deductionCategory": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "monthlyAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "signedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },
@@ -10805,6 +11776,173 @@
           }
         }
       },
+      "GetPayslipLine": {
+        "required": [
+          "seq",
+          "code",
+          "side",
+          "name",
+          "base",
+          "rate",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "base": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetPayslipResponse": {
+        "required": [
+          "id",
+          "payrollId",
+          "payrollNumber",
+          "payrollKind",
+          "periodFrom",
+          "periodTo",
+          "paymentDate",
+          "companyName",
+          "companyNip",
+          "companyAddress",
+          "employeeId",
+          "employeeNumber",
+          "firstName",
+          "lastName",
+          "employmentNumber",
+          "contractKind",
+          "gross",
+          "net",
+          "payout",
+          "zusBase",
+          "healthBase",
+          "taxBase",
+          "costs",
+          "lines"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payrollId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payrollNumber": {
+            "type": "string"
+          },
+          "payrollKind": {
+            "type": "string"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "companyNip": {
+            "type": "string"
+          },
+          "companyAddress": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "employmentNumber": {
+            "type": "string"
+          },
+          "contractKind": {
+            "type": "string"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
+          },
+          "zusBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "healthBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "costs": {
+            "type": "number",
+            "format": "double"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetPayslipLine"
+            }
+          }
+        }
+      },
       "GetPpkReenrollmentItem": {
         "required": [
           "employeeId",
@@ -10898,6 +12036,244 @@
             "items": {
               "$ref": "#/components/schemas/GetPpkReenrollmentItem"
             }
+          }
+        }
+      },
+      "GetTaxFormResponse": {
+        "required": [
+          "id",
+          "companyId",
+          "employeeId",
+          "employeeNumber",
+          "year",
+          "version",
+          "purpose",
+          "pesel",
+          "generatedAt",
+          "sentToOfficeAt",
+          "givenToEmployeeAt",
+          "givenHow",
+          "isLatest",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "companyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "pesel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sentToOfficeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenToEmployeeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenHow": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isLatest": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Pit11Data"
+          }
+        }
+      },
+      "GetTaxSummaryItem": {
+        "required": [
+          "month",
+          "employmentAdvances",
+          "mandateAdvances",
+          "specificWorkAdvances",
+          "advancesTotal",
+          "advancePeople",
+          "mandateFlatTax",
+          "specificWorkFlatTax",
+          "flatTaxTotal",
+          "flatTaxPeople"
+        ],
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "employmentAdvances": {
+            "type": "number",
+            "format": "double"
+          },
+          "mandateAdvances": {
+            "type": "number",
+            "format": "double"
+          },
+          "specificWorkAdvances": {
+            "type": "number",
+            "format": "double"
+          },
+          "advancesTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "advancePeople": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mandateFlatTax": {
+            "type": "number",
+            "format": "double"
+          },
+          "specificWorkFlatTax": {
+            "type": "number",
+            "format": "double"
+          },
+          "flatTaxTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "flatTaxPeople": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetWageCardItem": {
+        "required": [
+          "entryId",
+          "payrollNumber",
+          "payrollKind",
+          "periodFrom",
+          "paymentDate",
+          "employmentNumber",
+          "contractKind",
+          "gross",
+          "zusBase",
+          "employeeContributions",
+          "employerContributions",
+          "health",
+          "costs",
+          "pit",
+          "ppkEmployee",
+          "ppkEmployer",
+          "deductions",
+          "net",
+          "payout"
+        ],
+        "type": "object",
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payrollNumber": {
+            "type": "string"
+          },
+          "payrollKind": {
+            "type": "string"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "employmentNumber": {
+            "type": "string"
+          },
+          "contractKind": {
+            "type": "string"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "zusBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "employeeContributions": {
+            "type": "number",
+            "format": "double"
+          },
+          "employerContributions": {
+            "type": "number",
+            "format": "double"
+          },
+          "health": {
+            "type": "number",
+            "format": "double"
+          },
+          "costs": {
+            "type": "number",
+            "format": "double"
+          },
+          "pit": {
+            "type": "number",
+            "format": "double"
+          },
+          "ppkEmployee": {
+            "type": "number",
+            "format": "double"
+          },
+          "ppkEmployer": {
+            "type": "number",
+            "format": "double"
+          },
+          "deductions": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -12485,6 +13861,59 @@
           }
         }
       },
+      "ListPayslipsItem": {
+        "required": [
+          "id",
+          "payrollNumber",
+          "payrollKind",
+          "periodFrom",
+          "paymentDate",
+          "employmentNumber",
+          "contractKind",
+          "gross",
+          "net",
+          "payout"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payrollNumber": {
+            "type": "string"
+          },
+          "payrollKind": {
+            "type": "string"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "employmentNumber": {
+            "type": "string"
+          },
+          "contractKind": {
+            "type": "string"
+          },
+          "gross": {
+            "type": "number",
+            "format": "double"
+          },
+          "net": {
+            "type": "number",
+            "format": "double"
+          },
+          "payout": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
       "ListPayTypesItem": {
         "required": [
           "optimaId",
@@ -12584,6 +14013,95 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "ListPit11Item": {
+        "required": [
+          "employeeId",
+          "employeeNumber",
+          "firstName",
+          "lastName",
+          "taxFormId",
+          "version",
+          "purpose",
+          "generatedAt",
+          "sentToOfficeAt",
+          "givenToEmployeeAt",
+          "givenHow",
+          "missing",
+          "isOutdated"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNumber": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "taxFormId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "purpose": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "generatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "sentToOfficeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenToEmployeeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenHow": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isOutdated": {
+            "type": "boolean"
           }
         }
       },
@@ -12801,6 +14319,60 @@
           }
         }
       },
+      "ListTaxFormsItem": {
+        "required": [
+          "id",
+          "year",
+          "version",
+          "purpose",
+          "generatedAt",
+          "sentToOfficeAt",
+          "givenToEmployeeAt",
+          "givenHow"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sentToOfficeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenToEmployeeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenHow": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ListTaxOfficesItem": {
         "required": [
           "id",
@@ -12942,6 +14514,43 @@
         "type": "object",
         "properties": {
           "informedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "MarkTaxFormGivenRequest": {
+        "required": [
+          "givenAt",
+          "givenHow"
+        ],
+        "type": "object",
+        "properties": {
+          "givenAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "givenHow": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MarkTaxFormSentRequest": {
+        "required": [
+          "sentAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sentAt": {
             "type": [
               "null",
               "string"
@@ -13268,6 +14877,167 @@
           },
           "details": {
             "$ref": "#/components/schemas/JsonObject"
+          }
+        }
+      },
+      "Pit11Address": {
+        "required": [
+          "country",
+          "street",
+          "house",
+          "apartment",
+          "city",
+          "postalCode"
+        ],
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "house": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "apartment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "city": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          }
+        }
+      },
+      "Pit11Data": {
+        "required": [
+          "form",
+          "year",
+          "payer",
+          "taxpayer",
+          "taxOffice",
+          "positions",
+          "payrollIds",
+          "entryCount",
+          "missing"
+        ],
+        "type": "object",
+        "properties": {
+          "form": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "payer": {
+            "$ref": "#/components/schemas/Pit11Payer"
+          },
+          "taxpayer": {
+            "$ref": "#/components/schemas/Pit11Taxpayer"
+          },
+          "taxOffice": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Pit11TaxOffice"
+              }
+            ]
+          },
+          "positions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "payrollIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "entryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Pit11Payer": {
+        "required": [
+          "nip",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "nip": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Pit11TaxOffice": {
+        "required": [
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Pit11Taxpayer": {
+        "required": [
+          "firstName",
+          "lastName",
+          "birthDate",
+          "address"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "address": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Pit11Address"
+              }
+            ]
           }
         }
       },
@@ -14158,6 +15928,9 @@
       "name": "DeductionConsents"
     },
     {
+      "name": "Documents"
+    },
+    {
       "name": "Employees"
     },
     {
@@ -14180,6 +15953,9 @@
     },
     {
       "name": "MandateHours"
+    },
+    {
+      "name": "MyDocuments"
     },
     {
       "name": "MyPpk"
