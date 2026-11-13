@@ -85,7 +85,8 @@ migracja tego nie robi, bo nie zna klucza): `scripts/dev-pesel.sh`.
 | `Auth__BootstrapAdmin__Login`, `__Email`, `__Password`, `__DisplayName` | — | pierwszy Administrator przy starcie, gdy żadnego nie ma |
 | `Data__EncryptionKey` | — (wymagany) | klucz szyfrowania PESEL i rachunku, co najmniej 32 znaki ([ADR-0009](docs/adr/0009-personal-data-encryption.md)); utrata = utrata tych danych. Compose: `HR_DATA_KEY` w `infrastructure/.env`, przy `dotnet run` ustaw zmienną sam |
 
-Front: `HR_API_URL` (adres API widziany z serwera frontu, domyślnie `http://localhost:6300`).
+Front: `HR_API_URL` (adres API widziany z serwera frontu, domyślnie `http://localhost:6300`), `HR_API_TIMEOUT_MS`
+(limit czasu wywołania API, domyślnie 30000 — po nim użytkownik widzi „serwer chwilowo nie odpowiada”).
 Migracje produkcyjne: Liquibase z `--contexts=main` (bez kont deweloperskich).
 
 ## Build, testy, format

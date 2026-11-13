@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { GetEmployeeResponse } from "#/api/models";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useLinkEmployeeAccount, useUnlinkEmployeeAccount } from "../employeesQueries";
 
 export function AccountSection({ employee }: { employee: GetEmployeeResponse }) {
@@ -27,7 +27,7 @@ export function AccountSection({ employee }: { employee: GetEmployeeResponse }) 
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, ["account"] as const)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},
@@ -48,7 +48,7 @@ export function AccountSection({ employee }: { employee: GetEmployeeResponse }) 
 						onPress={() =>
 							unlink.mutate(employee.id, {
 								onSuccess: () => toast.success(t("employees.account.unlinked")),
-								onError: () => toast.danger(t("common.serverError")),
+								onError: () => toast.danger(serverErrorText(t)),
 							})
 						}
 					>

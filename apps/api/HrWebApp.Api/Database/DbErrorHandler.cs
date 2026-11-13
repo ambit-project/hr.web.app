@@ -34,6 +34,7 @@ public sealed class DbErrorHandler(IProblemDetailsService problemDetails) : IExc
                 ? new HttpValidationProblemDetails(ParseFieldErrors(postgres.Hint))
                 : new Microsoft.AspNetCore.Mvc.ProblemDetails();
         problem.Status = status.Value;
+        problem.Title = DbErrors.Title(sqlState);
         problem.Extensions["code"] = sqlState;
         if (sqlState != DbErrors.Validation && !string.IsNullOrWhiteSpace(postgres.Hint))
         {

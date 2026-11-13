@@ -2,7 +2,7 @@ import { toast } from "@heroui/react";
 import type { useTranslation } from "react-i18next";
 import type { ValidationCode } from "#/forms/validation";
 import type { pl } from "#/i18n/pl";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 
 type TranslateFn = ReturnType<typeof useTranslation>["t"];
 type Reason = keyof typeof pl.reasons;
@@ -24,7 +24,7 @@ export function onSaveError(
 	onDone: () => void,
 ) {
 	if (!(error instanceof ProblemError)) {
-		toast.danger(t("common.serverError"));
+		toast.danger(serverErrorText(t));
 		return;
 	}
 	const { problem } = error;
@@ -42,7 +42,7 @@ export function onSaveError(
 	toast.danger(
 		code
 			? t(`validation.${code as ValidationCode}`, { defaultValue: t("validation.unknown") })
-			: t("common.serverError"),
+			: serverErrorText(t),
 	);
 }
 
@@ -55,6 +55,6 @@ export function onActionError(t: TranslateFn, error: unknown) {
 			toast.warning(t("common.conflict"));
 		}
 	} else {
-		toast.danger(t("common.serverError"));
+		toast.danger(serverErrorText(t));
 	}
 }

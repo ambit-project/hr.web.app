@@ -12,7 +12,7 @@ import { ZusCodePicker } from "#/features/zus-codes/ZusCodePicker";
 import { useAppForm } from "#/forms";
 import { errorCode } from "#/forms/errors";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import {
 	useAddEmploymentTerms,
 	useCreateEmployment,
@@ -258,7 +258,7 @@ function EmploymentForm({ target, onDone }: { target: FormTarget; onDone: () => 
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				} else {
 					// The error may sit on a field of a step that is not shown — go to the first such step.
 					const steps = stepsFor(target.mode, value.kind);
@@ -660,7 +660,7 @@ function TerminateForm({
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, ["terminatedAt"] as const)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

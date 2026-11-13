@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ListPositionsItem } from "#/api/models";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useCreatePosition, useUpdatePosition } from "./positionsQueries";
 
 export type PositionDialogHandle = {
@@ -93,7 +93,7 @@ function PositionForm({ target, onDone }: { target: Target; onDone: () => void }
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

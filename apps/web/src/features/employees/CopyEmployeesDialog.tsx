@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CopyEmployeesResponse } from "#/api/models";
 import { CompanySelect } from "#/features/companies/CompanySelect";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useCopyEmployees } from "./employeesQueries";
 import type { EmployeeStatus } from "./types";
 
@@ -71,7 +71,7 @@ function CopyForm({ target, onDone }: { target: Target; onDone: () => void }) {
 						problem.problem.errors?.employeeIds?.[0])
 					: undefined;
 			if (code) setError(t(`validation.${code}`, t("validation.unknown")));
-			else toast.danger(t("common.serverError"));
+			else toast.danger(serverErrorText(t));
 		}
 	};
 

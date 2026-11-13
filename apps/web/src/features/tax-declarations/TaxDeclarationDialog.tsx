@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ListTaxDeclarationsItem } from "#/api/models";
 import { useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useCreateTaxDeclaration, useEndTaxDeclaration } from "./taxDeclarationsQueries";
 import {
 	allowedMonths,
@@ -68,7 +68,7 @@ function onSaveError(
 		toast.warning(t("common.conflict"));
 		onDone();
 	} else if (!(error instanceof ProblemError) || !applyErrors(error.problem.errors)) {
-		toast.danger(t("common.serverError"));
+		toast.danger(serverErrorText(t));
 	}
 }
 

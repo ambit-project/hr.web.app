@@ -78,6 +78,7 @@ services:
         condition: service_healthy
     environment:
       HR_API_URL: http://api:8080
+      HR_API_TIMEOUT_MS: "10000"
     ports:
       - "127.0.0.1:${HR_WEB_PORT:-6301}:3000"
 

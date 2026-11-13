@@ -10,7 +10,7 @@ import { EmploymentsSection } from "#/features/employments/EmploymentsSection";
 import { DeductionsSection } from "#/features/pay-components/DeductionsSection";
 import { TaxDeclarationsSection } from "#/features/tax-declarations/TaxDeclarationsSection";
 import { birthDateWithAge } from "#/lib/age";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { EmployeeDialog, type EmployeeDialogHandle } from "./EmployeeDialog";
 import { employeeQuery, useDeleteEmployee } from "./employeesQueries";
 import { AccountSection } from "./sections/AccountSection";
@@ -144,7 +144,7 @@ function DataSection({ employee }: { employee: GetEmployeeResponse }) {
 					? error.problem.reason === "retention"
 						? t("reasons.retention")
 						: t("employees.delete.blocked")
-					: t("common.serverError"),
+					: serverErrorText(t),
 			);
 		}
 	};

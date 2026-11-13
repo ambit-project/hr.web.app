@@ -12,6 +12,18 @@ public static class DbErrors
     /// <summary>Logowanie nieudane (złe dane, blokada, nieaktywne konto) — zwraca API, nie baza.</summary>
     public const string AuthFailed = "U0005";
 
+    /// <summary>Tytuł ProblemDetails; front pokazuje własny tekst po <c>code</c> i <c>reason</c>.</summary>
+    public static string Title(string sqlState) =>
+        sqlState switch
+        {
+            Validation => "Validation failed",
+            NotFound => "Not found",
+            Conflict => "Conflict",
+            Forbidden => "Forbidden",
+            MissingLegalParameter => "Missing legal parameter",
+            _ => "Database error",
+        };
+
     public static int? StatusCode(string sqlState) =>
         sqlState switch
         {

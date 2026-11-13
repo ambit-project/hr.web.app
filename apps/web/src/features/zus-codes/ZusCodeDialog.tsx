@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ListZusCodesItem } from "#/api/models";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { isZusCodeKind, ZUS_CODE_KINDS, ZUS_CODE_PATTERN, type ZusCodeKind } from "./types";
 import { useCreateZusCode, useUpdateZusCode } from "./zusCodesQueries";
 
@@ -111,7 +111,7 @@ function ZusCodeForm({ target, onDone }: { target: Target; onDone: () => void })
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

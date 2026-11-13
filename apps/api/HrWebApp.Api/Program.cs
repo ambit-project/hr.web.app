@@ -1,5 +1,6 @@
 using HrWebApp.Api.Auth;
 using HrWebApp.Api.Common;
+using HrWebApp.Api.Common.Errors;
 using HrWebApp.Api.Database;
 using HrWebApp.Api.Features.Audit;
 using HrWebApp.Api.Features.Companies;
@@ -17,8 +18,22 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiDocument();
-builder.Services.AddProblemDetails();
+
+// Każdy ProblemDetails niesie traceId (sam identyfikator W3C), pod którym błąd jest w logu i w śladach — użytkownik
+// podaje go przy zgłoszeniu (wzór: ambit.es).
+builder.Services.AddProblemDetails(options =>
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Extensions["traceId"] =
+            System.Diagnostics.Activity.Current?.TraceId.ToString()
+            ?? context.HttpContext.TraceIdentifier;
+        context.ProblemDetails.Instance ??= context.HttpContext.Request.Path;
+    }
+);
+
+// Kolejność ma znaczenie: najpierw błędy z rutyn (U…), potem wszystko inne.
 builder.Services.AddExceptionHandler<DbErrorHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHealthChecks();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddSessionAuth(builder.Configuration);
@@ -37,6 +52,9 @@ builder.Services.AddScoped<ListAuditHandler>();
 var app = builder.Build();
 
 app.UseExceptionHandler();
+
+// Puste odpowiedzi błędów (nieznana ścieżka, zła metoda) też jako ProblemDetails.
+app.UseStatusCodePages();
 app.UseAuthentication();
 app.UseAuthorization();
 

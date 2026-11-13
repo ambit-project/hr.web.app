@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ListTaxOfficesItem } from "#/api/models";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useCreateTaxOffice, useUpdateTaxOffice } from "./taxOfficesQueries";
 
 export type TaxOfficeDialogHandle = {
@@ -87,7 +87,7 @@ function TaxOfficeForm({ target, onDone }: { target: Target; onDone: () => void 
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

@@ -68,6 +68,10 @@ export const pl = {
 		taxDeclarations: "Oświadczenia podatkowe",
 		deductionConsents: "Zgody na potrącenia",
 	},
+	errors: {
+		unavailable: "Serwer albo baza danych chwilowo nie odpowiada. Spróbuj ponownie za chwilę.",
+		reference: "Numer zgłoszenia: {{traceId}}.",
+	},
 	validation: {
 		required: "Pole jest wymagane.",
 		maxLength: "Wartość jest za długa.",

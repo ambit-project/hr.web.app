@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useAddEmployeeAddress } from "./employeesQueries";
 import { ADDRESS_KINDS, type AddressKind } from "./types";
 
@@ -70,7 +70,7 @@ function AddressForm({
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { ListTaxDeclarationsItem } from "#/api/models";
 import { ToggleFilter } from "#/components/table/ToggleFilter";
 import { AddButton } from "#/components/ui/AddButton";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { TaxDeclarationDialog, type TaxDeclarationDialogHandle } from "./TaxDeclarationDialog";
 import { TaxDeclarationsTable } from "./TaxDeclarationsTable";
 import { taxDeclarationsQuery, useDeleteTaxDeclaration } from "./taxDeclarationsQueries";
@@ -63,7 +63,7 @@ function DeleteButton({ item }: { item: ListTaxDeclarationsItem }) {
 			if (error instanceof ProblemError && error.problem.status === 409) {
 				toast.warning(t("common.conflict"));
 			} else {
-				toast.danger(t("common.serverError"));
+				toast.danger(serverErrorText(t));
 			}
 		}
 	};

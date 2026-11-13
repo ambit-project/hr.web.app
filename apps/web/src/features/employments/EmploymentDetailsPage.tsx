@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { GetEmploymentResponse } from "#/api/models";
 import { AddButton, EditButton } from "#/components/ui/AddButton";
 import { EmploymentComponentsSection } from "#/features/pay-components/EmploymentComponentsSection";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { EmploymentDialog, type EmploymentDialogHandle } from "./EmploymentDialog";
 import { EmploymentStatusChip } from "./EmploymentStatusChip";
 import {
@@ -217,7 +217,7 @@ function DeleteEmploymentButton({ employment }: { employment: GetEmploymentRespo
 				search: { tab: "employments" },
 			});
 		} catch {
-			toast.danger(t("common.serverError"));
+			toast.danger(serverErrorText(t));
 		}
 	};
 
@@ -243,7 +243,7 @@ function DeleteLastTermsButton({ employment }: { employment: GetEmploymentRespon
 			toast.danger(
 				error instanceof ProblemError && error.problem.reason
 					? t(`reasons.${error.problem.reason}`, t("common.conflict"))
-					: t("common.serverError"),
+					: serverErrorText(t),
 			);
 		}
 	};

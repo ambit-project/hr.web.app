@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ListUsersItem } from "#/api/models";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useCreateUser, useSetUserPassword, useUpdateUser } from "./usersQueries";
 
 export type UserDialogHandle = {
@@ -122,7 +122,7 @@ function AccountForm({ target, onDone }: { target: AccountTarget; onDone: () => 
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, ACCOUNT_FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},
@@ -217,7 +217,7 @@ function PasswordForm({ user, onDone }: { user: ListUsersItem; onDone: () => voi
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, ["password"] as const)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

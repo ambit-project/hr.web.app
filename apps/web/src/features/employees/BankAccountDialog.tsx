@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { text, useAppForm } from "#/forms";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useAddEmployeeBankAccount, useCloseEmployeeBankAccount } from "./employeesQueries";
 
 type Mode = "add" | "close";
@@ -86,7 +86,7 @@ function BankAccountForm({
 					Object.entries(mapped ?? {}).filter(([, codes]) => codes.length > 0),
 				);
 				if (!applyFieldErrors(formApi, known, ["iban", "date"] as const)) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				}
 			}
 		},

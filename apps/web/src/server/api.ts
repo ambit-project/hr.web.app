@@ -5,6 +5,9 @@ import { type AxiosRequestConfig, isAxiosError } from "axios";
 // Server-only: the browser never calls the API directly. Server functions call it with the session token taken
 // from the httpOnly cookie, so the token never reaches JavaScript in the browser.
 const API_URL = process.env.HR_API_URL ?? "http://localhost:6300";
+// Without a limit a call to an API that is down hangs the save forever; after it the person sees "unavailable"
+// (toResult turns a call without an answer into a 503).
+const API_TIMEOUT_MS = Number(process.env.HR_API_TIMEOUT_MS ?? 30_000);
 
 export const SESSION_COOKIE = "hr_session";
 
@@ -13,6 +16,7 @@ export function apiOptions(): AxiosRequestConfig {
 	const token = getCookie(SESSION_COOKIE);
 	return {
 		baseURL: API_URL,
+		timeout: API_TIMEOUT_MS,
 		headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 	};
 }

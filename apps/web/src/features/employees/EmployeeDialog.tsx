@@ -10,7 +10,7 @@ import { TaxOfficePicker } from "#/features/tax-offices/TaxOfficePicker";
 import { text, useAppForm } from "#/forms";
 import { errorCode } from "#/forms/errors";
 import { applyFieldErrors } from "#/forms/serverErrors";
-import { ProblemError } from "#/lib/problem";
+import { ProblemError, serverErrorText } from "#/lib/problem";
 import { useCreateEmployee, useUpdateEmployee } from "./employeesQueries";
 import { peselBirthDate } from "./pesel";
 
@@ -196,7 +196,7 @@ function EmployeeForm({ target, onDone }: { target: Target; onDone: () => void }
 					!(error instanceof ProblemError) ||
 					!applyFieldErrors(formApi, error.problem.errors, FIELDS)
 				) {
-					toast.danger(t("common.serverError"));
+					toast.danger(serverErrorText(t));
 				} else {
 					// The error may sit on a field of a step that is not shown — go to the first such step.
 					setStep((current) => firstStepWithError(STEP_FIELDS, error.problem.errors) ?? current);
