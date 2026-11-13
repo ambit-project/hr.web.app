@@ -1,15 +1,16 @@
 import { Chip, EmptyState, Spinner, Table, toast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { CalendarArrowDown } from "lucide-react";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { ListHolidaysItem } from "#/api/models";
-import { AddButton } from "#/components/ui/AddButton";
+import { AddButton, IconButton } from "#/components/ui/AddButton";
 import { ConfirmDelete } from "#/components/ui/ConfirmDelete";
 import { hasRole } from "#/features/auth/session";
 import { onActionError } from "#/forms/feedback";
 import { HolidayDialog, type HolidayDialogHandle } from "./HolidayDialog";
-import { holidaysQuery, useDeleteHoliday } from "./timeAbsenceQueries";
+import { holidaysQuery, useDeleteHoliday, useFillStatutoryHolidays } from "./timeAbsenceQueries";
 import { currentYear, isoWeekday } from "./types";
 import { YearSelect } from "./YearSelect";
 
@@ -36,10 +37,13 @@ export function HolidaysPage() {
 					<p className="max-w-3xl text-sm text-muted">{t("timeAbsence.holidays.hint")}</p>
 				</div>
 				{canEdit ? (
-					<AddButton
-						label={t("timeAbsence.holidays.add.title")}
-						onPress={() => dialog.current?.create(year)}
-					/>
+					<div className="flex gap-2">
+						<FillStatutory year={year} />
+						<AddButton
+							label={t("timeAbsence.holidays.add.title")}
+							onPress={() => dialog.current?.create(year)}
+						/>
+					</div>
 				) : null}
 			</header>
 			<YearSelect
@@ -93,6 +97,41 @@ export function HolidaysPage() {
 			)}
 			<HolidayDialog ref={dialog} />
 		</section>
+	);
+}
+
+/** The first year of the current statutory list (Wigilia since 2025); earlier years are entered by hand. */
+const STATUTORY_FROM = 2025;
+
+function FillStatutory({ year }: { year: number }) {
+	const { t } = useTranslation();
+	const fill = useFillStatutoryHolidays();
+	const supported = year >= STATUTORY_FROM;
+
+	const onFill = async () => {
+		try {
+			const { added } = await fill.mutateAsync(year);
+			if (added === 0) {
+				toast.info(t("timeAbsence.holidays.statutory.none", { year }));
+			} else {
+				toast.success(t("timeAbsence.holidays.statutory.added", { count: added, year }));
+			}
+		} catch (error) {
+			onActionError(t, error);
+		}
+	};
+
+	return (
+		<IconButton
+			icon={CalendarArrowDown}
+			label={
+				supported
+					? t("timeAbsence.holidays.statutory.action")
+					: t("timeAbsence.holidays.statutory.unsupported", { from: STATUTORY_FROM })
+			}
+			isDisabled={!supported || fill.isPending}
+			onPress={() => void onFill()}
+		/>
 	);
 }
 

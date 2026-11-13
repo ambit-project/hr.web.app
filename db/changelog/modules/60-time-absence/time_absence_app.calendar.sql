@@ -73,6 +73,38 @@ BEGIN
 END;
 $$;
 
+--changeset hr:time_absence_app.holiday_fill_statutory runOnChange:true splitStatements:false
+--comment: Uzupełnienie słownika świętami ustawowymi roku (Administrator; przycisk „Pobierz święta ustawowe”). Dopisuje
+--comment: tylko brakujące daty — wpisy istniejące (także ręczne) zostają bez zmian; każde dodanie w audycie. Zwraca
+--comment: liczbę dodanych. Rok spoza 2000–2100 — year invalid; przed 2025 — U0003 statutoryHolidaysUnsupported.
+CREATE OR REPLACE PROCEDURE time_absence_app.holiday_fill_statutory(IN p_year integer, INOUT p_added integer)
+    LANGUAGE plpgsql
+    SECURITY DEFINER
+    SET search_path = pg_catalog, pg_temp
+AS $$
+DECLARE
+    v_row time_absence.holidays%ROWTYPE;
+BEGIN
+    PERFORM platform.require_role('administrator');
+    IF p_year IS NULL OR p_year NOT BETWEEN 2000 AND 2100 THEN
+        PERFORM platform.fail_validation('{"year": ["invalid"]}');
+    END IF;
+
+    p_added := 0;
+    FOR v_row IN
+        INSERT INTO time_absence.holidays (date, name, created_by)
+        SELECT s.date, s.name, platform.actor_id()
+        FROM time_absence.statutory_holidays(p_year) s
+        ORDER BY s.date
+        ON CONFLICT (date) DO NOTHING
+        RETURNING *
+    LOOP
+        PERFORM platform.audit('holiday', v_row.date::text, 'create', NULL, to_jsonb(v_row));
+        p_added := p_added + 1;
+    END LOOP;
+END;
+$$;
+
 --changeset hr:time_absence_app.calendar_generate runOnChange:true splitStatements:false
 --comment: Kalendarz spółki na rok (R2, R3): pn–pt 8 h, sobota i niedziela wolne, święto 0 h. Zwraca liczbę świąt
 --comment: w sobotę, za które Kadry wyznaczają dzień wolny. Rok z kalendarzem — U0003 calendarExists; rok bez świąt

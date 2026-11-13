@@ -40,6 +40,87 @@ public sealed class TimeAbsenceRoutineTests(DatabaseFixture database)
         );
     }
 
+    [Theory]
+    [InlineData(2026)]
+    [InlineData(2027)]
+    public async Task Statutory_holidays_match_the_dictionary_from_the_act(int year)
+    {
+        // Słownik 2026–2027 z migracji (daty ruchome sprawdzone z kalendarzem) = wyliczenie z ustawy i Wielkanocy.
+        var computed = await AdminAsync<string>(
+            "SELECT string_agg(date || ' ' || name, '; ' ORDER BY date) FROM time_absence.statutory_holidays($1)",
+            year
+        );
+        var dictionary = await AdminAsync<string>(
+            "SELECT string_agg(date || ' ' || name, '; ' ORDER BY date) FROM time_absence.holidays WHERE extract(year FROM date) = $1 AND created_by IS NULL",
+            year
+        );
+
+        Assert.Equal(dictionary, computed);
+        Assert.Equal(14, computed!.Split("; ").Length);
+    }
+
+    [Fact]
+    public async Task Fill_statutory_adds_only_missing_holidays_and_rejects_years_before_2025()
+    {
+        // Rok 2028 (Wielkanoc 16.04) w transakcji wycofanej na końcu — słownik współdzielony przez testy zostaje.
+        await using var connection = await TestDb.ApiAsync(
+            database,
+            await TestDb.DevUserAsync(database, "admin")
+        );
+        await using var transaction = await connection.BeginTransactionAsync();
+        await RunAsync<object>(
+            connection,
+            "CALL time_absence_app.holiday_add(DATE '2028-01-01', 'Nowy Rok — wpis ręczny')",
+            []
+        );
+
+        var added = await RunAsync<int>(
+            connection,
+            "CALL time_absence_app.holiday_fill_statutory(2028, NULL)",
+            []
+        );
+        var again = await RunAsync<int>(
+            connection,
+            "CALL time_absence_app.holiday_fill_statutory(2028, NULL)",
+            []
+        );
+        var movable = await RunAsync<string>(
+            connection,
+            """
+            SELECT string_agg(to_char(date, 'MM-DD'), ',' ORDER BY date) FROM time_absence_app.holiday_list(2028)
+            WHERE date NOT IN (SELECT make_date(2028, m, d) FROM (VALUES (1, 1), (1, 6), (5, 1), (5, 3), (8, 15),
+                (11, 1), (11, 11), (12, 24), (12, 25), (12, 26)) AS f (m, d))
+            """,
+            []
+        );
+        var manual = await RunAsync<string>(
+            connection,
+            "SELECT name FROM time_absence_app.holiday_list(2028) WHERE date = DATE '2028-01-01'",
+            []
+        );
+        var audited = await RunAsync<long>(
+            connection,
+            "SELECT count(*) FROM platform_app.audit_list('holiday', p_limit => 100) WHERE entity_id LIKE '2028-%'",
+            []
+        );
+        await transaction.RollbackAsync();
+
+        var before2025 = await Assert.ThrowsAsync<PostgresException>(() =>
+            AsAsync<int>("admin", "CALL time_absence_app.holiday_fill_statutory(2024, NULL)")
+        );
+        var kadry = await Assert.ThrowsAsync<PostgresException>(() =>
+            AsAsync<int>("kadry", "CALL time_absence_app.holiday_fill_statutory(2028, NULL)")
+        );
+
+        Assert.Equal(13, added);
+        Assert.Equal(0, again);
+        Assert.Equal("04-16,04-17,06-04,06-15", movable);
+        Assert.Equal("Nowy Rok — wpis ręczny", manual);
+        Assert.Equal(14L, audited);
+        Assert.Equal("statutoryHolidaysUnsupported", before2025.Hint);
+        Assert.Equal("U0004", kadry.SqlState);
+    }
+
     [Fact]
     public async Task Designated_day_off_lowers_the_month_and_holidays_stay_holidays()
     {

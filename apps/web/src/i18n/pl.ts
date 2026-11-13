@@ -423,6 +423,8 @@ export const pl = {
 		consentInUse:
 			"Zgoda jest wskazana w składniku umowy na ten okres — najpierw zakończ albo usuń składnik.",
 		calendarExists: "Spółka ma już kalendarz na ten rok.",
+		statutoryHolidaysUnsupported:
+			"Święta ustawowe można pobrać od roku 2025 (obecna lista z Wigilią) — wcześniejsze lata wpisz ręcznie.",
 		holidaysMissing:
 			"W słowniku nie ma świąt tego roku — Administrator musi je najpierw dopisać (Czas pracy → Święta).",
 		calendarMissing:
@@ -898,6 +900,16 @@ export const pl = {
 			saturday: "sobota — dzień wolny do wyznaczenia",
 			empty: "Brak świąt w tym roku — dopisz je, zanim Kadry wygenerują kalendarze.",
 			add: { title: "Nowe święto", added: "Dodano święto {{date}}." },
+			statutory: {
+				action: "Pobierz święta ustawowe tego roku",
+				unsupported:
+					"Święta ustawowe można pobrać od roku {{from}} — wcześniejsze lata wpisz ręcznie",
+				added_one: "Dodano {{count}} święto ustawowe roku {{year}}.",
+				added_few: "Dodano {{count}} święta ustawowe roku {{year}}.",
+				added_many: "Dodano {{count}} świąt ustawowych roku {{year}}.",
+				added_other: "Dodano {{count}} święta ustawowe roku {{year}}.",
+				none: "Słownik ma już wszystkie święta ustawowe roku {{year}}.",
+			},
 			delete: {
 				action: "Usuń",
 				title: "Usunąć święto {{date}}?",

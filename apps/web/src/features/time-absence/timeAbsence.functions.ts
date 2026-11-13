@@ -6,7 +6,12 @@ import {
 	listAbsenceTypes,
 	updateAbsence,
 } from "#/api/endpoints/absences/absences";
-import { addHoliday, deleteHoliday, listHolidays } from "#/api/endpoints/holidays/holidays";
+import {
+	addHoliday,
+	deleteHoliday,
+	fillStatutoryHolidays,
+	listHolidays,
+} from "#/api/endpoints/holidays/holidays";
 import { getLeaveEntitlement, setLeaveEntitlement } from "#/api/endpoints/leave/leave";
 import {
 	addMandateHours,
@@ -48,6 +53,10 @@ export const listHolidaysFn = createServerFn({ method: "GET" })
 export const addHolidayFn = createServerFn({ method: "POST" })
 	.validator((input: AddHolidayRequest) => input)
 	.handler(({ data }) => toResult(() => callApi(() => addHoliday(data, apiOptions()))));
+
+export const fillStatutoryHolidaysFn = createServerFn({ method: "POST" })
+	.validator((year: number) => year)
+	.handler(({ data }) => toResult(() => callApi(() => fillStatutoryHolidays(data, apiOptions()))));
 
 export const deleteHolidayFn = createServerFn({ method: "POST" })
 	.validator((date: string) => date)

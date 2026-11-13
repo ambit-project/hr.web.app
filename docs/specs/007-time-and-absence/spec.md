@@ -20,7 +20,12 @@ chorobowe, zasiłki i dodatki za nadgodziny liczy 009.
 ### Święta i kalendarz
 - **R1.** Słownik świąt ustawowych (data, nazwa) z ustawy o dniach wolnych art. 1 pkt 1 — w tym 24 grudnia od 2025 r.
   Migracja zakłada lata 2026 i 2027 (święta ruchome: Wielkanoc 5.04.2026 / 28.03.2027, Zielone Świątki 24.05 / 16.05,
-  Boże Ciało 4.06 / 27.05). Administrator dopisuje kolejne lata.
+  Boże Ciało 4.06 / 27.05). Administrator dopisuje kolejne lata ręcznie albo przyciskiem **Pobierz święta ustawowe**:
+  system wylicza listę z ustawy (10 dat stałych + Wielkanoc, Poniedziałek Wielkanocny, Zielone Świątki +49 dni,
+  Boże Ciało +60 dni; Wielkanoc algorytmem kalendarza gregoriańskiego) bez zewnętrznego serwisu i dopisuje tylko
+  brakujące daty (istniejące wpisy, także ręczne, zostają; każde dodanie w audycie). Lata przed 2025 (inna lista —
+  bez Wigilii) — `U0003` `statutoryHolidaysUnsupported`, wpis ręczny. Zmiana ustawy wymaga zmiany
+  `time_absence.statutory_holidays` i jej testu.
 - **R2.** Kalendarz spółki na rok (jeden na spółkę i rok, decyzja projektowa — systemy równoważne i zmianowe poza
   zakresem): Kadry go **generują**: poniedziałek–piątek dzień roboczy 8 h, sobota i niedziela wolne (0 h), święto 0 h.
   Generowanie roku, który ma już kalendarz, odrzuca `U0003` `calendarExists`.

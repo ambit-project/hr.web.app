@@ -21,6 +21,12 @@ public static class TimeAbsenceEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status403Forbidden);
         holidays
+            .MapPost("/statutory/{year:int}", FillStatutoryHolidays.Handle)
+            .WithName("FillStatutoryHolidays")
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status409Conflict);
+        holidays
             .MapDelete("/{date}", DeleteHoliday.Handle)
             .WithName("DeleteHoliday")
             .ProducesProblem(StatusCodes.Status403Forbidden)

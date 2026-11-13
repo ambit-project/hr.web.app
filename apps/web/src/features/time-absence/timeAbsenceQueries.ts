@@ -20,6 +20,7 @@ import {
 	deleteHolidayFn,
 	deleteMandateHoursFn,
 	deleteOvertimeFn,
+	fillStatutoryHolidaysFn,
 	generateCalendarFn,
 	getCalendarMonthFn,
 	getCalendarYearFn,
@@ -146,6 +147,13 @@ function useTimeAbsenceMutation<TVariables, TResult>(
 export function useAddHoliday() {
 	return useTimeAbsenceMutation(async (request: AddHolidayRequest) =>
 		unwrap(await addHolidayFn({ data: request })),
+	);
+}
+
+/** Adds the statutory holidays of the year that the dictionary lacks; resolves to how many were added. */
+export function useFillStatutoryHolidays() {
+	return useTimeAbsenceMutation(async (year: number) =>
+		unwrap(await fillStatutoryHolidaysFn({ data: year })),
 	);
 }
 

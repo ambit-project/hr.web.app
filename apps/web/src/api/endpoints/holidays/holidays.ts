@@ -4,7 +4,12 @@
  * hr.web.app API
  * OpenAPI spec version: v1
  */
-import type { AddHolidayRequest, ListHolidaysItem, ListHolidaysParams } from "../../models";
+import type {
+	AddHolidayRequest,
+	FillStatutoryHolidaysResponse,
+	ListHolidaysItem,
+	ListHolidaysParams,
+} from "../../models";
 import type { BodyType } from "../../mutator.ts";
 import { customInstance } from "../../mutator.ts";
 
@@ -33,6 +38,15 @@ export const addHoliday = (
 		options,
 	);
 };
+export const fillStatutoryHolidays = (
+	year: number,
+	options?: SecondParameter<typeof customInstance<FillStatutoryHolidaysResponse>>,
+) => {
+	return customInstance<FillStatutoryHolidaysResponse>(
+		{ url: `/api/holidays/statutory/${year}`, method: "POST" },
+		options,
+	);
+};
 export const deleteHoliday = (
 	date: string,
 	options?: SecondParameter<typeof customInstance<void>>,
@@ -41,4 +55,7 @@ export const deleteHoliday = (
 };
 export type ListHolidaysResult = NonNullable<Awaited<ReturnType<typeof listHolidays>>>;
 export type AddHolidayResult = NonNullable<Awaited<ReturnType<typeof addHoliday>>>;
+export type FillStatutoryHolidaysResult = NonNullable<
+	Awaited<ReturnType<typeof fillStatutoryHolidays>>
+>;
 export type DeleteHolidayResult = NonNullable<Awaited<ReturnType<typeof deleteHoliday>>>;

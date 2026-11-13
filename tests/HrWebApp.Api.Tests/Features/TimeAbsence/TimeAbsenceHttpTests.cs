@@ -169,6 +169,32 @@ public sealed class TimeAbsenceHttpTests(DatabaseFixture database)
     }
 
     [Fact]
+    public async Task Admin_fills_statutory_holidays_and_kadry_get_403()
+    {
+        using var admin = await database.Api.ClientAsAsync("administrator");
+        using var kadry = await database.Api.ClientAsAsync("kadry");
+
+        // Rok 2026 jest już w słowniku z migracji — nic do dodania.
+        var complete = await admin.PostAsync("/api/holidays/statutory/2026", null);
+        var before2025 = await admin.PostAsync("/api/holidays/statutory/2024", null);
+        var forbidden = await kadry.PostAsync("/api/holidays/statutory/2026", null);
+
+        Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
+        Assert.Equal(
+            0,
+            (await complete.Content.ReadFromJsonAsync<JsonElement>())
+                .GetProperty("added")
+                .GetInt32()
+        );
+        Assert.Equal(HttpStatusCode.Conflict, before2025.StatusCode);
+        Assert.Contains(
+            "statutoryHolidaysUnsupported",
+            await before2025.Content.ReadAsStringAsync()
+        );
+        Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
+    }
+
+    [Fact]
     public async Task Pracownik_reads_own_leave_and_absences_and_gets_403_elsewhere()
     {
         using var pracownik = await database.Api.ClientAsAsync("pracownik");

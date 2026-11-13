@@ -399,3 +399,62 @@ BEGIN
     RETURN '{}';
 END;
 $$;
+
+--changeset hr:time_absence.statutory_holidays runOnChange:true splitStatements:false
+--comment: Święta ustawowe roku wyliczone z ustawy o dniach wolnych od pracy (art. 1 pkt 1, t.j. Dz.U. 2025 poz. 296;
+--comment: Wigilia od 1.02.2025 — Dz.U. 2024 poz. 1965): 10 dat stałych i 4 dni od Wielkanocy (niedziela Wielkanocy,
+--comment: +1 poniedziałek, +49 Zielone Świątki, +60 Boże Ciało). Wielkanoc — algorytm Meeusa/Jonesa/Butchera dla
+--comment: kalendarza gregoriańskiego. Obecna lista obowiązuje od 2025 r.; lata wcześniejsze — U0003
+--comment: statutoryHolidaysUnsupported (wpis ręczny).
+CREATE OR REPLACE FUNCTION time_absence.statutory_holidays(p_year integer)
+    RETURNS TABLE (date date, name text)
+    LANGUAGE plpgsql
+    IMMUTABLE
+    SET search_path = pg_catalog, pg_temp
+AS $$
+DECLARE
+    a integer := p_year % 19;
+    b integer := p_year / 100;
+    c integer := p_year % 100;
+    h integer;
+    l integer;
+    m integer;
+    v_easter date;
+BEGIN
+    IF p_year IS NULL OR p_year < 2025 THEN
+        RAISE EXCEPTION 'statutory holidays known from 2025' USING ERRCODE = 'U0003',
+            HINT = 'statutoryHolidaysUnsupported';
+    END IF;
+    h := (19 * a + b - b / 4 - (b - (b + 8) / 25 + 1) / 3 + 15) % 30;
+    l := (32 + 2 * (b % 4) + 2 * (c / 4) - h - c % 4) % 7;
+    m := (a + 11 * h + 22 * l) / 451;
+    v_easter := make_date(p_year, (h + l - 7 * m + 114) / 31, (h + l - 7 * m + 114) % 31 + 1);
+
+    RETURN QUERY
+    SELECT s.date, s.name
+    FROM (
+        SELECT make_date(p_year, v.month, v.day) AS date, v.name
+        FROM (VALUES
+            (1, 1, 'Nowy Rok'),
+            (1, 6, 'Święto Trzech Króli'),
+            (5, 1, 'Święto Państwowe'),
+            (5, 3, 'Święto Narodowe Trzeciego Maja'),
+            (8, 15, 'Wniebowzięcie Najświętszej Maryi Panny'),
+            (11, 1, 'Wszystkich Świętych'),
+            (11, 11, 'Narodowe Święto Niepodległości'),
+            (12, 24, 'Wigilia Bożego Narodzenia'),
+            (12, 25, 'Pierwszy dzień Bożego Narodzenia'),
+            (12, 26, 'Drugi dzień Bożego Narodzenia')
+        ) AS v (month, day, name)
+        UNION ALL
+        SELECT v_easter + v.offset_days, v.name
+        FROM (VALUES
+            (0, 'Pierwszy dzień Wielkiej Nocy'),
+            (1, 'Drugi dzień Wielkiej Nocy'),
+            (49, 'Pierwszy dzień Zielonych Świątek'),
+            (60, 'Boże Ciało')
+        ) AS v (offset_days, name)
+    ) AS s
+    ORDER BY s.date;
+END;
+$$;

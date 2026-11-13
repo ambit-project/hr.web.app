@@ -31,6 +31,24 @@ public static class AddHoliday
     }
 }
 
+public static class FillStatutoryHolidays
+{
+    /// <summary>
+    /// Tylko Administrator. Dopisuje brakujące święta ustawowe roku wyliczone z ustawy (daty stałe i od Wielkanocy);
+    /// istniejące wpisy zostają. Rok przed 2025 → 409 <c>statutoryHolidaysUnsupported</c> (wpis ręczny).
+    /// </summary>
+    public sealed record Response(int Added);
+
+    public static async Task<Ok<Response>> Handle(
+        int year,
+        CalendarHandler handler,
+        CancellationToken cancellationToken
+    ) =>
+        TypedResults.Ok(
+            new Response(await handler.FillStatutoryHolidaysAsync(year, cancellationToken))
+        );
+}
+
 public static class DeleteHoliday
 {
     public static async Task<NoContent> Handle(
@@ -142,6 +160,16 @@ public sealed class CalendarHandler(DbSession db)
         await db.ScalarAsync<object>(
             "CALL time_absence_app.holiday_add($1, $2)",
             [Db.Param(request.Date), Db.Param(request.Name)],
+            cancellationToken
+        );
+
+    public async Task<int> FillStatutoryHolidaysAsync(
+        int year,
+        CancellationToken cancellationToken
+    ) =>
+        await db.ScalarAsync<int>(
+            "CALL time_absence_app.holiday_fill_statutory($1, NULL)",
+            [Db.Param(year)],
             cancellationToken
         );
 
