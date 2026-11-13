@@ -59,7 +59,8 @@ END;
 $$;
 
 --changeset hr:tax_declarations_app.declaration_create runOnChange:true splitStatements:false
---comment: Nowy wpis (R2–R5). Bez końca: noAdvances i returnRelief dostają koniec naturalny (R4).
+--comment: Nowy wpis (R2–R5). Bez końca: noAdvances i returnRelief dostają koniec naturalny (R4). Okres obejmuje
+--comment: datę wypłaty zamkniętej listy płac — U0003 payrollClosed, naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE tax_declarations_app.declaration_create(
     IN p_employee_id uuid,
     IN p_kind text,
@@ -93,6 +94,9 @@ BEGIN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
+    PERFORM payroll.guard(p_employee_id, NULL, p_valid_from,
+        coalesce(p_valid_to, tax_declarations.natural_end(v_kind, p_valid_from, p_year_to)), true);
+
     INSERT INTO tax_declarations.declarations (employee_id, kind, share, year_from, year_to, submitted_at, valid_from,
                                                valid_to, created_by)
     VALUES (p_employee_id, v_kind, v_share, p_year_from, p_year_to, p_submitted_at, p_valid_from,
@@ -108,7 +112,8 @@ $$;
 
 --changeset hr:tax_declarations_app.declaration_end runOnChange:true splitStatements:false
 --comment: Zakończenie wpisu wycofaniem złożonym w dniu, od miesiąca stop_from (R6): koniec = ostatni dzień miesiąca
---comment: poprzedniego. Obie daty puste cofają zakończenie (koniec wraca do naturalnego).
+--comment: poprzedniego. Obie daty puste cofają zakończenie (koniec wraca do naturalnego). Zmienione miesiące z datą
+--comment: wypłaty zamkniętej listy płac — U0003 payrollClosed (009 R25).
 CREATE OR REPLACE PROCEDURE tax_declarations_app.declaration_end(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -162,6 +167,12 @@ BEGIN
         v_valid_to := p_stop_from - 1;
     END IF;
 
+    IF v_before.valid_to IS DISTINCT FROM v_valid_to THEN
+        PERFORM payroll.guard(v_before.employee_id, NULL,
+            least(coalesce(v_before.valid_to, 'infinity'), coalesce(v_valid_to, 'infinity')) + 1,
+            nullif(greatest(coalesce(v_before.valid_to, 'infinity'), coalesce(v_valid_to, 'infinity')), 'infinity'),
+            true);
+    END IF;
     UPDATE tax_declarations.declarations d
     SET valid_to = v_valid_to, withdrawn_at = CASE WHEN p_stop_from IS NULL THEN NULL ELSE p_withdrawn_at END
     WHERE d.id = p_id;
@@ -176,7 +187,8 @@ END;
 $$;
 
 --changeset hr:tax_declarations_app.declaration_delete runOnChange:true splitStatements:false
---comment: Usunięcie wpisu wprowadzonego przez pomyłkę (R9). Od modułu 009: blokada, gdy wpis użyto na liście płac.
+--comment: Usunięcie wpisu wprowadzonego przez pomyłkę (R9). Okres z datą wypłaty zamkniętej listy płac (wpis użyty
+--comment: na liście) — U0003 payrollClosed, naliczonej — lista nieaktualna (009 R25).
 CREATE OR REPLACE PROCEDURE tax_declarations_app.declaration_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -193,6 +205,7 @@ BEGIN
     IF (SELECT d.xmin::text::bigint FROM tax_declarations.declarations d WHERE d.id = p_id) <> p_row_version THEN
         RAISE EXCEPTION 'tax declaration changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard(v_row.employee_id, NULL, v_row.valid_from, v_row.valid_to, true);
 
     DELETE FROM tax_declarations.declarations d WHERE d.id = p_id;
     PERFORM platform.audit('tax_declaration', p_id::text, 'delete', to_jsonb(v_row), NULL);

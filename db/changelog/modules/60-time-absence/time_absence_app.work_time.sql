@@ -48,6 +48,7 @@ $$;
 
 --changeset hr:time_absence_app.overtime_add runOnChange:true splitStatements:false
 --comment: Nadgodziny w dniu (R16): 0,5–16 h, rodzaj dodatku 50 albo 100 (KP art. 151¹ § 1 — wybierają Kadry).
+--comment: Dzień w okresie zamkniętej listy płac — U0003 payrollClosed, naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE time_absence_app.overtime_add(
     IN p_employment_id uuid,
     IN p_date date,
@@ -92,6 +93,8 @@ BEGIN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
+    PERFORM payroll.guard(v_employment.employee_id, p_employment_id, p_date, p_date);
+
     INSERT INTO time_absence.overtime_entries (employment_id, date, hours, rate, created_by)
     VALUES (p_employment_id, p_date, p_hours, p_rate, platform.actor_id())
     RETURNING * INTO v_row;
@@ -101,7 +104,7 @@ END;
 $$;
 
 --changeset hr:time_absence_app.overtime_delete runOnChange:true splitStatements:false
---comment: Usunięcie wpisu nadgodzin (R16), z wersją wiersza.
+--comment: Usunięcie wpisu nadgodzin (R16), z wersją wiersza. Blokada i nieaktualność list jak przy dodaniu.
 CREATE OR REPLACE PROCEDURE time_absence_app.overtime_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -118,6 +121,7 @@ BEGIN
     IF (SELECT o.xmin::text::bigint FROM time_absence.overtime_entries o WHERE o.id = p_id) <> p_row_version THEN
         RAISE EXCEPTION 'overtime entry changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard(NULL, v_row.employment_id, v_row.date, v_row.date);
     DELETE FROM time_absence.overtime_entries o WHERE o.id = p_id;
     PERFORM platform.audit('overtime', p_id::text, 'delete', to_jsonb(v_row), NULL);
 END;
@@ -218,7 +222,8 @@ $$;
 
 --changeset hr:time_absence_app.mandate_hours_add runOnChange:true splitStatements:false
 --comment: Godziny zlecenia za okres (R17): data i sposób potwierdzenia przez zleceniobiorcę (ustawa o minimalnym
---comment: wynagrodzeniu art. 8b) albo oba puste — wpis bez potwierdzenia.
+--comment: wynagrodzeniu art. 8b) albo oba puste — wpis bez potwierdzenia. Godziny należą do listy miesiąca końca
+--comment: okresu: zamknięta — U0003 payrollClosed, naliczona — nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE time_absence_app.mandate_hours_add(
     IN p_employment_id uuid,
     IN p_date_from date,
@@ -246,6 +251,8 @@ BEGIN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
+    PERFORM payroll.guard(v_employment.employee_id, p_employment_id, p_date_to, p_date_to);
+
     INSERT INTO time_absence.mandate_hours (employment_id, date_from, date_to, hours, confirmed_at, confirmation_form,
                                             created_by)
     VALUES (p_employment_id, p_date_from, p_date_to, p_hours, p_confirmed_at, p_confirmation_form,
@@ -257,7 +264,8 @@ END;
 $$;
 
 --changeset hr:time_absence_app.mandate_hours_update runOnChange:true splitStatements:false
---comment: Zmiana godzin zlecenia, w tym potwierdzenie (R17), z wersją wiersza.
+--comment: Zmiana godzin zlecenia, w tym potwierdzenie (R17), z wersją wiersza. Blokada i nieaktualność list jak przy
+--comment: dodaniu — dla starego i nowego miesiąca.
 CREATE OR REPLACE PROCEDURE time_absence_app.mandate_hours_update(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -294,6 +302,9 @@ BEGIN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
+    PERFORM payroll.guard(v_employment.employee_id, v_employment.id, v_before.date_to, v_before.date_to);
+    PERFORM payroll.guard(v_employment.employee_id, v_employment.id, p_date_to, p_date_to);
+
     UPDATE time_absence.mandate_hours h
     SET date_from = p_date_from, date_to = p_date_to, hours = p_hours, confirmed_at = p_confirmed_at,
         confirmation_form = p_confirmation_form
@@ -304,7 +315,7 @@ END;
 $$;
 
 --changeset hr:time_absence_app.mandate_hours_delete runOnChange:true splitStatements:false
---comment: Usunięcie godzin zlecenia (R17), z wersją wiersza.
+--comment: Usunięcie godzin zlecenia (R17), z wersją wiersza. Blokada i nieaktualność list jak przy dodaniu.
 CREATE OR REPLACE PROCEDURE time_absence_app.mandate_hours_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -321,6 +332,7 @@ BEGIN
     IF (SELECT h.xmin::text::bigint FROM time_absence.mandate_hours h WHERE h.id = p_id) <> p_row_version THEN
         RAISE EXCEPTION 'mandate hours changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard(NULL, v_row.employment_id, v_row.date_to, v_row.date_to);
     DELETE FROM time_absence.mandate_hours h WHERE h.id = p_id;
     PERFORM platform.audit('mandate_hours', p_id::text, 'delete', to_jsonb(v_row), NULL);
 END;

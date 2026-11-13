@@ -212,8 +212,8 @@ $$;
 
 --changeset hr:ppk_app.participation_delete runOnChange:true splitStatements:false
 --comment: Usunięcie uczestnictwa wpisanego przez pomyłkę (R6a), z wersją wiersza (U0003 przy nieaktualnej): znikają
---comment: uczestnictwo i jego okresy stawek, deklaracje kartoteki zostają. Od 009: blokada, gdy uczestnictwo użyto na
---comment: liście płac.
+--comment: uczestnictwo i jego okresy stawek, deklaracje kartoteki zostają. Wpłaty PPK na zamkniętej liście płac — U0003
+--comment: payrollClosed (009 R25).
 CREATE OR REPLACE PROCEDURE ppk_app.participation_delete(IN p_employee_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -231,6 +231,7 @@ BEGIN
     IF (SELECT p.xmin::text::bigint FROM ppk.participations p WHERE p.id = v_row.id) IS DISTINCT FROM p_row_version THEN
         RAISE EXCEPTION 'participation changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard_used('ppk', p_employee_id);
     DELETE FROM ppk.participations p WHERE p.id = v_row.id;
     PERFORM platform.audit('ppk_participation', v_row.id::text, 'delete', to_jsonb(v_row), NULL);
 END;

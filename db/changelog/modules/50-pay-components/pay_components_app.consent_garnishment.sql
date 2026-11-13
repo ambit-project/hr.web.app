@@ -215,7 +215,8 @@ END;
 $$;
 
 --changeset hr:pay_components_app.consent_delete runOnChange:true splitStatements:false
---comment: Usunięcie zgody wprowadzonej przez pomyłkę (R15); wskazanej w składniku nie usuwa się (consentInUse).
+--comment: Usunięcie zgody wprowadzonej przez pomyłkę (R15); wskazanej w składniku nie usuwa się (consentInUse), użytej
+--comment: na zamkniętej liście płac — U0003 payrollClosed (009 R25).
 CREATE OR REPLACE PROCEDURE pay_components_app.consent_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -235,6 +236,7 @@ BEGIN
     IF EXISTS (SELECT FROM pay_components.employment_components c WHERE c.consent_id = p_id) THEN
         RAISE EXCEPTION 'consent is used' USING ERRCODE = 'U0003', HINT = 'consentInUse';
     END IF;
+    PERFORM payroll.guard_used('consent', p_id);
     DELETE FROM pay_components.consents d WHERE d.id = p_id;
     PERFORM platform.audit('deduction_consent', p_id::text, 'delete', to_jsonb(v_row), NULL);
 END;
@@ -242,7 +244,7 @@ $$;
 
 --changeset hr:pay_components_app.garnishment_list runOnChange:true splitStatements:false
 --comment: Zajęcia kartoteki: alimenty przed innymi, potem doręczenie (R21; Kadry, Administrator). Zapisuje audyt odczytu
---comment: (R22), więc VOLATILE. Kwota ściągnięta — 0 do czasu list płac (009).
+--comment: (R22), więc VOLATILE. Kwota ściągnięta — suma potrąceń z zamkniętych list płac (009 R25).
 CREATE OR REPLACE FUNCTION pay_components_app.garnishment_list(p_employee_id uuid)
     RETURNS TABLE (
         id uuid,
@@ -272,7 +274,7 @@ BEGIN
 
     RETURN QUERY
     SELECT g.id, g.kind, g.authority_kind, g.authority_name, g.case_number, g.received_at, g.monthly_amount,
-           g.total_amount, 0::numeric, g.status, g.status_date, g.note, g.xmin::text::bigint
+           g.total_amount, payroll.garnishment_collected(g.id), g.status, g.status_date, g.note, g.xmin::text::bigint
     FROM pay_components.garnishments g
     WHERE g.employee_id = p_employee_id
     ORDER BY g.status <> 'active', g.kind <> 'alimony', g.received_at, g.case_number;
@@ -420,7 +422,8 @@ END;
 $$;
 
 --changeset hr:pay_components_app.garnishment_delete runOnChange:true splitStatements:false
---comment: Usunięcie zajęcia wprowadzonego przez pomyłkę (R19). Od 009: blokada, gdy potrącono z niego na liście.
+--comment: Usunięcie zajęcia wprowadzonego przez pomyłkę (R19). Potrącone na zamkniętej liście płac — U0003
+--comment: payrollClosed (009 R25).
 CREATE OR REPLACE PROCEDURE pay_components_app.garnishment_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -437,6 +440,7 @@ BEGIN
     IF (SELECT g.xmin::text::bigint FROM pay_components.garnishments g WHERE g.id = p_id) <> p_row_version THEN
         RAISE EXCEPTION 'garnishment changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard_used('garnishment', p_id);
     DELETE FROM pay_components.garnishments g WHERE g.id = p_id;
     PERFORM platform.audit('garnishment', p_id::text, 'delete', to_jsonb(v_row), NULL);
 END;

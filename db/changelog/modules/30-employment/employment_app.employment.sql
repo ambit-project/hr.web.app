@@ -227,7 +227,8 @@ $$;
 
 --changeset hr:employment_app.employment_update runOnChange:true splitStatements:false
 --comment: Edycja umowy z wersją wiersza (R6). Rodzaju i kartoteki nie zmienia się; początek pierwszej wersji warunków
---comment: idzie za początkiem umowy.
+--comment: idzie za początkiem umowy. Przesunięcie początku albo końca w okres zamkniętej listy płac — U0003
+--comment: payrollClosed, naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE employment_app.employment_update(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -289,6 +290,9 @@ BEGIN
     END IF;
     PERFORM employment.check_concurrency(v_after.employee_id, v_after.kind,
         employment.period(v_after.start_date, v_after.end_date, v_after.terminated_at), p_id);
+    PERFORM payroll.guard_period_change(v_before.employee_id, p_id, v_before.start_date,
+        coalesce(v_before.terminated_at, v_before.end_date), v_after.start_date,
+        coalesce(v_after.terminated_at, v_after.end_date));
 
     UPDATE employment.employments m
     SET number = v_after.number, contract_type = v_after.contract_type, signed_at = v_after.signed_at,
@@ -310,7 +314,8 @@ END;
 $$;
 
 --changeset hr:employment_app.employment_terminate runOnChange:true splitStatements:false
---comment: Rozwiązanie umowy datą albo jego cofnięcie pustą datą (R7).
+--comment: Rozwiązanie umowy datą albo jego cofnięcie pustą datą (R7). Zmiana końca w okresie zamkniętej listy płac —
+--comment: U0003 payrollClosed, naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE employment_app.employment_terminate(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -349,6 +354,10 @@ BEGIN
     PERFORM employment.check_concurrency(v_before.employee_id, v_before.kind,
         employment.period(v_before.start_date, v_before.end_date, p_terminated_at), p_id);
 
+    PERFORM payroll.guard_period_change(v_before.employee_id, p_id, v_before.start_date,
+        coalesce(v_before.terminated_at, v_before.end_date), v_before.start_date,
+        coalesce(p_terminated_at, v_before.end_date));
+
     UPDATE employment.employments m SET terminated_at = p_terminated_at WHERE m.id = p_id;
     PERFORM platform.audit('employment', p_id::text, 'update',
         jsonb_build_object('terminated_at', v_before.terminated_at),
@@ -360,7 +369,8 @@ END;
 $$;
 
 --changeset hr:employment_app.employment_delete runOnChange:true splitStatements:false
---comment: Usunięcie umowy wprowadzonej przez pomyłkę (R9). Od modułu 009: blokada, gdy umowa jest na liście płac.
+--comment: Usunięcie umowy wprowadzonej przez pomyłkę (R9). Umowa na zamkniętej liście płac — U0003 payrollClosed;
+--comment: z list nie zamkniętych znika, naliczone stają się nieaktualne (009 R25).
 CREATE OR REPLACE PROCEDURE employment_app.employment_delete(IN p_id uuid)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -374,6 +384,7 @@ BEGIN
     IF NOT FOUND THEN
         RAISE EXCEPTION 'employment not found' USING ERRCODE = 'U0002';
     END IF;
+    PERFORM payroll.guard_used('employment', p_id);
 
     DELETE FROM employment.employments m WHERE m.id = p_id;
     PERFORM platform.audit('employment', p_id::text, 'delete', to_jsonb(v_row), NULL);
@@ -382,6 +393,7 @@ $$;
 
 --changeset hr:employment_app.terms_add runOnChange:true splitStatements:false
 --comment: Nowa wersja warunków od dnia (R14): poprzednia kończy się dzień wcześniej; ta sama data poprawia ostatnią.
+--comment: Od dnia w okresie zamkniętej listy płac — U0003 payrollClosed, naliczonej — lista nieaktualna (009 [D]).
 CREATE OR REPLACE PROCEDURE employment_app.terms_add(
     IN p_employment_id uuid,
     IN p_valid_from date,
@@ -444,6 +456,7 @@ BEGIN
     v_new.insurances := employment.normalize_insurances(p_insurances);
     v_new.cost_kind := p_cost_kind;
 
+    PERFORM payroll.guard(v_employment.employee_id, p_employment_id, p_valid_from, NULL);
     IF p_valid_from = v_last.valid_from THEN
         UPDATE employment.terms t
         SET position_id = v_new.position_id, fte_numerator = v_new.fte_numerator,
@@ -473,6 +486,7 @@ $$;
 
 --changeset hr:employment_app.terms_delete_last runOnChange:true splitStatements:false
 --comment: Usunięcie ostatniej wersji warunków (R14); poprzednia znów jest otwarta. Jedynej wersji nie usuwa się.
+--comment: Wersja w okresie zamkniętej listy płac — U0003 payrollClosed (009 [D]).
 CREATE OR REPLACE PROCEDURE employment_app.terms_delete_last(IN p_employment_id uuid)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -492,6 +506,7 @@ BEGIN
 
     SELECT * INTO v_last FROM employment.terms t
     WHERE t.employment_id = p_employment_id ORDER BY t.valid_from DESC LIMIT 1;
+    PERFORM payroll.guard(NULL, p_employment_id, v_last.valid_from, NULL);
     DELETE FROM employment.terms t WHERE t.id = v_last.id;
     UPDATE employment.terms t SET valid_to = NULL
     WHERE t.id = (SELECT p.id FROM employment.terms p

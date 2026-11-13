@@ -60,7 +60,8 @@ ze śladem źródeł — sprawdzają i zamykają. Zamknięcie blokuje dane okres
 - **R10.** Składniki umowy (006): kwota stała; procent zasadniczego; stawka × godziny (godziny z 007 R17 dla zlecenia,
   dla umowy o pracę — poza zakresem **[D]**). Cechy składnika (ZUS, zdrowotna, PIT, chorobowe) decydują o podstawach.
 - **R11.** Ekwiwalent za niewykorzystany urlop w miesiącu rozwiązania umowy (KP art. 171, R1997 § 18–19): saldo
-  godzin (007 R15) × (zasadnicze + średnia zmiennych) ÷ współczynnik ÷ 8 × etat; współczynnik jako parametr prawny
+  godzin (007 R15) × (zasadnicze + średnia zmiennych) ÷ (współczynnik × etat) ÷ 8 (przy niepełnym etacie współczynnik
+  obniżony proporcjonalnie — R1997 § 19 ust. 3; saldo w godzinach dnia 8-godzinnego); współczynnik jako parametr prawny
   (2026: 20,92 — 251 ÷ 12 **[?]** zaokrąglenie). Ekwiwalent jest przychodem ze składkami i podatkiem.
 
 ### Przychody (zlecenie, dzieło)
@@ -80,7 +81,7 @@ ze śladem źródeł — sprawdzają i zamykają. Zamknięcie blokuje dane okres
   9a, 9c) — znacznik na umowie poza zakresem **[D]**.
 - **R15.** Składka zdrowotna 9% od podstawy = podstawa emerytalno-rentowa (bez limitu) + wynagrodzenie chorobowe
   − składki społeczne pracownika (ustawa o świadczeniach art. 81 ust. 1 i 6). Ograniczenie do zaliczki z 2021 r.
-  (art. 83 ust. 1) — **nie liczone [?]**, ostrzeżenie, gdy zaliczka < składki **[D]**.
+  (art. 83 ust. 1) — **nie liczone [?]**.
 
 ### Podatek
 - **R16.** Umowa o pracę: dochód = przychód opodatkowany − składki społeczne pracownika (od przychodu

@@ -109,7 +109,8 @@ END;
 $$;
 
 --changeset hr:time_absence_app.absence_create runOnChange:true splitStatements:false
---comment: Nowa nieobecność umowy (R7–R11). Numer e-ZLA wymagany przy chorobie.
+--comment: Nowa nieobecność umowy (R7–R11). Numer e-ZLA wymagany przy chorobie. Okres zamkniętej listy płac — U0003
+--comment: payrollClosed, naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE time_absence_app.absence_create(
     IN p_employment_id uuid,
     IN p_absence_type_id text,
@@ -135,6 +136,7 @@ BEGIN
     v_employment := time_absence.employment_get(p_employment_id, ARRAY['employment', 'mandate', 'specific_work']);
     PERFORM time_absence.absence_check(NULL, v_employment, p_absence_type_id, p_date_from, p_date_to, v_certificate,
         v_note);
+    PERFORM payroll.guard(v_employment.employee_id, p_employment_id, p_date_from, p_date_to);
 
     INSERT INTO time_absence.absences (employment_id, absence_type_code, date_from, date_to, certificate_number,
                                        note, created_by)
@@ -146,7 +148,8 @@ END;
 $$;
 
 --changeset hr:time_absence_app.absence_update runOnChange:true splitStatements:false
---comment: Zmiana nieobecności (R12), z wersją wiersza. Od 009: blokada w okresie zamkniętej listy płac.
+--comment: Zmiana nieobecności (R12), z wersją wiersza. Stary i nowy okres w okresie zamkniętej listy płac — U0003
+--comment: payrollClosed, naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE time_absence_app.absence_update(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -181,6 +184,8 @@ BEGIN
         ARRAY['employment', 'mandate', 'specific_work']);
     PERFORM time_absence.absence_check(p_id, v_employment, p_absence_type_id, p_date_from, p_date_to, v_certificate,
         v_note);
+    PERFORM payroll.guard(v_employment.employee_id, v_employment.id, v_before.date_from, v_before.date_to);
+    PERFORM payroll.guard(v_employment.employee_id, v_employment.id, p_date_from, p_date_to);
 
     UPDATE time_absence.absences a
     SET absence_type_code = p_absence_type_id, date_from = p_date_from, date_to = p_date_to,
@@ -192,7 +197,7 @@ END;
 $$;
 
 --changeset hr:time_absence_app.absence_delete runOnChange:true splitStatements:false
---comment: Usunięcie nieobecności (R12), z wersją wiersza.
+--comment: Usunięcie nieobecności (R12), z wersją wiersza. Blokada i nieaktualność list jak przy zmianie (009 R25).
 CREATE OR REPLACE PROCEDURE time_absence_app.absence_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -209,6 +214,7 @@ BEGIN
     IF (SELECT a.xmin::text::bigint FROM time_absence.absences a WHERE a.id = p_id) <> p_row_version THEN
         RAISE EXCEPTION 'absence changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard(NULL, v_row.employment_id, v_row.date_from, v_row.date_to);
     DELETE FROM time_absence.absences a WHERE a.id = p_id;
     PERFORM platform.audit('absence', p_id::text, 'delete', to_jsonb(v_row), NULL);
 END;

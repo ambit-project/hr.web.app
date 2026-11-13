@@ -42,7 +42,8 @@ END;
 $$;
 
 --changeset hr:pay_components_app.employment_component_add runOnChange:true splitStatements:false
---comment: Przypisanie składnika do umowy (R7–R10).
+--comment: Przypisanie składnika do umowy (R7–R10). Okres w okresie zamkniętej listy płac — U0003 payrollClosed,
+--comment: naliczonej — lista nieaktualna (009 R2, R25).
 CREATE OR REPLACE PROCEDURE pay_components_app.employment_component_add(
     IN p_employment_id uuid,
     IN p_component_type_id uuid,
@@ -74,6 +75,8 @@ BEGIN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
+    PERFORM payroll.guard(NULL, p_employment_id, p_valid_from, p_valid_to);
+
     INSERT INTO pay_components.employment_components (employment_id, component_type_id, value, valid_from, valid_to,
                                                       consent_id, created_by)
     VALUES (p_employment_id, p_component_type_id, p_value, p_valid_from, p_valid_to, p_consent_id,
@@ -89,6 +92,7 @@ $$;
 
 --changeset hr:pay_components_app.employment_component_end runOnChange:true splitStatements:false
 --comment: Zakończenie przypisania datą albo cofnięcie zakończenia pustą datą (R11); sprawdza okres i zgodę jak przy dodaniu.
+--comment: Zmienione dni (między starym a nowym końcem) w okresie zamkniętej listy — U0003 payrollClosed (009 R25).
 CREATE OR REPLACE PROCEDURE pay_components_app.employment_component_end(
     IN p_id uuid,
     IN p_row_version bigint,
@@ -123,6 +127,11 @@ BEGIN
         PERFORM platform.fail_validation(v_errors);
     END IF;
 
+    IF v_before.valid_to IS DISTINCT FROM p_valid_to THEN
+        PERFORM payroll.guard(NULL, v_before.employment_id,
+            least(coalesce(v_before.valid_to, 'infinity'), coalesce(p_valid_to, 'infinity')) + 1,
+            nullif(greatest(coalesce(v_before.valid_to, 'infinity'), coalesce(p_valid_to, 'infinity')), 'infinity'));
+    END IF;
     UPDATE pay_components.employment_components c SET valid_to = p_valid_to WHERE c.id = p_id;
     PERFORM platform.audit('employment_component', p_id::text, 'update',
         jsonb_build_object('valid_to', v_before.valid_to), jsonb_build_object('valid_to', p_valid_to));
@@ -133,7 +142,8 @@ END;
 $$;
 
 --changeset hr:pay_components_app.employment_component_delete runOnChange:true splitStatements:false
---comment: Usunięcie przypisania wprowadzonego przez pomyłkę (R11). Od 009: blokada, gdy użyte na liście płac.
+--comment: Usunięcie przypisania wprowadzonego przez pomyłkę (R11). Okres w okresie zamkniętej listy płac (składnik
+--comment: użyty na liście) — U0003 payrollClosed, naliczonej — lista nieaktualna (009 R25).
 CREATE OR REPLACE PROCEDURE pay_components_app.employment_component_delete(IN p_id uuid, IN p_row_version bigint)
     LANGUAGE plpgsql
     SECURITY DEFINER
@@ -151,6 +161,7 @@ BEGIN
     THEN
         RAISE EXCEPTION 'employment component changed' USING ERRCODE = 'U0003';
     END IF;
+    PERFORM payroll.guard(NULL, v_row.employment_id, v_row.valid_from, v_row.valid_to);
     DELETE FROM pay_components.employment_components c WHERE c.id = p_id;
     PERFORM platform.audit('employment_component', p_id::text, 'delete', to_jsonb(v_row), NULL);
 END;
