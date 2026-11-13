@@ -3320,6 +3320,811 @@
           }
         }
       }
+    },
+    "/api/optima/agent-keys": {
+      "get": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "ListOptimaAgentKeys",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListAgentKeysItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "CreateOptimaAgentKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentKeyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAgentKeyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/agent-keys/{id}": {
+      "delete": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "RevokeOptimaAgentKey",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/databases": {
+      "get": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "ListOptimaDatabases",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListOptimaDatabasesItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/companies/{companyId}/database": {
+      "put": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "SetOptimaCompanyDatabase",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCompanyDatabaseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/companies/{companyId}/pay-types": {
+      "get": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "ListOptimaPayTypes",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListPayTypesItem"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/companies/{companyId}/pay-types/{optimaId}": {
+      "put": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "MapOptimaPayType",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "optimaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapPayTypeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/companies/{companyId}/payrolls": {
+      "get": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "GetOptimaPayrolls",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetOptimaPayrollsPayrollList"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/operations": {
+      "post": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "CreateOptimaOperation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOperationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOperationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "ListOptimaOperations",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedListOfListOperationsItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/operations/{id}": {
+      "get": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "GetOptimaOperation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOperationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/operations/{id}/retry": {
+      "post": {
+        "tags": [
+          "Optima"
+        ],
+        "operationId": "RetryOptimaOperation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetryOperationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/agent/connection": {
+      "get": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentConnection",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/optima/agent/operations/claim": {
+      "post": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentClaim",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimOperationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimOperationResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/optima/agent/operations/{id}/employees": {
+      "get": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentEmployees",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOperationEmployeesResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/agent/operations/{id}/deductions": {
+      "get": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentDeductions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOperationDeductionsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/agent/operations/{id}/allowances": {
+      "get": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentAllowances",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOperationAllowancesResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/agent/operations/{id}/payroll-period": {
+      "get": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentPayrollPeriod",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollPeriodResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/optima/agent/operations/{id}/result": {
+      "post": {
+        "tags": [
+          "OptimaAgent"
+        ],
+        "operationId": "OptimaAgentResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportResultRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3720,6 +4525,51 @@
           }
         }
       },
+      "ClaimOperationRequest": {
+        "required": [
+          "agentVersion",
+          "supportedKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "agentVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "supportedKinds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ClaimOperationResponse": {
+        "required": [
+          "id",
+          "kind",
+          "attempt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "CloseEmployeeBankAccountRequest": {
         "required": [
           "validTo"
@@ -3818,6 +4668,37 @@
             "type": "string"
           },
           "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateAgentKeyRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CreateAgentKeyResponse": {
+        "required": [
+          "id",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "token": {
             "type": "string"
           }
         }
@@ -4342,6 +5223,67 @@
         }
       },
       "CreateGarnishmentResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateOperationRequest": {
+        "required": [
+          "kind",
+          "companyId",
+          "year",
+          "month",
+          "employeeIds"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "month": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "employeeIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "CreateOperationResponse": {
         "required": [
           "id"
         ],
@@ -4960,6 +5902,695 @@
           }
         }
       },
+      "GetOperationAllowancesItem": {
+        "required": [
+          "allowanceId",
+          "employeeId",
+          "employeeCode",
+          "optimaId",
+          "amount",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "allowanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "optimaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "GetOperationAllowancesResponse": {
+        "required": [
+          "databaseName",
+          "year",
+          "month",
+          "allowances"
+        ],
+        "type": "object",
+        "properties": {
+          "databaseName": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "allowances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOperationAllowancesItem"
+            }
+          }
+        }
+      },
+      "GetOperationDeductionsItem": {
+        "required": [
+          "deductionId",
+          "employeeId",
+          "employeeCode",
+          "optimaId",
+          "amount",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "deductionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "optimaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "GetOperationDeductionsResponse": {
+        "required": [
+          "databaseName",
+          "year",
+          "month",
+          "deductions"
+        ],
+        "type": "object",
+        "properties": {
+          "databaseName": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deductions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOperationDeductionsItem"
+            }
+          }
+        }
+      },
+      "GetOperationEmployeesEmployee": {
+        "required": [
+          "employeeId",
+          "employeeCode",
+          "lastName",
+          "firstName",
+          "dateOfBirth",
+          "pesel",
+          "citizenshipCode",
+          "email",
+          "phone",
+          "street",
+          "buildingNumber",
+          "unitNumber",
+          "postalCode",
+          "city",
+          "addressCountryCode",
+          "note",
+          "documentKind",
+          "documentNumber",
+          "documentValidUntil",
+          "positionName",
+          "startsOn",
+          "endsOn"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "pesel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "citizenshipCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "street": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "buildingNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "postalCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "city": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "addressCountryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "documentKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "documentNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "documentValidUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "positionName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startsOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endsOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "GetOperationEmployeesResponse": {
+        "required": [
+          "databaseName",
+          "employees"
+        ],
+        "type": "object",
+        "properties": {
+          "databaseName": {
+            "type": "string"
+          },
+          "employees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOperationEmployeesEmployee"
+            }
+          }
+        }
+      },
+      "GetOperationLogEntry": {
+        "required": [
+          "at",
+          "code",
+          "databaseName",
+          "errorNumber",
+          "count",
+          "employeeId",
+          "deductionId",
+          "allowanceId",
+          "warningCodes"
+        ],
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "databaseName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "errorNumber": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "count": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "deductionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "allowanceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "warningCodes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "GetOperationResponse": {
+        "required": [
+          "id",
+          "kind",
+          "state",
+          "attempt",
+          "companyId",
+          "companyShortName",
+          "databaseName",
+          "year",
+          "month",
+          "employeeCount",
+          "createdAt",
+          "claimedAt",
+          "finishedAt",
+          "succeeded",
+          "errorCode",
+          "log",
+          "skippedItems"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "companyShortName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "databaseName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "month": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "employeeCount": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "claimedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "succeeded": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "errorCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOperationLogEntry"
+            }
+          },
+          "skippedItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOperationSkipped"
+            }
+          }
+        }
+      },
+      "GetOperationSkipped": {
+        "required": [
+          "id",
+          "employeeId",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "GetOptimaPayrollsElement": {
+        "required": [
+          "componentOptimaId",
+          "name",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "componentOptimaId": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetOptimaPayrollsPayout": {
+        "required": [
+          "optimaId",
+          "employeeId",
+          "employeeCode",
+          "employeeName",
+          "gross",
+          "net",
+          "isClosed",
+          "elements"
+        ],
+        "type": "object",
+        "properties": {
+          "optimaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "employeeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "employeeName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "gross": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "net": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "isClosed": {
+            "type": "boolean"
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOptimaPayrollsElement"
+            }
+          }
+        }
+      },
+      "GetOptimaPayrollsPayrollList": {
+        "required": [
+          "id",
+          "optimaId",
+          "number",
+          "name",
+          "periodFrom",
+          "periodTo",
+          "documentDate",
+          "isClosed",
+          "importedAt",
+          "payouts"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "optimaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "number": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "periodFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "periodTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "documentDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "isClosed": {
+            "type": "boolean"
+          },
+          "importedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "payouts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetOptimaPayrollsPayout"
+            }
+          }
+        }
+      },
+      "GetPayrollPeriodResponse": {
+        "required": [
+          "databaseName",
+          "year",
+          "month"
+        ],
+        "type": "object",
+        "properties": {
+          "databaseName": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "HttpValidationProblemDetails": {
         "type": "object",
         "properties": {
@@ -5013,6 +6644,54 @@
         "properties": {
           "account": {
             "type": "string"
+          }
+        }
+      },
+      "ListAgentKeysItem": {
+        "required": [
+          "id",
+          "name",
+          "keyPrefix",
+          "createdAt",
+          "revokedAt",
+          "lastSeenAt",
+          "lastAgentVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "keyPrefix": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastSeenAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastAgentVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -5741,6 +7420,257 @@
           }
         }
       },
+      "ListOperationsItem": {
+        "required": [
+          "id",
+          "kind",
+          "state",
+          "attempt",
+          "companyId",
+          "companyShortName",
+          "databaseName",
+          "year",
+          "month",
+          "createdAt",
+          "claimedAt",
+          "finishedAt",
+          "errorCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "companyShortName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "databaseName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "month": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "claimedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "errorCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ListOptimaDatabasesItem": {
+        "required": [
+          "companyId",
+          "companyShortName",
+          "companyNip",
+          "databaseName",
+          "taxNumber",
+          "lastSeenAt",
+          "taxNumberMatches"
+        ],
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "companyShortName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "companyNip": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "databaseName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "taxNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastSeenAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "taxNumberMatches": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
+      "ListPayTypesItem": {
+        "required": [
+          "optimaId",
+          "name",
+          "shortName",
+          "isDeduction",
+          "sourceKind",
+          "standardId",
+          "defaultAmount",
+          "isPkzp",
+          "isSeizure",
+          "isActive",
+          "isWithdrawn",
+          "importedAt",
+          "missingSince",
+          "componentTypeId",
+          "componentCode",
+          "componentName"
+        ],
+        "type": "object",
+        "properties": {
+          "optimaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isDeduction": {
+            "type": "boolean"
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "standardId": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "defaultAmount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "isPkzp": {
+            "type": "boolean"
+          },
+          "isSeizure": {
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isWithdrawn": {
+            "type": "boolean"
+          },
+          "importedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "missingSince": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "componentTypeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "componentCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "componentName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ListPositionsItem": {
         "required": [
           "id",
@@ -5979,6 +7909,22 @@
           }
         }
       },
+      "MapPayTypeRequest": {
+        "required": [
+          "componentTypeId"
+        ],
+        "type": "object",
+        "properties": {
+          "componentTypeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "NullableOfJsonElement": {},
       "PagedListOfListAuditItem": {
         "required": [
           "items",
@@ -6108,6 +8054,35 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ListLegalParametersItem"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PagedListOfListOperationsItem": {
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListOperationsItem"
             }
           },
           "total": {
@@ -6269,6 +8244,88 @@
             ]
           },
           "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReportResultRequest": {
+        "required": [
+          "attempt",
+          "succeeded",
+          "errorCode",
+          "log",
+          "payrollComponents",
+          "payrolls"
+        ],
+        "type": "object",
+        "properties": {
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "succeeded": {
+            "type": "boolean"
+          },
+          "errorCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "log": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/NullableOfJsonElement"
+              }
+            ]
+          },
+          "payrollComponents": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/NullableOfJsonElement"
+              }
+            ]
+          },
+          "payrolls": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/NullableOfJsonElement"
+              }
+            ]
+          }
+        }
+      },
+      "RetryOperationResponse": {
+        "required": [
+          "attempt"
+        ],
+        "type": "object",
+        "properties": {
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SetCompanyDatabaseRequest": {
+        "required": [
+          "databaseName"
+        ],
+        "type": "object",
+        "properties": {
+          "databaseName": {
             "type": [
               "null",
               "string"
@@ -6847,6 +8904,12 @@
     },
     {
       "name": "LegalParameters"
+    },
+    {
+      "name": "Optima"
+    },
+    {
+      "name": "OptimaAgent"
     },
     {
       "name": "PayComponentTypes"

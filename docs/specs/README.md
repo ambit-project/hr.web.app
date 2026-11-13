@@ -19,3 +19,4 @@ Model danych: [docs/domain](../domain/README.md). Wymaganie bez testu w `tasks.m
 | [005](005-tax-declarations/spec.md) | Oświadczenia podatkowe: PIT-2, ulgi, koszty, wnioski o zaliczki | zrobione (R1–R16) |
 | [006](006-pay-components/spec.md) | Składniki płacowe, zgody na potrącenia, zajęcia wynagrodzenia | zrobione (R1–R25) |
 | [007](007-time-and-absence/spec.md) | Czas pracy i nieobecności: kalendarz, nieobecności, limit urlopu, ewidencja godzin | specyfikacja do zatwierdzenia |
+| [011](011-optima-integration/spec.md) | Integracja z Comarch ERP Optima przez agenta | API zrobione (R1–R22); front osobno |

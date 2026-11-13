@@ -68,5 +68,6 @@ Kolejność modułów wynika z zależności w [modelu domeny](docs/domain/README
 | 008 | PPK | do napisania |
 | 009 | Listy płac, liczenie, korekty | do napisania |
 | 010 | Paski, dokumenty zgód, PIT | do napisania |
+| 011 | Integracja z Comarch ERP Optima przez agenta: rodzaje płac, eksport pracowników, potrąceń i dodatków, listy płac z Optimy | API zrobione, front do zrobienia |
 
 Pomysły spoza zakresu dopisuje się tu jako kolejne wiersze, a nie do kodu.
